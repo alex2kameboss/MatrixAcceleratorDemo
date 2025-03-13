@@ -1,0 +1,19 @@
+package:
+  name: matrix_accelerator_demo
+  authors:
+    - "Alexandru Puscasu <alexandru.puscasu@imt.ro>"
+
+dependencies:
+    matrix_accelerator: { git: "https://github.com/alex2kameboss/MatrixAccelerator.git",  version: 1.0.0  }
+    cva6:               { git: "https://github.com/openhwgroup/cva6.git",                 version: 5.3.0  }
+
+
+workspace:
+  checkout_dir: "src/ips"
+
+sources:
+  include_dirs:
+    - src/includes
+  
+  files:
+    - src/rtl/matrix_accelerator_subsystem.sv
