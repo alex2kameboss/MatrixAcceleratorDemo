@@ -12,13 +12,13 @@ module matrix_accelerator_subsystem (
     AXI_BUS.Master      acc_axi     
 );
 
-
 // Local Parameters -----------------------------------------------------------
 localparam config_pkg::cva6_cfg_t CVA6Cfg = build_config_pkg::build_config(cva6_config_pkg::cva6_cfg);
 localparam AxiNarrowDataWidth = cva6_config_pkg::cva6_cfg.AxiDataWidth;
 localparam AxiNarrowStrbWidth = AxiNarrowDataWidth / 8;
 localparam AxiWideDataWidth   = core_axi.AXI_DATA_WIDTH;
 localparam AXiWideStrbWidth   = AxiWideDataWidth / 8;
+
 
 // Data Types Definition ------------------------------------------------------
 typedef logic [AxiNarrowDataWidth-1:0]      axi_narrow_data_t;
