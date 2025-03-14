@@ -5,9 +5,11 @@ package:
 
 dependencies:
     matrix_accelerator: { git: "https://github.com/alex2kameboss/MatrixAccelerator.git",  version: 1.0.0  }
-    cva6:               { git: "https://github.com/openhwgroup/cva6.git",                 version: 5.3.0  }
-
-
+    ariane:             { git: "https://github.com/openhwgroup/cva6.git",                 version: 5.3.0  }
+    axi:                { git: "https://github.com/pulp-platform/axi.git",                rev: master     }
+    cv_x_if:            { git: "https://github.com/alex2kameboss/core-v-xif-fix.git",     rev: bender     }
+    fpnew:              { git: "https://github.com/openhwgroup/cvfpu.git",                version: 0.7.0  }
+  
 workspace:
   checkout_dir: "src/ips"
 
@@ -16,4 +18,11 @@ sources:
     - src/includes
   
   files:
+    # cva6 configuration
+    - src/packages/cv32a60x_config_pkg.sv
+
     - src/rtl/matrix_accelerator_subsystem.sv
+    - src/ips/ariane/common/local/util/sram_cache.sv
+    - src/ips/ariane/core/pmp/src/pmp_data_if.sv
+    - src/ips/ariane/core/cvxif_issue_register_commit_if_driver.sv
+    - src/ips/ariane/core/cva6_mmu/cva6_shared_tlb.sv
