@@ -4,12 +4,13 @@
 `include "cvxif_types.svh"
 
 module matrix_accelerator_subsystem (
-    input               clk         ,
-    input               rst_n       ,
+    input                       clk         ,
+    input                       rst_n       ,
+    input logic [32 - 1 : 0]    boot_addr   ,
     // core axi
-    AXI_BUS.Master      core_axi    ,
+    AXI_BUS.Master              core_axi    ,
     // accelerator axi
-    AXI_BUS.Master      acc_axi     
+    AXI_BUS.Master              acc_axi     
 );
 
 // Local Parameters -----------------------------------------------------------
@@ -120,8 +121,8 @@ cva6 #(
 ) i_core (
     .clk_i          ( clk                   ),
     .rst_ni         ( rst_n                 ),
-    .boot_addr_i    ( boot_addr_i           ),
-    .hart_id_i      ( hart_id               ),
+    .boot_addr_i    ( boot_addr             ),
+    .hart_id_i      ( '0                    ),
     .irq_i          ( '0                    ),
     .ipi_i          ( '0                    ),
     .time_irq_i     ( '0                    ),

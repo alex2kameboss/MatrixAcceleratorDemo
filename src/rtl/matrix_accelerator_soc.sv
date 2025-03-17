@@ -1,11 +1,15 @@
+`include "axi/typedef.svh"
+`include "axi/assign.svh"
+
 module matrix_accelerator_soc (
-    input   clk     ,
-    input   rst_n   
+    input           clk     ,
+    input           rst_n   ,
+    output          tx      ,
+    input           rx      
 );
     
 // Local Parameters -----------------------------------------------------------
 localparam AXI_NO_MASTERS = 2;
-localparam AXI_NO_SLAVES = 1;
 
 localparam AXI_DATA_WIDTH = 128;
 localparam AXI_STROBE_WIDTH = AXI_DATA_WIDTH / 8;
@@ -14,8 +18,10 @@ localparam AXI_USER_WIDTH = 4;
 localparam AXI_ID_WIDTH = 5;
 localparam AXI_ID_WIDTH_SLAVE = AXI_ID_WIDTH + $clog2(AXI_NO_MASTERS);
 
-localparam RAM_LENGTH = 32'h4000_0000;
-localparam RAM_WORDS = RAM_LENGTH / AXI_DATA_WIDTH;
+localparam RAM_LENGTH = 32'h4000_0000; // 1GB
+localparam RAM_WORDS = RAM_LENGTH / AXI_STROBE_WIDTH;
+
+localparam UART_LENGTH = 2 ** 5;
 
 localparam axi_pkg::xbar_cfg_t xbar_cfg = '{
     NoSlvPorts:         AXI_NO_MASTERS,
@@ -46,11 +52,14 @@ typedef logic [AXI_USER_WIDTH-1:0] axi_user_t;
 `AXI_TYPEDEF_ALL(slave_axi, axi_addr_t, axi_slave_id_t, axi_data_t, axi_strobe_t, axi_user_t)
 
 typedef enum int unsigned {
-    RAM 
+    RAM             ,
+    UART            ,
+    AXI_NO_SLAVES   
 } axi_slaves_e;
 
 typedef enum logic [32:0] {
-    RAM_BASE = 32'h0000_0000,
+    RAM_BASE  = 32'h0000_0000   ,
+    UART_BASE = 32'hC000_0000   
 } soc_bus_start_e;
 
 
@@ -80,12 +89,19 @@ axi_pkg::xbar_rule_32_t [AXI_NO_SLAVES - 1 : 0] routing_rules;
 
 // Combinatorial Logic --------------------------------------------------------
 assign routing_rules = '{
-    '{idx: RAM, start_addr: RAM_BASE, end_addr: RAM_BASE + RAM_LENGTH}
+    '{idx: RAM , start_addr: RAM_BASE , end_addr: RAM_BASE + RAM_LENGTH  },
+    '{idx: UART, start_addr: UART_BASE, end_addr: UART_BASE + UART_LENGTH}
 };
 
 
 // Modules Instantiation ------------------------------------------------------
-
+matrix_accelerator_subsystem  i_core (
+    .clk         ( clk      ),
+    .rst_n       ( rst_n    ),
+    .boot_addr   ( RAM_BASE ),
+    .core_axi    ( master[0]),
+    .acc_axi     ( master[1])
+);
 
 // axi interconnect
 axi_xbar_intf #(
@@ -140,6 +156,24 @@ tc_sram #(
     .wdata_i(ram_wdata                                                                      ),
     .be_i   (ram_be                                                                         ),
     .rdata_o(ram_rdata                                                                      )
+);
+
+// uart
+
+axi_to_axi_lite_intf #(
+    .AXI_ADDR_WIDTH     ( AXI_ADDR_WIDTH    ),
+    .AXI_DATA_WIDTH     ( AXI_DATA_WIDTH    ),
+    .AXI_ID_WIDTH       ( AXI_ID_WIDTH_SLAVE),
+    .AXI_USER_WIDTH     ( AXI_USER_WIDTH    ),
+    .AXI_MAX_WRITE_TXNS ( 1                 ),
+    .AXI_MAX_READ_TXNS  ( 1                 ),
+    .FALL_THROUGH       ( 1'b0              )
+) i_uart_axi_to_lite (
+    .clk_i      ( clk ),
+    .rst_ni     ( rst_n ),
+    .testmode_i ( '0 ),
+    .slv        ( slave[UART] ),
+    .mst        (  )
 );
 
 endmodule
