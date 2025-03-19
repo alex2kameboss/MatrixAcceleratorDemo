@@ -14,8 +14,8 @@ module matrix_accelerator_subsystem (
 );
 
 // Local Parameters -----------------------------------------------------------
-localparam config_pkg::cva6_cfg_t CVA6Cfg = build_config_pkg::build_config(cva6_config_pkg::cva6_cfg);
-localparam AxiNarrowDataWidth = cva6_config_pkg::cva6_cfg.AxiDataWidth;
+localparam config_pkg::cva6_cfg_t CVA6Cfg = build_config_pkg::build_config(ma_cva6_config_pkg::cva6_cfg);
+localparam AxiNarrowDataWidth = ma_cva6_config_pkg::cva6_cfg.AxiDataWidth;
 localparam AxiNarrowStrbWidth = AxiNarrowDataWidth / 8;
 localparam AxiWideDataWidth   = core_axi.AXI_DATA_WIDTH;
 localparam AXiWideStrbWidth   = AxiWideDataWidth / 8;
@@ -72,7 +72,7 @@ core_v_xif #(
 
 
 // Combinatorial Logic --------------------------------------------------------
-`AXI_ASSIGN_TO_REQ(core_wide_axi_req, core_axi)
+`AXI_ASSIGN_FROM_REQ(core_axi, core_wide_axi_req)
 `AXI_ASSIGN_TO_RESP(core_wide_axi_resp, core_axi)
 
 // connect xif
@@ -105,17 +105,17 @@ cva6 #(
     .r_chan_t               ( core_narrow_axi_r_chan_t  ),    
     .noc_req_t              ( core_narrow_axi_req_t     ),
     .noc_resp_t             ( core_narrow_axi_resp_t    ),
-    .readregflags_t         ( xif.readregflags_t        ),
-    .writeregflags_t        ( xif.writeregflags_t       ),
-    .id_t                   ( xif.id_t                  ),
-    .hartid_t               ( xif.hartid_t              ),
-    .x_compressed_req_t     ( xif.x_compressed_req_t    ),
-    .x_compressed_resp_t    ( xif.x_compressed_resp_t   ),
-    .x_issue_req_t          ( xif.x_issue_req_t         ),
-    .x_issue_resp_t         ( xif.x_issue_resp_t        ),
-    .x_register_t           ( xif.x_register_t          ),
-    .x_commit_t             ( xif.x_commit_t            ),
-    .x_result_t             ( xif.x_result_t            ),
+    .readregflags_t         ( xif_readregflags_t        ),
+    .writeregflags_t        ( xif_writeregflags_t       ),
+    .id_t                   ( xif_id_t                  ),
+    .hartid_t               ( xif_hartid_t              ),
+    .x_compressed_req_t     ( xif_compressed_req_t      ),
+    .x_compressed_resp_t    ( xif_compressed_resp_t     ),
+    .x_issue_req_t          ( xif_issue_req_t           ),
+    .x_issue_resp_t         ( xif_issue_resp_t          ),
+    .x_register_t           ( xif_register_req_t        ),
+    .x_commit_t             ( xif_commit_t              ),
+    .x_result_t             ( xif_result_t              ),
     .cvxif_req_t            ( xif_req_t                 ),
     .cvxif_resp_t           ( xif_resp_t                )
 ) i_core (
@@ -128,8 +128,8 @@ cva6 #(
     .time_irq_i     ( '0                    ),
     .debug_req_i    ( '0                    ),
     .rvfi_probes_o  ( /* empty */           ),
-    .cvxif_req_o    ( acc_req               ),
-    .cvxif_resp_i   ( acc_resp              ),
+    .cvxif_req_o    ( xif_req               ),
+    .cvxif_resp_i   ( xif_resp              ),
     .noc_req_o      ( core_narrow_axi_req   ),
     .noc_resp_i     ( core_narrow_axi_resp  )
   );

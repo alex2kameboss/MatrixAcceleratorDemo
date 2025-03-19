@@ -1,6 +1,6 @@
 `include "cva6_parameters.svh"
 
-package cva6_config_pkg;
+package ma_cva6_config_pkg;
 
   localparam CVA6ConfigXlen = 32;
 

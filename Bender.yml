@@ -19,10 +19,15 @@ sources:
   
   files:
     # cva6 configuration
-    - src/packages/cv32a60x_config_pkg.sv
+    #- src/packages/ma_cv32a60x_config_pkg.sv
+    - src/packages/ma_cv32a6_imac_sv0_config_pkg.sv
 
     - src/rtl/matrix_accelerator_subsystem.sv
-    - src/ips/ariane/common/local/util/sram_cache.sv
-    - src/ips/ariane/core/pmp/src/pmp_data_if.sv
-    - src/ips/ariane/core/cvxif_issue_register_commit_if_driver.sv
-    - src/ips/ariane/core/cva6_mmu/cva6_shared_tlb.sv
+    - src/rtl/matrix_accelerator_soc.sv
+    
+
+    - target: test
+      files:
+        - src/tests/uart_mock.sv
+        - src/tests/soc_tb.sv
+        - src/tests/dpi/elfloader.cc

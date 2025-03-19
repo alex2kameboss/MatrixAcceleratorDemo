@@ -3,8 +3,12 @@
 module uart_mock (
     input           clk     ,
     input           rst_n   ,
-    AXI_LITE.Slave  axi     
+    AXI_LITE.Slave  axi     ,
+    output          tx      ,
+    input           rx           
 );
+
+assign tx  = 1'b1;
 
 logic addr_valid, data_valid;
 logic aw_valid, w_valid, b_valid;

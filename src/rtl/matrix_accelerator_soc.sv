@@ -1,5 +1,5 @@
+`include "soc_parameters.svh"
 `include "axi/typedef.svh"
-`include "axi/assign.svh"
 
 module matrix_accelerator_soc (
     input           clk     ,
@@ -7,18 +7,24 @@ module matrix_accelerator_soc (
     output          tx      ,
     input           rx      
 );
-    
+
+typedef enum int unsigned {
+    RAM             ,
+    UART            ,
+    AXI_NO_SLAVES   
+} axi_slaves_e;
+
 // Local Parameters -----------------------------------------------------------
 localparam AXI_NO_MASTERS = 2;
 
-localparam AXI_DATA_WIDTH = 128;
+localparam AXI_DATA_WIDTH   = `SOC_AXI_DATA_WIDTH;
 localparam AXI_STROBE_WIDTH = AXI_DATA_WIDTH / 8;
-localparam AXI_ADDR_WIDTH = 32;
-localparam AXI_USER_WIDTH = 4;
-localparam AXI_ID_WIDTH = 5;
+localparam AXI_ADDR_WIDTH   = `SOC_AXI_ADDR_WIDTH;
+localparam AXI_USER_WIDTH   = `SOC_AXI_USER_WIDTH;
+localparam AXI_ID_WIDTH     = `SOC_AXI_ID_WIDTH;
 localparam AXI_ID_WIDTH_SLAVE = AXI_ID_WIDTH + $clog2(AXI_NO_MASTERS);
 
-localparam RAM_LENGTH = 32'h4000_0000; // 1GB
+localparam RAM_LENGTH = `SOC_RAM_LENGTH;
 localparam RAM_WORDS = RAM_LENGTH / AXI_STROBE_WIDTH;
 
 localparam UART_LENGTH = 2 ** 5;
@@ -51,15 +57,9 @@ typedef logic [AXI_USER_WIDTH-1:0] axi_user_t;
 `AXI_TYPEDEF_ALL(master_axi, axi_addr_t, axi_master_id_t, axi_data_t, axi_strobe_t, axi_user_t)
 `AXI_TYPEDEF_ALL(slave_axi, axi_addr_t, axi_slave_id_t, axi_data_t, axi_strobe_t, axi_user_t)
 
-typedef enum int unsigned {
-    RAM             ,
-    UART            ,
-    AXI_NO_SLAVES   
-} axi_slaves_e;
-
-typedef enum logic [32:0] {
-    RAM_BASE  = 32'h0000_0000   ,
-    UART_BASE = 32'hC000_0000   
+typedef enum logic [31:0] {
+    RAM_BASE  = `SOC_RAM_BASE   ,
+    UART_BASE = `SOC_UART_BASE   
 } soc_bus_start_e;
 
 
@@ -73,18 +73,23 @@ logic [AXI_DATA_WIDTH - 1 : 0]      ram_rdata;
 logic                               ram_rvalid;
 
 AXI_BUS #(
-    .AXI_ADDR_WIDTH ( AXI_ADDR_WIDTH      ),
-    .AXI_DATA_WIDTH ( AXI_DATA_WIDTH      ),
-    .AXI_ID_WIDTH   ( TbAxiIdWidthMasters ),
-    .AXI_USER_WIDTH ( AXI_USER_WIDTH      )
+    .AXI_ADDR_WIDTH ( AXI_ADDR_WIDTH    ),
+    .AXI_DATA_WIDTH ( AXI_DATA_WIDTH    ),
+    .AXI_ID_WIDTH   ( AXI_ID_WIDTH      ),
+    .AXI_USER_WIDTH ( AXI_USER_WIDTH    )
 ) master [AXI_NO_MASTERS-1:0] ();
 AXI_BUS #(
-    .AXI_ADDR_WIDTH ( AXI_ADDR_WIDTH     ),
-    .AXI_DATA_WIDTH ( AXI_DATA_WIDTH     ),
-    .AXI_ID_WIDTH   ( TbAxiIdWidthSlaves ),
-    .AXI_USER_WIDTH ( AXI_USER_WIDTH     )
+    .AXI_ADDR_WIDTH ( AXI_ADDR_WIDTH        ),
+    .AXI_DATA_WIDTH ( AXI_DATA_WIDTH        ),
+    .AXI_ID_WIDTH   ( AXI_ID_WIDTH_SLAVE    ),
+    .AXI_USER_WIDTH ( AXI_USER_WIDTH        )
 ) slave [AXI_NO_SLAVES-1:0] ();
 axi_pkg::xbar_rule_32_t [AXI_NO_SLAVES - 1 : 0] routing_rules;
+
+AXI_LITE #(
+  .AXI_ADDR_WIDTH   ( AXI_ADDR_WIDTH ),
+  .AXI_DATA_WIDTH   ( AXI_DATA_WIDTH )
+) axi_uart ();
 
 
 // Combinatorial Logic --------------------------------------------------------
@@ -125,28 +130,28 @@ axi_to_mem_intf #(
     .DATA_WIDTH ( AXI_DATA_WIDTH    ),
     .ID_WIDTH   ( AXI_ID_WIDTH_SLAVE),
     .USER_WIDTH ( AXI_USER_WIDTH    ),
-    .NUM_BANKS  ( 1                 ),
+    .NUM_BANKS  ( 1                 )
 ) i_axi_to_mem (
     .clk_i          ( clk           ),
     .rst_ni         ( rst_n         ),
     .slv            ( slave[RAM]    ),
     .mem_req_o      ( ram_req       ),
     .mem_gnt_i      ( ram_req       ),
-    .mem_addr_o     ( ram_we        ),
-    .mem_wdata_o    ( ram_addr      ),
+    .mem_addr_o     ( ram_addr      ),
+    .mem_wdata_o    ( ram_wdata     ),
     .mem_strb_o     ( ram_be        ),
-    .mem_we_o       ( ram_wdata     ),
-    .mem_rvalid_i   ( ram_rdata     ),
-    .mem_rdata_i    ( ram_rvalid    ),
+    .mem_we_o       ( ram_we        ),
+    .mem_rvalid_i   ( ram_rvalid    ),
+    .mem_rdata_i    ( ram_rdata     ),
     .busy_o         ( /* Unused */  ),
-    .mem_atop_o     ( /* Unused */  ),
+    .mem_atop_o     ( /* Unused */  )
 );
 
 tc_sram #(
-    .NumWords ( RAM_WORDS       ),
-    .NumPorts ( 1               ),
-    .DataWidth( AXI_DATA_WIDTH  ),
-    .SimInit("random")
+    .NumWords   ( RAM_WORDS         ),
+    .NumPorts   ( 1                 ),
+    .DataWidth  ( AXI_DATA_WIDTH    ),
+    .SimInit    ( "random"          )
 ) i_dram (
     .clk_i  (clk_i                                                                          ),
     .rst_ni (rst_ni                                                                         ),
@@ -173,7 +178,15 @@ axi_to_axi_lite_intf #(
     .rst_ni     ( rst_n ),
     .testmode_i ( '0 ),
     .slv        ( slave[UART] ),
-    .mst        (  )
+    .mst        ( axi_uart )
+);
+
+uart_mock i_uart (
+    .clk    ( clk       ),
+    .rst_n  ( rst_n     ),
+    .axi    ( axi_uart  ),
+    .tx     ( tx        ),
+    .rx     ( rx        )
 );
 
 endmodule
