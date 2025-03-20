@@ -26,8 +26,7 @@ sources:
     - src/rtl/matrix_accelerator_soc.sv
     
 
-    - target: test
+    - target: demo_test
       files:
         - src/tests/uart_mock.sv
         - src/tests/soc_tb.sv
-        - src/tests/dpi/elfloader.cc
