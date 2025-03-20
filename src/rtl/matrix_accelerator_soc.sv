@@ -38,7 +38,7 @@ localparam axi_pkg::xbar_cfg_t xbar_cfg = '{
     LatencyMode:        axi_pkg::CUT_MST_PORTS,
     PipelineStages:     0,
     AxiIdWidthSlvPorts: AXI_ID_WIDTH,
-    AxiIdUsedSlvPorts:  AXI_ID_WIDTH_SLAVE,
+    AxiIdUsedSlvPorts:  AXI_ID_WIDTH,
     UniqueIds:          1'b0,
     AxiAddrWidth:       AXI_ADDR_WIDTH,
     AxiDataWidth:       AXI_DATA_WIDTH,
@@ -57,7 +57,7 @@ typedef logic [AXI_USER_WIDTH-1:0] axi_user_t;
 `AXI_TYPEDEF_ALL(master_axi, axi_addr_t, axi_master_id_t, axi_data_t, axi_strobe_t, axi_user_t)
 `AXI_TYPEDEF_ALL(slave_axi, axi_addr_t, axi_slave_id_t, axi_data_t, axi_strobe_t, axi_user_t)
 
-typedef enum logic [31:0] {
+typedef enum logic [`SOC_AXI_ADDR_WIDTH - 1 : 0] {
     RAM_BASE  = `SOC_RAM_BASE   ,
     UART_BASE = `SOC_UART_BASE   
 } soc_bus_start_e;
@@ -84,7 +84,7 @@ AXI_BUS #(
     .AXI_ID_WIDTH   ( AXI_ID_WIDTH_SLAVE    ),
     .AXI_USER_WIDTH ( AXI_USER_WIDTH        )
 ) slave [AXI_NO_SLAVES-1:0] ();
-axi_pkg::xbar_rule_32_t [AXI_NO_SLAVES - 1 : 0] routing_rules;
+axi_pkg::xbar_rule_64_t [AXI_NO_SLAVES - 1 : 0] routing_rules;
 
 AXI_LITE #(
   .AXI_ADDR_WIDTH   ( AXI_ADDR_WIDTH ),
@@ -97,6 +97,12 @@ assign routing_rules = '{
     '{idx: RAM , start_addr: RAM_BASE , end_addr: RAM_BASE + RAM_LENGTH  },
     '{idx: UART, start_addr: UART_BASE, end_addr: UART_BASE + UART_LENGTH}
 };
+
+
+// Sequential Logic -----------------------------------------------------------
+always_ff @( posedge clk, negedge rst_n )
+    if ( ~rst_n )           ram_rvalid <= 'd0;          else
+                            ram_rvalid <= ram_req;
 
 
 // Modules Instantiation ------------------------------------------------------
@@ -112,8 +118,8 @@ matrix_accelerator_subsystem  i_core (
 axi_xbar_intf #(
     .AXI_USER_WIDTH ( AXI_USER_WIDTH            ),
     .Cfg            ( xbar_cfg                  ),
-    .rule_t         ( axi_pkg::xbar_rule_32_t   )
-) i_xbar_dut (
+    .rule_t         ( axi_pkg::xbar_rule_64_t   )
+) i_xbar (
     .clk_i                  ( clk           ),
     .rst_ni                 ( rst_n         ),
     .test_i                 ( 1'b0          ),
@@ -153,8 +159,8 @@ tc_sram #(
     .DataWidth  ( AXI_DATA_WIDTH    ),
     .SimInit    ( "random"          )
 ) i_dram (
-    .clk_i  (clk_i                                                                          ),
-    .rst_ni (rst_ni                                                                         ),
+    .clk_i  (clk                                                                            ),
+    .rst_ni (rst_n                                                                          ),
     .req_i  (ram_req                                                                        ),
     .we_i   (ram_we                                                                         ),
     .addr_i (ram_addr[$clog2(RAM_WORDS)-1+$clog2(AXI_DATA_WIDTH/8):$clog2(AXI_DATA_WIDTH/8)]),
@@ -174,11 +180,11 @@ axi_to_axi_lite_intf #(
     .AXI_MAX_READ_TXNS  ( 1                 ),
     .FALL_THROUGH       ( 1'b0              )
 ) i_uart_axi_to_lite (
-    .clk_i      ( clk ),
-    .rst_ni     ( rst_n ),
-    .testmode_i ( '0 ),
-    .slv        ( slave[UART] ),
-    .mst        ( axi_uart )
+    .clk_i      ( clk           ),
+    .rst_ni     ( rst_n         ),
+    .testmode_i ( '0            ),
+    .slv        ( slave[UART]   ),
+    .mst        ( axi_uart      )
 );
 
 uart_mock i_uart (

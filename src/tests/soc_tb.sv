@@ -8,7 +8,7 @@ import "DPI-C" context function byte read_section(input longint address, inout b
 
 module soc_tb ();
 
-localparam CLOCK_PERIOD  = 1ns;
+localparam CLOCK_PERIOD  = 2ns;
 localparam AXI_DATA_WIDTH   = `SOC_AXI_DATA_WIDTH;
 localparam AXI_ADDR_WIDTH   = `SOC_AXI_ADDR_WIDTH;
 localparam AXI_DATA_BYTE_WIDTH = AXI_DATA_WIDTH / 8;
@@ -29,6 +29,7 @@ logic rst_n;
 initial begin
     clk   = 1'b0;
     rst_n = 1'b0;
+    $display("CVA6 CFG: %p",i_dut.i_core.CVA6Cfg);
 
     // Synch reset for TB memories
     repeat (10) #(CLOCK_PERIOD/2) clk = ~clk;

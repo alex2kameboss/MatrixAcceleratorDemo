@@ -8,6 +8,7 @@
 // Original Author: Jean-Roch COULON - Thales
 
 `include "cva6_parameters.svh"
+`include "soc_parameters.svh"
 
 package ma_cva6_config_pkg;
 
@@ -38,12 +39,12 @@ package ma_cva6_config_pkg;
   localparam CVA6ConfigDataUserEn = 0;
   localparam CVA6ConfigDataUserWidth = `CVA6_AXI_DATA_USER_WIDTH;
 
-  localparam CVA6ConfigIcacheByteSize = 16384;
+  localparam CVA6ConfigIcacheByteSize = 4096;
   localparam CVA6ConfigIcacheSetAssoc = 4;
   localparam CVA6ConfigIcacheLineWidth = 128;
-  localparam CVA6ConfigDcacheByteSize = 32768;
-  localparam CVA6ConfigDcacheSetAssoc = 8;
-  localparam CVA6ConfigDcacheLineWidth = 128;
+  localparam CVA6ConfigDcacheByteSize = 8192;
+  localparam CVA6ConfigDcacheSetAssoc = 4;
+  localparam CVA6ConfigDcacheLineWidth = 256;
 
   localparam CVA6ConfigDcacheIdWidth = 1;
   localparam CVA6ConfigMemTidWidth = 2;
@@ -62,13 +63,13 @@ package ma_cva6_config_pkg;
 
   localparam CVA6ConfigTvalEn = 1;
 
-  localparam CVA6ConfigNrPMPEntries = 8;
+  localparam CVA6ConfigNrPMPEntries = 0;
 
   localparam CVA6ConfigPerfCounterEn = 1;
 
   localparam config_pkg::cache_type_t CVA6ConfigDcacheType = config_pkg::WT;
 
-  localparam CVA6ConfigMmuPresent = 1;
+  localparam CVA6ConfigMmuPresent = 0;
 
   localparam CVA6ConfigRvfiTrace = 1;
 
@@ -126,20 +127,20 @@ package ma_cva6_config_pkg;
       PMPCfgRstVal: {64{64'h0}},
       PMPAddrRstVal: {64{64'h0}},
       PMPEntryReadOnly: 64'd0,
-      PMPNapotEn: bit'(1),
+      PMPNapotEn: bit'(0),
       NOCType: config_pkg::NOC_TYPE_AXI4_ATOP,
-      NrNonIdempotentRules: unsigned'(2),
-      NonIdempotentAddrBase: 1024'({64'b0, 64'b0}),
-      NonIdempotentLength: 1024'({64'b0, 64'b0}),
+      NrNonIdempotentRules: unsigned'(1),
+      NonIdempotentAddrBase: {`SOC_UART_BASE},
+      NonIdempotentLength: {`SOC_UART_LENGTH},
       NrExecuteRegionRules: unsigned'(3),
-      ExecuteRegionAddrBase: 1024'({64'h8000_0000, 64'h1_0000, 64'h0}),
-      ExecuteRegionLength: 1024'({64'h40000000, 64'h10000, 64'h1000}),
+      ExecuteRegionAddrBase: {`SOC_RAM_BASE, 64'h1_0000, 64'h0},
+      ExecuteRegionLength: {`SOC_RAM_LENGTH, 64'h10000, 64'h1000},
       NrCachedRegionRules: unsigned'(1),
-      CachedRegionAddrBase: 1024'({64'h8000_0000}),
-      CachedRegionLength: 1024'({64'h40000000}),
+      CachedRegionAddrBase: {`SOC_RAM_BASE},
+      CachedRegionLength: {`SOC_RAM_LENGTH},
       MaxOutstandingStores: unsigned'(7),
-      DebugEn: bit'(1),
-      AxiBurstWriteEn: bit'(0),
+      DebugEn: bit'(0),
+      AxiBurstWriteEn: bit'(1),
       IcacheByteSize: unsigned'(CVA6ConfigIcacheByteSize),
       IcacheSetAssoc: unsigned'(CVA6ConfigIcacheSetAssoc),
       IcacheLineWidth: unsigned'(CVA6ConfigIcacheLineWidth),

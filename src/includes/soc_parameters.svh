@@ -2,14 +2,15 @@
 `define SOC_PARAMETERS_SVH
 
 `define SOC_AXI_DATA_WIDTH  128
-`define SOC_AXI_ADDR_WIDTH  32
+`define SOC_AXI_ADDR_WIDTH  64
 `define SOC_AXI_USER_WIDTH  4
 `define SOC_AXI_ID_WIDTH    5
 
 // 1GB RAM
-`define SOC_RAM_BASE        32'h0000_0000
-`define SOC_RAM_LENGTH      32'h4000_0000
+`define SOC_RAM_BASE        64'h8000_0000
+`define SOC_RAM_LENGTH      64'h0200_0000
 
-`define SOC_UART_BASE       32'hC000_0000
+`define SOC_UART_BASE       64'hC000_0000
+`define SOC_UART_LENGTH     64'h0002_0000
 
 `endif // SOC_PARAMETERS_SVH
