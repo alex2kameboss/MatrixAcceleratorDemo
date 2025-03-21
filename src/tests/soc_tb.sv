@@ -29,7 +29,6 @@ logic rst_n;
 initial begin
     clk   = 1'b0;
     rst_n = 1'b0;
-    $display("CVA6 CFG: %p",i_dut.i_core.CVA6Cfg);
 
     // Synch reset for TB memories
     repeat (10) #(CLOCK_PERIOD/2) clk = ~clk;
