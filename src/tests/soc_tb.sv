@@ -39,7 +39,7 @@ initial begin
     repeat (5) #(CLOCK_PERIOD);
     rst_n = 1'b1;
     repeat (5) #(CLOCK_PERIOD);
-
+    $display("-------- STDOUT --------");
     // Start the clock
     forever #(CLOCK_PERIOD/2) clk = ~clk;
 end
