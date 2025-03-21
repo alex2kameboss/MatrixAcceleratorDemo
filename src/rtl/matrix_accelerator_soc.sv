@@ -11,6 +11,7 @@ module matrix_accelerator_soc (
 typedef enum int unsigned {
     RAM             ,
     UART            ,
+    CTRL            ,
     AXI_NO_SLAVES   
 } axi_slaves_e;
 
@@ -28,7 +29,9 @@ localparam AXI_UART_DATA_WIDTH = 32;
 localparam RAM_LENGTH = `SOC_RAM_LENGTH;
 localparam RAM_WORDS = RAM_LENGTH / AXI_STROBE_WIDTH;
 
-localparam UART_LENGTH = 2 ** 5;
+localparam UART_LENGTH = `SOC_UART_LENGTH;
+
+localparam CTRL_LENGTH = `SOC_CTRL_REG_LENGTH;
 
 localparam axi_pkg::xbar_cfg_t xbar_cfg = '{
     NoSlvPorts:         AXI_NO_MASTERS,
@@ -59,8 +62,9 @@ typedef logic [AXI_USER_WIDTH-1:0] axi_user_t;
 `AXI_TYPEDEF_ALL(slave_axi, axi_addr_t, axi_slave_id_t, axi_data_t, axi_strobe_t, axi_user_t)
 
 typedef enum logic [`SOC_AXI_ADDR_WIDTH - 1 : 0] {
-    RAM_BASE  = `SOC_RAM_BASE   ,
-    UART_BASE = `SOC_UART_BASE   
+    RAM_BASE  = `SOC_RAM_BASE       ,
+    UART_BASE = `SOC_UART_BASE      ,
+    CTRL_BASE = `SOC_CTRL_REG_BASE  
 } soc_bus_start_e;
 
 
@@ -87,23 +91,35 @@ AXI_BUS #(
 ) slave [AXI_NO_SLAVES-1:0] ();
 axi_pkg::xbar_rule_64_t [AXI_NO_SLAVES - 1 : 0] routing_rules;
 
+// uart
 AXI_BUS #(
     .AXI_ADDR_WIDTH ( AXI_ADDR_WIDTH        ),
     .AXI_DATA_WIDTH ( AXI_UART_DATA_WIDTH   ),
     .AXI_ID_WIDTH   ( AXI_ID_WIDTH_SLAVE    ),
     .AXI_USER_WIDTH ( AXI_USER_WIDTH        )
 ) uart_axi ();
-
 AXI_LITE #(
-  .AXI_ADDR_WIDTH   ( AXI_ADDR_WIDTH ),
-  .AXI_DATA_WIDTH   ( AXI_DATA_WIDTH )
+  .AXI_ADDR_WIDTH   ( AXI_ADDR_WIDTH        ),
+  .AXI_DATA_WIDTH   ( AXI_UART_DATA_WIDTH   )
 ) uart_axi_lite ();
 
+// ctrl
+AXI_BUS #(
+    .AXI_ADDR_WIDTH ( AXI_ADDR_WIDTH        ),
+    .AXI_DATA_WIDTH ( AXI_UART_DATA_WIDTH   ),
+    .AXI_ID_WIDTH   ( AXI_ID_WIDTH_SLAVE    ),
+    .AXI_USER_WIDTH ( AXI_USER_WIDTH        )
+) ctrl_axi ();
+AXI_LITE #(
+  .AXI_ADDR_WIDTH   ( AXI_ADDR_WIDTH        ),
+  .AXI_DATA_WIDTH   ( AXI_UART_DATA_WIDTH   )
+) ctrl_axi_lite ();
 
 // Combinatorial Logic --------------------------------------------------------
 assign routing_rules = '{
     '{idx: RAM , start_addr: RAM_BASE , end_addr: RAM_BASE + RAM_LENGTH  },
-    '{idx: UART, start_addr: UART_BASE, end_addr: UART_BASE + UART_LENGTH}
+    '{idx: UART, start_addr: UART_BASE, end_addr: UART_BASE + UART_LENGTH},
+    '{idx: CTRL, start_addr: CTRL_BASE, end_addr: CTRL_BASE + CTRL_LENGTH}
 };
 
 
@@ -178,7 +194,6 @@ tc_sram #(
 );
 
 // uart
-
 axi_dw_converter_intf #(
     .AXI_ID_WIDTH           ( AXI_ID_WIDTH_SLAVE    ),
     .AXI_ADDR_WIDTH         ( AXI_ADDR_WIDTH        ),
@@ -195,7 +210,7 @@ axi_dw_converter_intf #(
 
 axi_to_axi_lite_intf #(
     .AXI_ADDR_WIDTH     ( AXI_ADDR_WIDTH    ),
-    .AXI_DATA_WIDTH     ( AXI_DATA_WIDTH    ),
+    .AXI_DATA_WIDTH     (AXI_UART_DATA_WIDTH),
     .AXI_ID_WIDTH       ( AXI_ID_WIDTH_SLAVE),
     .AXI_USER_WIDTH     ( AXI_USER_WIDTH    ),
     .AXI_MAX_WRITE_TXNS ( 1                 ),
@@ -215,6 +230,52 @@ uart_mock i_uart (
     .axi    ( uart_axi_lite ),
     .tx     ( tx            ),
     .rx     ( rx            )
+);
+
+// ctrl
+axi_dw_converter_intf #(
+    .AXI_ID_WIDTH           ( AXI_ID_WIDTH_SLAVE    ),
+    .AXI_ADDR_WIDTH         ( AXI_ADDR_WIDTH        ),
+    .AXI_SLV_PORT_DATA_WIDTH( AXI_DATA_WIDTH        ),
+    .AXI_MST_PORT_DATA_WIDTH( AXI_UART_DATA_WIDTH   ),
+    .AXI_USER_WIDTH         ( AXI_USER_WIDTH        ),
+    .AXI_MAX_READS          ( 1                     )
+) i_ctrl_axi_dw (
+    .clk_i  ( clk           ),
+    .rst_ni ( rst_n         ),
+    .slv    ( slave[CTRL]   ),
+    .mst    ( ctrl_axi      )
+);
+
+axi_to_axi_lite_intf #(
+    .AXI_ADDR_WIDTH     ( AXI_ADDR_WIDTH    ),
+    .AXI_DATA_WIDTH     (AXI_UART_DATA_WIDTH),
+    .AXI_ID_WIDTH       ( AXI_ID_WIDTH_SLAVE),
+    .AXI_USER_WIDTH     ( AXI_USER_WIDTH    ),
+    .AXI_MAX_WRITE_TXNS ( 1                 ),
+    .AXI_MAX_READ_TXNS  ( 1                 ),
+    .FALL_THROUGH       ( 1'b0              )
+) i_ctrl_axi_to_lite (
+    .clk_i      ( clk           ),
+    .rst_ni     ( rst_n         ),
+    .testmode_i ( '0            ),
+    .slv        ( ctrl_axi      ),
+    .mst        ( ctrl_axi_lite )
+);
+
+axi_lite_regs_intf #(
+    .REG_NUM_BYTES  ( CTRL_LENGTH       ),
+    .AXI_ADDR_WIDTH ( AXI_ADDR_WIDTH    ),
+    .AXI_DATA_WIDTH (AXI_UART_DATA_WIDTH)
+) i_ctrl_regs (
+    .clk_i      ( clk           ),
+    .rst_ni     ( rst_n         ),
+    .slv        ( ctrl_axi_lite ),
+    .wr_active_o(               ),
+    .rd_active_o(               ),
+    .reg_d_i    ( '0            ),
+    .reg_load_i ( '0            ),
+    .reg_q_o    (               )
 );
 
 endmodule

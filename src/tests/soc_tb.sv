@@ -86,6 +86,10 @@ initial begin : dram_init
     end
 end : dram_init
 
+initial begin : wait_for_stop
+    wait(i_dut.i_ctrl_regs.reg_q_o[0] == 'hFF);
+    $finish();
+end
 
 matrix_accelerator_soc i_dut (
     .clk    ( clk   ),
