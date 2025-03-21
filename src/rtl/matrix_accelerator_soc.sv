@@ -23,6 +23,7 @@ localparam AXI_ADDR_WIDTH   = `SOC_AXI_ADDR_WIDTH;
 localparam AXI_USER_WIDTH   = `SOC_AXI_USER_WIDTH;
 localparam AXI_ID_WIDTH     = `SOC_AXI_ID_WIDTH;
 localparam AXI_ID_WIDTH_SLAVE = AXI_ID_WIDTH + $clog2(AXI_NO_MASTERS);
+localparam AXI_UART_DATA_WIDTH = 32;
 
 localparam RAM_LENGTH = `SOC_RAM_LENGTH;
 localparam RAM_WORDS = RAM_LENGTH / AXI_STROBE_WIDTH;
@@ -86,10 +87,17 @@ AXI_BUS #(
 ) slave [AXI_NO_SLAVES-1:0] ();
 axi_pkg::xbar_rule_64_t [AXI_NO_SLAVES - 1 : 0] routing_rules;
 
+AXI_BUS #(
+    .AXI_ADDR_WIDTH ( AXI_ADDR_WIDTH        ),
+    .AXI_DATA_WIDTH ( AXI_UART_DATA_WIDTH   ),
+    .AXI_ID_WIDTH   ( AXI_ID_WIDTH_SLAVE    ),
+    .AXI_USER_WIDTH ( AXI_USER_WIDTH        )
+) uart_axi ();
+
 AXI_LITE #(
   .AXI_ADDR_WIDTH   ( AXI_ADDR_WIDTH ),
   .AXI_DATA_WIDTH   ( AXI_DATA_WIDTH )
-) axi_uart ();
+) uart_axi_lite ();
 
 
 // Combinatorial Logic --------------------------------------------------------
@@ -171,6 +179,20 @@ tc_sram #(
 
 // uart
 
+axi_dw_converter_intf #(
+    .AXI_ID_WIDTH           ( AXI_ID_WIDTH_SLAVE    ),
+    .AXI_ADDR_WIDTH         ( AXI_ADDR_WIDTH        ),
+    .AXI_SLV_PORT_DATA_WIDTH( AXI_DATA_WIDTH        ),
+    .AXI_MST_PORT_DATA_WIDTH( AXI_UART_DATA_WIDTH   ),
+    .AXI_USER_WIDTH         ( AXI_USER_WIDTH        ),
+    .AXI_MAX_READS          ( 1                     )
+) i_uart_axi_dw (
+    .clk_i  ( clk           ),
+    .rst_ni ( rst_n         ),
+    .slv    ( slave[UART]   ),
+    .mst    ( uart_axi      )
+);
+
 axi_to_axi_lite_intf #(
     .AXI_ADDR_WIDTH     ( AXI_ADDR_WIDTH    ),
     .AXI_DATA_WIDTH     ( AXI_DATA_WIDTH    ),
@@ -183,16 +205,16 @@ axi_to_axi_lite_intf #(
     .clk_i      ( clk           ),
     .rst_ni     ( rst_n         ),
     .testmode_i ( '0            ),
-    .slv        ( slave[UART]   ),
-    .mst        ( axi_uart      )
+    .slv        ( uart_axi      ),
+    .mst        ( uart_axi_lite )
 );
 
 uart_mock i_uart (
-    .clk    ( clk       ),
-    .rst_n  ( rst_n     ),
-    .axi    ( axi_uart  ),
-    .tx     ( tx        ),
-    .rx     ( rx        )
+    .clk    ( clk           ),
+    .rst_n  ( rst_n         ),
+    .axi    ( uart_axi_lite ),
+    .tx     ( tx            ),
+    .rx     ( rx            )
 );
 
 endmodule
