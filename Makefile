@@ -21,12 +21,15 @@ dirs:
 lib: dirs
 	vlib ${WORK_PATH}
 
-hello_build:
+hello_dummy_build:
 	#../RISC-V/install/bin/riscv32-unknown-elf-gcc -mabi=ilp32 -mcmodel=medany -static -nostartfiles -lm -Wl,--gc-sections -ffunction-sections -fdata-sections -lgcc -march=rv32im -fno-common -fno-builtin-printf -Iapps/common/printf -Tapps/common/soc.ld apps/hello_world.c apps/common/printf/*.c -o runs/build/hello
 	#../RISC-V/install/bin/riscv32-unknown-elf-gcc -O3 -ffast-math -mcmodel=medany -static -nostartfiles -lm -Wl,--gc-sections -ffunction-sections -fdata-sections -lgcc -march=rv32im -fno-common -fno-builtin-printf -Iapps/common/printf -Tsrc/ips/ariane/config/gen_from_riscv_config/cv32a60x/linker/link.ld apps/hello_world.c apps/common/printf/*.c -o runs/build/hello
 	#../RISC-V/install/bin/riscv32-unknown-elf-gcc -mcmodel=medany -march=rv32im -mabi=ilp32 -static -std=gnu99 -O3 -ffast-math -fno-common -fno-builtin-printf -nostartfiles -lm -lgcc -Wl,--gc-sections -Tapps/common/soc.ld  -Iapps/common/printf apps/hello_world.c apps/common/printf/*.c -o runs/build/hello
 	#../RISC-V/install/bin/riscv32-unknown-elf-gcc -march=rv32im -mabi=ilp32 -static -mcmodel=medany -Wall -fvisibility=hidden -nostdlib -nostartfiles -ffreestanding -T src/ips/ariane/config/gen_from_riscv_config/cv32a60x/linker/link.ld apps/hello_world.c -o runs/build/hello
-	../RISC-V/install/bin/riscv32-unknown-elf-gcc -march=rv32im -mabi=ilp32 -static -mcmodel=medany -Wall -fvisibility=hidden -nostdlib -nostartfiles -ffreestanding -T apps/common/link.ld apps/common/crt0.S apps/hello_world.c -o runs/build/hello
+	../RISC-V/install/bin/riscv32-unknown-elf-gcc -march=rv32im -mabi=ilp32 -static -mcmodel=medany -Wall -fvisibility=hidden -nostdlib -nostartfiles -ffreestanding -T apps/common/link.ld apps/common/crt0.S apps/hello_world_dummy.c -o runs/build/app
+
+hello_printf_build:
+	../RISC-V/install/bin/riscv32-unknown-elf-gcc -lm -lgcc -march=rv32im -mabi=ilp32 -static -mcmodel=medany -Wall -fvisibility=hidden -nostartfiles -ffreestanding -Tapps/common/link.ld -Iapps/common/include apps/common/crt0.S apps/common/printf.c apps/common/serial.c apps/hello_world_printf.c -o runs/build/app
 
 vsim_dpi: lib
 	vlog ${VSIM_OPT} -l ${LOG_PATH}/dpi.log ${PWD}/src/tests/dpi/elfloader.cc -ccflags "-I${PWD}/src/ips/ariane/verif/core-v-verif/vendor/riscv/riscv-isa-sim/ -I${PWD}/src/ips/ariane/verif/core-v-verif/lib/dpi_dasm/ -lfesvr -lriscv -lyaml-cpp -W -std=gnu++17"
@@ -35,7 +38,7 @@ vsim_build: lib vsim_dpi bender
 	cd ${WORK_DIR} ; vsim ${VSIM_OPT} -l ${LOG_PATH}/build.log -c -do "source ${WORK_DIR}/compile.tcl; exit"
 
 vsim_gui: vsim_build vsim_dpi
-	cd ${WORK_DIR} ; vsim -l ${LOG_PATH}/sim.log -c "vsim soc_tb +PRELOAD=/home/alex/Isolde/MatrixAcceleratorDemo/runs/build/hello +UVM_NO_RELNOTES -voptargs=+acc"
+	cd ${WORK_DIR} ; vsim -l ${LOG_PATH}/sim.log -do "vsim soc_tb +PRELOAD=/home/alex/Isolde/MatrixAcceleratorDemo/runs/build/app +UVM_NO_RELNOTES -voptargs=+acc"
 
 vsim_cli: vsim_build vsim_dpi
-	cd ${WORK_DIR} ; vsim -c -l ${LOG_PATH}/sim.log -do "vsim soc_tb +PRELOAD=/home/alex/Isolde/MatrixAcceleratorDemo/runs/build/hello +UVM_NO_RELNOTES -voptargs=+acc"
+	cd ${WORK_DIR} ; vsim -c -l ${LOG_PATH}/sim.log -do "vsim soc_tb +PRELOAD=/home/alex/Isolde/MatrixAcceleratorDemo/runs/build/app +UVM_NO_RELNOTES -voptargs=+acc"

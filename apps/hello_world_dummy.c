@@ -1,9 +1,6 @@
-//#include "printf.h"
-
 extern char fake_uart;
 
 int main() {
-    //printf("Hello world\n");
     fake_uart = 'H';
     fake_uart = 'e';
     fake_uart = 'l';
