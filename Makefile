@@ -24,7 +24,9 @@ lib: dirs
 hello_build:
 	#../RISC-V/install/bin/riscv32-unknown-elf-gcc -mabi=ilp32 -mcmodel=medany -static -nostartfiles -lm -Wl,--gc-sections -ffunction-sections -fdata-sections -lgcc -march=rv32im -fno-common -fno-builtin-printf -Iapps/common/printf -Tapps/common/soc.ld apps/hello_world.c apps/common/printf/*.c -o runs/build/hello
 	#../RISC-V/install/bin/riscv32-unknown-elf-gcc -O3 -ffast-math -mcmodel=medany -static -nostartfiles -lm -Wl,--gc-sections -ffunction-sections -fdata-sections -lgcc -march=rv32im -fno-common -fno-builtin-printf -Iapps/common/printf -Tsrc/ips/ariane/config/gen_from_riscv_config/cv32a60x/linker/link.ld apps/hello_world.c apps/common/printf/*.c -o runs/build/hello
-	../RISC-V/install/bin/riscv32-unknown-elf-gcc -mcmodel=medany -march=rv32im -mabi=ilp32 -static -std=gnu99 -O3 -ffast-math -fno-common -fno-builtin-printf -nostartfiles -lm -lgcc -Tapps/common/soc.ld  -Iapps/common/printf apps/hello_world.c apps/common/printf/*.c -o runs/build/hello
+	#../RISC-V/install/bin/riscv32-unknown-elf-gcc -mcmodel=medany -march=rv32im -mabi=ilp32 -static -std=gnu99 -O3 -ffast-math -fno-common -fno-builtin-printf -nostartfiles -lm -lgcc -Wl,--gc-sections -Tapps/common/soc.ld  -Iapps/common/printf apps/hello_world.c apps/common/printf/*.c -o runs/build/hello
+	#../RISC-V/install/bin/riscv32-unknown-elf-gcc -march=rv32im -mabi=ilp32 -static -mcmodel=medany -Wall -fvisibility=hidden -nostdlib -nostartfiles -ffreestanding -T src/ips/ariane/config/gen_from_riscv_config/cv32a60x/linker/link.ld apps/hello_world.c -o runs/build/hello
+	../RISC-V/install/bin/riscv32-unknown-elf-gcc -march=rv32im -mabi=ilp32 -static -mcmodel=medany -Wall -fvisibility=hidden -nostdlib -nostartfiles -ffreestanding -T apps/common/link.ld apps/common/crt0.S apps/hello_world.c -o runs/build/hello
 
 vsim_dpi: lib
 	vlog ${VSIM_OPT} -l ${LOG_PATH}/dpi.log ${PWD}/src/tests/dpi/elfloader.cc -ccflags "-I${PWD}/src/ips/ariane/verif/core-v-verif/vendor/riscv/riscv-isa-sim/ -I${PWD}/src/ips/ariane/verif/core-v-verif/lib/dpi_dasm/ -lfesvr -lriscv -lyaml-cpp -W -std=gnu++17"
