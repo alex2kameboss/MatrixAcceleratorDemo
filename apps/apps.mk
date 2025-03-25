@@ -14,4 +14,4 @@ hello_printf_build: dirs
 	${RISCV_GCC} ${RISCV_CFLAGS} ${RISCV_LD_FLAGS} ${RISCV_GCC_INCLUDES} ${RISCV_MIN_C_SOURCES} apps/hello_world_dummy.c -o ${APP_ELF}
 
 ma_ld_st_test_build:
-		${RISCV_GCC} ${RISCV_CFLAGS} ${RISCV_LD_FLAGS} ${RISCV_GCC_INCLUDES} ${RISCV_MIN_C_SOURCES} -I../MA-tests apps/matrix_accelerator/ld_st_test.c -o ${APP_ELF}
+	${RISCV_GCC} ${RISCV_CFLAGS} ${RISCV_LD_FLAGS} ${RISCV_GCC_INCLUDES} ${RISCV_MIN_C_SOURCES} apps/matrix_accelerator/ld_st_test.c -o ${APP_ELF}
