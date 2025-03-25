@@ -10,7 +10,7 @@ LIB_CMD = -work ${WORK_PATH}
 VSIM_OPT = ${LIB_CMD} -64 -quiet +permissive
 VLOG_OPT = ${VSIM_OPT} -nologo -svinputport=compat -timescale=1ns/1ns
 
-RISCV_GCC = ../RISC-V/install/bin/riscv32-unknown-elf-gcc
+RISCV_GCC = ../myRISCV/install/bin/riscv32-unknown-elf-gcc
 RISCV_CFLAGS = -lm -lgcc -march=rv32im -mabi=ilp32 -static -mcmodel=medany -Wall -fvisibility=hidden -nostartfiles -ffreestanding
 RISCV_LD_FLAGS = -Tapps/common/link.ld
 RISCV_GCC_INCLUDES = -Iapps/common/include
@@ -39,6 +39,9 @@ hello_dummy_build: dirs
 
 hello_printf_build: dirs
 	${RISCV_GCC} ${RISCV_CFLAGS} ${RISCV_LD_FLAGS} ${RISCV_GCC_INCLUDES} ${RISCV_MIN_C_SOURCES} apps/hello_world_dummy.c -o ${APP_ELF}
+
+ma_ld_st_test_build:
+		${RISCV_GCC} ${RISCV_CFLAGS} ${RISCV_LD_FLAGS} ${RISCV_GCC_INCLUDES} ${RISCV_MIN_C_SOURCES} -I../MA-tests apps/matrix_accelerator/ld_st_test.c -o ${APP_ELF}
 
 vsim_dpi: lib
 	vlog ${VSIM_OPT} -l ${LOG_PATH}/dpi.log ${PWD}/src/tests/dpi/elfloader.cc -ccflags "-I${PWD}/src/ips/ariane/verif/core-v-verif/vendor/riscv/riscv-isa-sim/ -I${PWD}/src/ips/ariane/verif/core-v-verif/lib/dpi_dasm/ -lfesvr -lriscv -lyaml-cpp -W -std=gnu++17"

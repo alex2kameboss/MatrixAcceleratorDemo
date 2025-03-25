@@ -98,6 +98,7 @@ assign xif_resp.result = xif.result;
 
 // Modules Instantiation ------------------------------------------------------
 cva6 #(
+    .CVA6Cfg                ( CVA6Cfg                   ),
     .axi_ar_chan_t          ( core_narrow_axi_ar_chan_t ),
     .axi_aw_chan_t          ( core_narrow_axi_aw_chan_t ),
     .axi_w_chan_t           ( core_narrow_axi_w_chan_t  ),
