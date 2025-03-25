@@ -1,0 +1,3 @@
+[submodule "toolchain/gcc"]
+	path = toolchain/gcc
+	url = https://github.com/alex2kameboss/MA-riscv-gnu-toolchain.git
