@@ -1,4 +1,11 @@
+#ifndef IMT_MATRIX_ACCELERATOR_H
+#define IMT_MATRIX_ACCELERATOR_H
+
 #define _STR(X) #X
+
+#define FLUSH_D_CACHE() ({ \
+    asm volatile("csrwi 0x7C1, 0"); \
+    asm volatile("csrwi 0x7C1, 1");})
 
 #define MA_DEFINE_int8_t(ID, W, H) ({ \
         asm volatile \
@@ -124,4 +131,4 @@
         ); \
     })
 
-#define MA_SYNC(ID) asm volatile("v2dsync x" _STR(ID) ", 0(x0)");
+#endif // IMT_MATRIX_ACCELERATOR_H

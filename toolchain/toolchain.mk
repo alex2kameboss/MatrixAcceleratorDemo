@@ -11,5 +11,5 @@ clean_toolchain:
 
 gcc: toolchain_dirs git_submodules
 	cd ${TOOLCHAIN_DIR}/gcc ; \
-		./configure --prefix=${RISCV} --disable-linux --with-arch=rv32imac ; \
+		./configure --prefix=${RISCV} --disable-linux --with-arch=rv32imac_zicsr ; \
 		make -j$(nproc)
