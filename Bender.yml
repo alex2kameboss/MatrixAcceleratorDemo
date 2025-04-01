@@ -4,11 +4,10 @@ package:
     - "Alexandru Puscasu <alexandru.puscasu@imt.ro>"
 
 dependencies:
-    matrix_accelerator: { git: "https://github.com/alex2kameboss/MatrixAccelerator.git",  version: 1.1.0  }
+    matrix_accelerator: { git: "https://github.com/alex2kameboss/MatrixAccelerator.git",  version: 1.1.1  }
     ariane:             { git: "https://github.com/openhwgroup/cva6.git",                 version: 5.3.0  }
     axi:                { git: "https://github.com/pulp-platform/axi.git",                rev: master     }
     cv_x_if:            { git: "https://github.com/alex2kameboss/core-v-xif-fix.git",     rev: demo       }
-    fpnew:              { git: "https://github.com/openhwgroup/cvfpu.git",                version: 0.7.0  }
   
 workspace:
   checkout_dir: "src/ips"
@@ -18,15 +17,11 @@ sources:
     - src/includes
   
   files:
-    # cva6 configuration
-    #- src/packages/ma_cv32a60x_config_pkg.sv
-    - src/packages/ma_cv32a6_imac_sv0_config_pkg.sv
+    - target: demo_test
+      files:
+        - src/packages/ma_cv32a6_imac_sv0_config_pkg.sv
+        - src/tests/sim/uart_mock.sv
+        - src/tests/sim/soc_tb.sv
 
     - src/rtl/matrix_accelerator_subsystem.sv
     - src/rtl/matrix_accelerator_soc.sv
-    
-
-    - target: demo_test
-      files:
-        - src/tests/uart_mock.sv
-        - src/tests/soc_tb.sv
