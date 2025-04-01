@@ -28,27 +28,11 @@ sources:
       files:
         - src/tests/sim/soc_tb.sv
 
-    - target: all(simulation, jtag)
-      files:
-        - src/tests/sim/jtag_dpi_test.sv
-        - src/tests/sim/soc_tb_jtag.sv
-        - src/ips/riscv-dbg/tb/SimJTAG.sv
-
-    - target: any(vivado, jtag)
-      files:
-        - src/packages/ma_cv32a6_imac_debug_config_pkg.sv
-        - src/rtl/jtag_debugger.sv
-
     - target: vivado
       files:
         - src/packages/ma_cv32a6_imac_sv0_config_pkg_xilinx.sv
         - src/tests/vivado/uart_mock.sv
-        - src/tests/vivado/ram_wrapper.sv
         - src/tests/vivado/top.sv
-
-    - target: verilator
-      files:
-        - src/tests/verilator/soc_tb.sv
 
     - src/rtl/matrix_accelerator_subsystem.sv
     - src/rtl/counter.sv

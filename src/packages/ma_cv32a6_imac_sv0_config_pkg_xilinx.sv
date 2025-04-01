@@ -25,7 +25,7 @@ package ma_cva6_config_pkg;
   localparam CVA6ConfigCExtEn = 1;
   localparam CVA6ConfigZcbExtEn = 0;
   localparam CVA6ConfigZcmpExtEn = 0;
-  localparam CVA6ConfigAExtEn = 1;
+  localparam CVA6ConfigAExtEn = 0;
   localparam CVA6ConfigHExtEn = 0;  // always disabled
   localparam CVA6ConfigBExtEn = 0;
   localparam CVA6ConfigVExtEn = 0;
@@ -37,7 +37,7 @@ package ma_cva6_config_pkg;
   localparam CVA6ConfigFetchUserEn = 0;
   localparam CVA6ConfigFetchUserWidth = CVA6ConfigXlen;
   localparam CVA6ConfigDataUserEn = 0;
-  localparam CVA6ConfigDataUserWidth = CVA6ConfigXlen;
+  localparam CVA6ConfigDataUserWidth = `CVA6_AXI_DATA_USER_WIDTH;
 
   localparam CVA6ConfigIcacheByteSize = 4096;
   localparam CVA6ConfigIcacheSetAssoc = 4;
@@ -139,7 +139,7 @@ package ma_cva6_config_pkg;
       CachedRegionAddrBase: {`SOC_RAM_BASE},
       CachedRegionLength: {`SOC_RAM_LENGTH},
       MaxOutstandingStores: unsigned'(7),
-      DebugEn: bit'(1),
+      DebugEn: bit'(0),
       AxiBurstWriteEn: bit'(1),
       IcacheByteSize: unsigned'(CVA6ConfigIcacheByteSize),
       IcacheSetAssoc: unsigned'(CVA6ConfigIcacheSetAssoc),
