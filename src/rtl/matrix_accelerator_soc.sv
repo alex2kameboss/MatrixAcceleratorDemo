@@ -16,6 +16,8 @@ typedef enum int unsigned {
 } axi_slaves_e;
 
 // Local Parameters -----------------------------------------------------------
+localparam COUNTER_WIDTH = 64;
+localparam COUNTER_WIDTH_BYTES = COUNTER_WIDTH / 8;
 localparam AXI_NO_MASTERS = 2;
 
 localparam AXI_DATA_WIDTH   = `SOC_AXI_DATA_WIDTH;
@@ -115,12 +117,17 @@ AXI_LITE #(
   .AXI_DATA_WIDTH   ( AXI_UART_DATA_WIDTH   )
 ) ctrl_axi_lite ();
 
+logic [CTRL_LENGTH - 1 : 0][7 : 0] ctrl_out;
+wor [CTRL_LENGTH - 1 : 0][7 : 0] ctrl_in;
+
 // Combinatorial Logic --------------------------------------------------------
 assign routing_rules = '{
     '{idx: RAM , start_addr: RAM_BASE , end_addr: RAM_BASE + RAM_LENGTH  },
     '{idx: UART, start_addr: UART_BASE, end_addr: UART_BASE + UART_LENGTH},
     '{idx: CTRL, start_addr: CTRL_BASE, end_addr: CTRL_BASE + CTRL_LENGTH}
 };
+
+assign ctrl_in = '0;
 
 
 // Sequential Logic -----------------------------------------------------------
@@ -273,9 +280,22 @@ axi_lite_regs_intf #(
     .slv        ( ctrl_axi_lite ),
     .wr_active_o(               ),
     .rd_active_o(               ),
-    .reg_d_i    ( '0            ),
-    .reg_load_i ( '0            ),
-    .reg_q_o    (               )
+    .reg_d_i    ( ctrl_in       ),
+    .reg_load_i ( {{COUNTER_WIDTH_BYTES{1'b1}}, {(CTRL_LENGTH - COUNTER_WIDTH_BYTES){1'b0}}}            ),
+    .reg_q_o    ( ctrl_out      )
+);
+
+// config timer byte 1
+// values timer bytes 15 : 8
+
+metrics_counter #(
+    .COUNTER_WIDTH  ( COUNTER_WIDTH )
+) i_metrics_counter (
+    .clk    ( clk                                               ),
+    .rst_n  ( rst_n                                             ),
+    .en     ( ctrl_out[1][0]                                    ),
+    .clear  ( ctrl_out[1][1]                                    ),
+    .cnt    ( {ctrl_in[CTRL_LENGTH - 1 -: COUNTER_WIDTH_BYTES]} )
 );
 
 endmodule

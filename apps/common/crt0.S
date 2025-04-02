@@ -66,7 +66,7 @@ main_entry:
   /* Halt simulation */
   li x5, 0xD0000000
   li x6, 0xFF
-  sw x6, 0(x5)
+  sb x6, 0(x5)
 
   /* If execution ends up here just put the core to sleep */
 sleep_loop:

@@ -63,4 +63,7 @@ SECTIONS
     } > ram
 
     fake_uart = 0xC0000004;
+    control_base = 0xD0000000;
+    timer_control = 0xD0000001;
+    timer_value = 0xD0000008;
 }

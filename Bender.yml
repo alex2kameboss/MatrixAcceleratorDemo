@@ -24,4 +24,5 @@ sources:
         - src/tests/sim/soc_tb.sv
 
     - src/rtl/matrix_accelerator_subsystem.sv
+    - src/rtl/counter.sv
     - src/rtl/matrix_accelerator_soc.sv
