@@ -40,4 +40,4 @@ vcs_sim: vcs_build
 	cd ${VCS_DIR} ; ./simv +PRELOAD=../build/app -fgp=num_threads:14
 
 bender_vivado:
-	bender script -D COMMON_CELLS_ASSERTS_OFF -t tech_cells_generic_include_tc_sram -t tech_cells_generic_include_tc_clk -t exclude_first_pass_decoder -t cv32a6_imac_sv0 -t rtl vivado > ${SIM_DIR}/../vivado.tcl
+	bender script -D COMMON_CELLS_ASSERTS_OFF -t tech_cells_generic_include_tc_sram -t tech_cells_generic_include_tc_clk -t exclude_first_pass_decoder -t cv32a6_imac_sv0 -t rtl -t fpga -t xilinx vivado -t vcu128 > ${SIM_DIR}/../vivado.tcl
