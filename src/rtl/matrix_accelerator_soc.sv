@@ -45,6 +45,7 @@ typedef enum int unsigned {
 // Local Parameters -----------------------------------------------------------
 localparam COUNTER_WIDTH = 64;
 localparam COUNTER_WIDTH_BYTES = COUNTER_WIDTH / 8;
+localparam AXI_NO_MASTERS = 2;
 
 localparam AXI_DATA_WIDTH   = `SOC_AXI_DATA_WIDTH;
 localparam AXI_STROBE_WIDTH = AXI_DATA_WIDTH / 8;
@@ -285,6 +286,19 @@ axi_lite_regs_intf #(
     .reg_d_i    ( ctrl_in       ),
     .reg_load_i ( {{COUNTER_WIDTH_BYTES{1'b1}}, {(CTRL_LENGTH - COUNTER_WIDTH_BYTES){1'b0}}}            ),
     .reg_q_o    ( ctrl_out      )
+);
+
+// config timer byte 1
+// values timer bytes 15 : 8
+
+metrics_counter #(
+    .COUNTER_WIDTH  ( COUNTER_WIDTH )
+) i_metrics_counter (
+    .clk    ( clk                                               ),
+    .rst_n  ( rst_n                                             ),
+    .en     ( ctrl_out[1][0]                                    ),
+    .clear  ( ctrl_out[1][1]                                    ),
+    .cnt    ( {ctrl_in[CTRL_LENGTH - 1 -: COUNTER_WIDTH_BYTES]} )
 );
 
 // config timer byte 1
