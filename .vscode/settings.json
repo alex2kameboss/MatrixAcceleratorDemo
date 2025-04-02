@@ -1,0 +1,10 @@
+{
+    "files.associations": {
+        "random": "cpp",
+        "cstdint": "cpp",
+        "*.tcc": "c",
+        "*.inc": "cpp",
+        "charconv": "cpp",
+        "imtmatrixaccelerator.h": "c"
+    }
+}
