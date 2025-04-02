@@ -1,5 +1,6 @@
 #include "ma_test_helper.h"
 #include "ImtMatrixAccelerator.h"
+#include "soc_metrics.h"
 
 #define MAX_WIDTH 1024
 #define MAX_HEIGHT 1024
@@ -34,6 +35,7 @@ INIT(int32_t)
     DTYPE_O res_sw[M * P], res_hw[M * P]; \
     init_array_##DTYPE_I(a, N, M); \
     init_array_##DTYPE_I(b, P, N); \
+    start_timer(); \
     MA_DEFINE_##DTYPE_I(0, N, M); \
     MA_DEFINE_##DTYPE_I(1, P, N); \
     MA_DEFINE_##DTYPE_O(2, P, M); \
@@ -43,8 +45,15 @@ INIT(int32_t)
     MA_LOAD_REGISTER(0, a); \
     MA_LOAD_REGISTER(1, b); \
     ACC(2, 0, 1); \
-    REF##_##DTYPE_O(a, b, res_sw, M, N, P); \
     MA_STORE_REGISTER(2, res_hw); \
+    stop_timer(); \
+    print_timer_value_hex(); \
+    printf(","); \
+    start_timer(); \
+    REF##_##DTYPE_O(a, b, res_sw, M, N, P); \
+    stop_timer(); \
+    print_timer_value_hex(); \
+    printf(","); \
     FLUSH_D_CACHE(); \
     debug_##DTYPE_I(a, b, res_sw, res_hw); \
     return cmp_##DTYPE_O(res_hw, res_sw, M * P); \
@@ -69,15 +78,16 @@ GROUP_TEST(int8_t)
 GROUP_TEST(int16_t)
 GROUP_TEST(int32_t)
 
-int printResult(const char* testName, bool result) {
-    printf("Test %s %s ; seed = %d\n", testName, result ? "PASSED" : "FAILED", seed - 1);
+int printResult(bool result) {
+    printf("%s,%d\n", result ? "PASSED" : "FAILED", seed - 1);
     return result;
 }
 
 #define RUN_TEST(TEST_NAME, TEST_FN) \
     srand(seed++); \
     numberOfTests++; \
-    passedTests += printResult(_STR(TEST_NAME), TEST_FN()); 
+    printf("%s,", _STR(TEST_NAME));\
+    passedTests += printResult(TEST_FN()); 
 
 #define RUN_TEST_GROUP(DTYPE) \
     RUN_TEST(Addition_##DTYPE, add_test_##DTYPE) \
@@ -86,6 +96,8 @@ int printResult(const char* testName, bool result) {
     RUN_TEST(SMultiplication_##DTYPE, smult_test_##DTYPE)
 
 int main() {
+    printf("test,hw,sw,result,seed\n");
+    
     RUN_TEST_GROUP(int8_t)
     RUN_TEST_GROUP(int16_t)
     RUN_TEST_GROUP(int32_t)
