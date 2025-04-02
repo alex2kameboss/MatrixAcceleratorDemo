@@ -138,7 +138,6 @@ AXI_LITE #(
 logic [CTRL_LENGTH - 1 : 0][7 : 0] ctrl_out;
 wor [CTRL_LENGTH - 1 : 0][7 : 0] ctrl_in;
 
-
 // Combinatorial Logic --------------------------------------------------------
 `ifdef TARGET_JTAG
 assign internal_rst_n = rst_n & rst_n_req;
