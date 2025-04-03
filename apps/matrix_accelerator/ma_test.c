@@ -19,14 +19,14 @@ INIT(int16_t)
 INIT(int32_t)
 
 #define TEST_BASE(DTYPE_I, DTYPE_O, ACC, REF) \
-    DTYPE_I a[M * N], b[N * P]; \
-    DTYPE_O res_sw[M * P], res_hw[M * P]; \
-    init_array_##DTYPE_I(a, N, M); \
-    init_array_##DTYPE_I(b, P, N); \
+    DTYPE_I a[m * n], b[n * p]; \
+    DTYPE_O res_sw[m * p], res_hw[m * p]; \
+    init_array_##DTYPE_I(a, n, m); \
+    init_array_##DTYPE_I(b, p, n); \
     start_timer(); \
-    MA_DEFINE_##DTYPE_I(0, N, M); \
-    MA_DEFINE_##DTYPE_I(1, P, N); \
-    MA_DEFINE_##DTYPE_O(2, P, M); \
+    MA_DEFINE_##DTYPE_I(0, n, m); \
+    MA_DEFINE_##DTYPE_I(1, p, n); \
+    MA_DEFINE_##DTYPE_O(2, p, m); \
     MA_LOC_RECT(0, 0, 0); \
     MA_LOC_RECT(1, 0, MAX_HEIGHT/2); \
     MA_LOC_RECT(2, MAX_WIDTH/2, MAX_HEIGHT/2); \
@@ -38,7 +38,7 @@ INIT(int32_t)
     print_timer_value_hex(); \
     printf(","); \
     start_timer(); \
-    REF##_##DTYPE_O(a, b, res_sw, M, N, P); \
+    REF##_##DTYPE_O(a, b, res_sw, m, n, p); \
     stop_timer(); \
     print_timer_value_hex(); \
     printf(","); \
@@ -71,17 +71,18 @@ int printResult(bool result) {
     return result;
 }
 
-#define RUN_TEST(TEST_NAME, DTYPE, TEST_FN, SIZE) { \
+#define RUN_TEST(TEST_NAME, TEST_FN, SIZE) { \
     srand(seed++); \
     numberOfTests++; \
-    printf("%s,", _STR(TEST_NAME));\
-    passedTests += printResult(TEST_FN()); 
+    printf("%s,%s,", _STR(TEST_NAME), _STR(SIZE));\
+    passedTests += printResult(TEST_FN(SIZE, SIZE, SIZE)); \
+}
 
 #define RUN_TEST_GROUP(DTYPE, SIZE) {\
-    RUN_TEST(Addition, DTYPE, add_test_##DTYPE, SIZE) \
-    RUN_TEST(Substraction, DTYPE, sub_test_##DTYPE, SIZE) \
-    RUN_TEST(Multiplication, DTYPE, mult_test_##DTYPE, SIZE) \
-    RUN_TEST(SMultiplication, DTYPE, smult_test_##DTYPE, SIZE) \
+    RUN_TEST(Addition_##DTYPE, add_test_##DTYPE, SIZE) \
+    RUN_TEST(Substraction_##DTYPE, sub_test_##DTYPE, SIZE) \
+    RUN_TEST(Multiplication_##DTYPE, mult_test_##DTYPE, SIZE) \
+    RUN_TEST(SMultiplication_##DTYPE, smult_test_##DTYPE, SIZE) \
 }
 
 #define RUN_TEST_GROUP_SIZE(SIZE) { \
@@ -91,11 +92,12 @@ int printResult(bool result) {
 }
 
 int main() {
-    printf("test,hw,sw,result,seed\n");
+    printf("test,size,hw,sw,result,seed\n");
     
-    RUN_TEST_GROUP(int8_t)
-    RUN_TEST_GROUP(int16_t)
-    RUN_TEST_GROUP(int32_t)
+    RUN_TEST_GROUP_SIZE(32)
+    RUN_TEST_GROUP_SIZE(64)
+    RUN_TEST_GROUP_SIZE(128)
+    RUN_TEST_GROUP_SIZE(256)
 
     printf("%d/%d\n", passedTests, numberOfTests);
 }
