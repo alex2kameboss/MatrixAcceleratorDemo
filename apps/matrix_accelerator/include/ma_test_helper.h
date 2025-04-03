@@ -15,16 +15,16 @@
 #include "printf.h"
 
 #define DEBUG(DTYPE) \
-void debug_##DTYPE(DTYPE *a, DTYPE *b, DTYPE *res_sw, DTYPE *res_hw) { \
+void debug_##DTYPE(DTYPE *a, DTYPE *b, DTYPE *res_sw, DTYPE *res_hw, int m, int n, int p) { \
     if ( DEBUG_EN ) { \
         printf("\na = \n"); \
-        print_array_##DTYPE(a, N, M); \
+        print_array_##DTYPE(a, n, m); \
         printf("b = \n"); \
-        print_array_##DTYPE(b, P, N); \
+        print_array_##DTYPE(b, p, n); \
         printf("sw = \n"); \
-        print_array_##DTYPE(res_sw, P, M); \
+        print_array_##DTYPE(res_sw, p, m); \
         printf("hw = \n"); \
-        print_array_##DTYPE(res_hw, P, M); \
+        print_array_##DTYPE(res_hw, p, m); \
     } \
 } 
 
