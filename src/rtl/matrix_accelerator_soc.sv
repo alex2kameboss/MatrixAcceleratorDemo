@@ -95,9 +95,6 @@ typedef enum logic [`SOC_AXI_ADDR_WIDTH - 1 : 0] {
 
 
 // Wires ----------------------------------------------------------------------
-logic internal_rst_n, rst_n_req;
-logic debug_req;
-
 AXI_BUS #(
     .AXI_ADDR_WIDTH ( AXI_ADDR_WIDTH    ),
     .AXI_DATA_WIDTH ( AXI_DATA_WIDTH    ),
@@ -195,12 +192,9 @@ axi_xbar_intf #(
 
 // memory
 ram_wrapper i_ram (
-`ifdef TARGET_VIVADO
-    .hbm_clk( clk_hbm   ),
-`endif
-    .clk    ( clk       ),
-    .rst_n  ( rst_n     ),
-    .axi    ( slave[RAM])   
+    .clk    ( clk           ),
+    .rst_n  ( rst_n         ),
+    .axi    ( slave[RAM]    )   
 );
 
 // uart
