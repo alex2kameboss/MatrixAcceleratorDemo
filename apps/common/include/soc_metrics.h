@@ -28,4 +28,8 @@ void print_timer_value_hex() {
     printf("%#016llx", timer_value);
 }
 
+void print_timer_value_dec() {
+    printf("%llu", timer_value);
+}
+
 #endif

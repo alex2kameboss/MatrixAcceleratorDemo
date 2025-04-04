@@ -35,12 +35,14 @@ INIT(int32_t)
     ACC(2, 0, 1); \
     MA_STORE_REGISTER(2, res_hw); \
     stop_timer(); \
-    print_timer_value_hex(); \
+    print_timer_value_dec(); \
+    clear_timer(); \
     printf(","); \
     start_timer(); \
     REF##_##DTYPE_O(a, b, res_sw, m, n, p); \
     stop_timer(); \
-    print_timer_value_hex(); \
+    print_timer_value_dec(); \
+    clear_timer(); \
     printf(","); \
     FLUSH_D_CACHE(); \
     debug_##DTYPE_I(a, b, res_sw, res_hw, m, n, p); \
@@ -71,18 +73,18 @@ int printResult(bool result) {
     return result;
 }
 
-#define RUN_TEST(TEST_NAME, TEST_FN, SIZE) { \
+#define RUN_TEST(TEST_NAME, DTYPE, TEST_FN, SIZE) { \
     srand(seed++); \
     numberOfTests++; \
-    printf("%s,%s,", _STR(TEST_NAME), _STR(SIZE));\
+    printf("%s,%s,%s,", _STR(TEST_NAME), _STR(DTYPE), _STR(SIZE));\
     passedTests += printResult(TEST_FN(SIZE, SIZE, SIZE)); \
 }
 
 #define RUN_TEST_GROUP(DTYPE, SIZE) {\
-    RUN_TEST(Addition_##DTYPE, add_test_##DTYPE, SIZE) \
-    RUN_TEST(Substraction_##DTYPE, sub_test_##DTYPE, SIZE) \
-    RUN_TEST(Multiplication_##DTYPE, mult_test_##DTYPE, SIZE) \
-    RUN_TEST(SMultiplication_##DTYPE, smult_test_##DTYPE, SIZE) \
+    RUN_TEST(Addition, DTYPE, add_test_##DTYPE, SIZE) \
+    RUN_TEST(Substraction, DTYPE, sub_test_##DTYPE, SIZE) \
+    RUN_TEST(Multiplication, DTYPE, mult_test_##DTYPE, SIZE) \
+    RUN_TEST(SMultiplication, DTYPE, smult_test_##DTYPE, SIZE) \
 }
 
 #define RUN_TEST_GROUP_SIZE(SIZE) { \
@@ -92,7 +94,7 @@ int printResult(bool result) {
 }
 
 int main() {
-    printf("test,size,hw,sw,result,seed\n");
+    printf("test,dtype,size,hw,sw,result,seed\n");
     
     RUN_TEST_GROUP_SIZE(32)
     RUN_TEST_GROUP_SIZE(64)
