@@ -29,10 +29,7 @@ localparam AXI_ID_WIDTH_SLAVE = AXI_ID_WIDTH + $clog2(AXI_NO_MASTERS);
 localparam AXI_UART_DATA_WIDTH = 32;
 
 localparam RAM_LENGTH = `SOC_RAM_LENGTH;
-localparam RAM_WORDS = RAM_LENGTH / AXI_STROBE_WIDTH;
-
 localparam UART_LENGTH = `SOC_UART_LENGTH;
-
 localparam CTRL_LENGTH = `SOC_CTRL_REG_LENGTH;
 
 localparam axi_pkg::xbar_cfg_t xbar_cfg = '{
@@ -71,14 +68,6 @@ typedef enum logic [`SOC_AXI_ADDR_WIDTH - 1 : 0] {
 
 
 // Wires ----------------------------------------------------------------------
-logic                               ram_req;
-logic                               ram_we;
-logic [AXI_ADDR_WIDTH - 1 : 0]      ram_addr;
-logic [AXI_DATA_WIDTH / 8 - 1 : 0]  ram_be;
-logic [AXI_DATA_WIDTH - 1 : 0]      ram_wdata;
-logic [AXI_DATA_WIDTH - 1 : 0]      ram_rdata;
-logic                               ram_rvalid;
-
 AXI_BUS #(
     .AXI_ADDR_WIDTH ( AXI_ADDR_WIDTH    ),
     .AXI_DATA_WIDTH ( AXI_DATA_WIDTH    ),
@@ -131,9 +120,6 @@ assign ctrl_in = '0;
 
 
 // Sequential Logic -----------------------------------------------------------
-always_ff @( posedge clk, negedge rst_n )
-    if ( ~rst_n )           ram_rvalid <= 'd0;          else
-                            ram_rvalid <= ram_req;
 
 
 // Modules Instantiation ------------------------------------------------------
@@ -162,42 +148,10 @@ axi_xbar_intf #(
 );
 
 // memory
-axi_to_mem_intf #(
-    .ADDR_WIDTH ( AXI_ADDR_WIDTH    ),
-    .DATA_WIDTH ( AXI_DATA_WIDTH    ),
-    .ID_WIDTH   ( AXI_ID_WIDTH_SLAVE),
-    .USER_WIDTH ( AXI_USER_WIDTH    ),
-    .NUM_BANKS  ( 1                 )
-) i_axi_to_mem (
-    .clk_i          ( clk           ),
-    .rst_ni         ( rst_n         ),
-    .slv            ( slave[RAM]    ),
-    .mem_req_o      ( ram_req       ),
-    .mem_gnt_i      ( ram_req       ),
-    .mem_addr_o     ( ram_addr      ),
-    .mem_wdata_o    ( ram_wdata     ),
-    .mem_strb_o     ( ram_be        ),
-    .mem_we_o       ( ram_we        ),
-    .mem_rvalid_i   ( ram_rvalid    ),
-    .mem_rdata_i    ( ram_rdata     ),
-    .busy_o         ( /* Unused */  ),
-    .mem_atop_o     ( /* Unused */  )
-);
-
-tc_sram #(
-    .NumWords   ( RAM_WORDS         ),
-    .NumPorts   ( 1                 ),
-    .DataWidth  ( AXI_DATA_WIDTH    ),
-    .SimInit    ( "random"          )
-) i_dram (
-    .clk_i  (clk                                                                            ),
-    .rst_ni (rst_n                                                                          ),
-    .req_i  (ram_req                                                                        ),
-    .we_i   (ram_we                                                                         ),
-    .addr_i (ram_addr[$clog2(RAM_WORDS)-1+$clog2(AXI_DATA_WIDTH/8):$clog2(AXI_DATA_WIDTH/8)]),
-    .wdata_i(ram_wdata                                                                      ),
-    .be_i   (ram_be                                                                         ),
-    .rdata_o(ram_rdata                                                                      )
+ram_wrapper i_ram (
+    .clk    ( clk           ),
+    .rst_n  ( rst_n         ),
+    .axi    ( slave[RAM]    )   
 );
 
 // uart
