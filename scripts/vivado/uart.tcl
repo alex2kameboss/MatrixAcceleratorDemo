@@ -1,20 +1,2 @@
-create_ip -name clk_wiz -vendor xilinx.com -library ip -version 6.0 -module_name pll
-set_property -dict [list \
-  CONFIG.CLKOUT1_DRIVES {BUFG} \
-  CONFIG.CLKOUT1_JITTER {137.681} \
-  CONFIG.CLKOUT1_PHASE_ERROR {105.461} \
-  CONFIG.CLKOUT2_DRIVES {BUFG} \
-  CONFIG.CLKOUT3_DRIVES {BUFG} \
-  CONFIG.CLKOUT4_DRIVES {BUFG} \
-  CONFIG.CLKOUT5_DRIVES {BUFG} \
-  CONFIG.CLKOUT6_DRIVES {BUFG} \
-  CONFIG.CLKOUT7_DRIVES {BUFG} \
-  CONFIG.CLK_OUT1_PORT {clk_out100} \
-  CONFIG.MMCM_BANDWIDTH {OPTIMIZED} \
-  CONFIG.MMCM_CLKFBOUT_MULT_F {9} \
-  CONFIG.MMCM_CLKOUT0_DIVIDE_F {9} \
-  CONFIG.MMCM_COMPENSATION {ZHOLD} \
-  CONFIG.PRIMITIVE {PLL} \
-  CONFIG.RESET_PORT {resetn} \
-  CONFIG.RESET_TYPE {ACTIVE_LOW} \
-] [get_ips pll]
+create_ip -name axi_uartlite -vendor xilinx.com -library ip -version 2.0 -module_name xilinx_uart
+set_property CONFIG.C_BAUDRATE {115200} [get_ips xilinx_uart]
