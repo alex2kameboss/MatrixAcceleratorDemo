@@ -73,7 +73,7 @@ initial begin : dram_init
                 if (address >= RAM_BASE && address < RAM_BASE + RAM_LENGTH)
                     // This requires the sections to be aligned to AXI_BYTE_OFFSET,
                     // otherwise, they can be over-written.
-                    i_dut.i_dram.init_val[(address - RAM_BASE + (w << AXI_BYTE_OFFSET)) >> AXI_BYTE_OFFSET] = mem_row;
+                    i_dut.i_ram.i_dram.init_val[(address - RAM_BASE + (w << AXI_BYTE_OFFSET)) >> AXI_BYTE_OFFSET] = mem_row;
                 else
                     $display("Cannot initialize address %x, which doesn't fall into the L2 region.", address);
                 end

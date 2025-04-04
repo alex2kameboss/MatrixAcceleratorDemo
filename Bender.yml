@@ -21,6 +21,7 @@ sources:
       files:
         - src/packages/ma_cv32a6_imac_sv0_config_pkg.sv
         - src/tests/sim/uart_mock.sv
+        - src/tests/sim/ram_wrapper.sv
         - src/tests/sim/soc_tb.sv
 
     - target: vivado
