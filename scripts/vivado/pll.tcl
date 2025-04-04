@@ -1,5 +1,4 @@
-create_ip -vlnv xilinx.com:ip:clk_wiz:6.0 clk_wiz_0
-endgroup
+create_ip -name clk_wiz -vendor xilinx.com -library ip -version 6.0 -module_name pll
 set_property -dict [list \
   CONFIG.CLKOUT1_DRIVES {BUFG} \
   CONFIG.CLKOUT1_JITTER {137.681} \
@@ -11,15 +10,11 @@ set_property -dict [list \
   CONFIG.CLKOUT6_DRIVES {BUFG} \
   CONFIG.CLKOUT7_DRIVES {BUFG} \
   CONFIG.CLK_OUT1_PORT {clk_out100} \
-  CONFIG.JITTER_SEL {No_Jitter} \
   CONFIG.MMCM_BANDWIDTH {OPTIMIZED} \
   CONFIG.MMCM_CLKFBOUT_MULT_F {9} \
   CONFIG.MMCM_CLKOUT0_DIVIDE_F {9} \
-  CONFIG.MMCM_CLKOUT0_DUTY_CYCLE {0.500} \
   CONFIG.MMCM_COMPENSATION {ZHOLD} \
   CONFIG.PRIMITIVE {PLL} \
   CONFIG.RESET_PORT {resetn} \
   CONFIG.RESET_TYPE {ACTIVE_LOW} \
-  CONFIG.USE_MIN_POWER {false} \
-  CONFIG.USE_RESET {true} \
-] [get_bd_cells clk_wiz_0]
+] [get_ips pll]
