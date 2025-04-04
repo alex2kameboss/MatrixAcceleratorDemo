@@ -30,7 +30,7 @@ sources:
 
     - target: vivado
       files:
-        - src/packages/ma_cv32a6_imac_sv0_config_pkg_xilinx.sv
+        - src/packages/ma_cv32a6_imac_sv0_config_pkg.sv
         - src/tests/vivado/uart_mock.sv
         - src/tests/vivado/top.sv
 
