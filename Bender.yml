@@ -17,17 +17,18 @@ sources:
     - src/includes
   
   files:
-    - target: demo_test
+    - target: sim_demo
       files:
         - src/packages/ma_cv32a6_imac_sv0_config_pkg.sv
         - src/tests/sim/uart_mock.sv
         - src/tests/sim/ram_wrapper.sv
         - src/tests/sim/soc_tb.sv
 
-    - target: vivado
+    - target: fpga_demo
       files:
-        - src/packages/ma_cv32a6_imac_sv0_config_pkg.sv
+        - src/packages/ma_cv32a6_imac_sv0_config_pkg_xilinx.sv
         - src/tests/vivado/uart_mock.sv
+        - src/tests/vivado/ram_wrapper.sv
         - src/tests/vivado/top.sv
 
     - src/rtl/matrix_accelerator_subsystem.sv

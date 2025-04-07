@@ -4,7 +4,7 @@
 // AXI parameters
 `define CVA6_AXI_ADDR_WIDTH 64
 `define CVA6_AXI_DATA_WIDTH 64
-`define CVA6_AXI_ID_WIDTH 5
+`define CVA6_AXI_ID_WIDTH 4
 `define CVA6_AXI_DATA_USER_WIDTH 1
 
 `endif // CVA6_PARAMETERS_SVH
