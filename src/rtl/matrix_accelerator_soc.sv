@@ -1,14 +1,9 @@
 `include "soc_parameters.svh"
 `include "axi/typedef.svh"
 
-module matrix_accelerator_soc #(
-    parameter PRF_LOG_P =   1   ,
-    parameter PRF_LOG_Q =   2   ,
-    parameter PRF_LOG_N =   10  ,
-    parameter PRF_LOG_M =   10  
-) (
+module matrix_accelerator_soc (
 `ifdef TARGET_VIVADO
-    input           clk_hbm ,
+    input           hbm_clk ,
 `endif
     input           clk     ,
     input           rst_n   ,
@@ -192,6 +187,9 @@ axi_xbar_intf #(
 
 // memory
 ram_wrapper i_ram (
+`ifdef TARGET_VIVADO
+    .hbm_clk( hbm_clk       ),
+`endif
     .clk    ( clk           ),
     .rst_n  ( rst_n         ),
     .axi    ( slave[RAM]    )   
