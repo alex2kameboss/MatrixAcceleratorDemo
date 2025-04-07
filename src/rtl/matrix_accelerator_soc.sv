@@ -2,6 +2,9 @@
 `include "axi/typedef.svh"
 
 module matrix_accelerator_soc (
+`ifdef TARGET_VIVADO
+    input           hbm_clk ,
+`endif
     input           clk     ,
     input           rst_n   ,
     output          tx      ,
@@ -149,6 +152,9 @@ axi_xbar_intf #(
 
 // memory
 ram_wrapper i_ram (
+`ifdef TARGET_VIVADO
+    .hbm_clk( hbm_clk       ),
+`endif
     .clk    ( clk           ),
     .rst_n  ( rst_n         ),
     .axi    ( slave[RAM]    )   
