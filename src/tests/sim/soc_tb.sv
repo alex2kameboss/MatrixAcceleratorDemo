@@ -6,6 +6,9 @@ import "DPI-C" context function byte read_section(input longint address, inout b
 
 `timescale 1ns/1ps
 
+`define PRF_LOG_P 1
+`define PRF_LOG_Q 2
+
 module soc_tb ();
 
 localparam CLOCK_PERIOD  = 2ns;
@@ -36,6 +39,7 @@ initial begin
     repeat (5) #(CLOCK_PERIOD);
     rst_n = 1'b1;
     repeat (5) #(CLOCK_PERIOD);
+    $display("LOG_P: %d, LOG_Q: %d", `PRF_LOG_P, `PRF_LOG_Q);
     $display("-------- STDOUT --------");
     // Start the clock
     forever #(CLOCK_PERIOD/2) clk = ~clk;
@@ -89,7 +93,10 @@ initial begin : wait_for_stop
     $finish();
 end
 
-matrix_accelerator_soc i_dut (
+matrix_accelerator_soc #(
+    .PRF_LOG_P  ( `PRF_LOG_P),
+    .PRF_LOG_Q  ( `PRF_LOG_Q)
+) i_dut (
     .clk    ( clk   ),
     .rst_n  ( rst_n ),
     .tx     (       ),

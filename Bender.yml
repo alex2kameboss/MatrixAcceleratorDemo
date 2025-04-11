@@ -4,7 +4,7 @@ package:
     - "Alexandru Puscasu <alexandru.puscasu@imt.ro>"
 
 dependencies:
-    matrix_accelerator: { git: "https://github.com/alex2kameboss/MatrixAccelerator.git",  version: 1.1.1  }
+    matrix_accelerator: { git: "https://github.com/alex2kameboss/MatrixAccelerator.git",  rev: demo       }
     ariane:             { git: "https://github.com/openhwgroup/cva6.git",                 version: 5.3.0  }
     axi:                { git: "https://github.com/pulp-platform/axi.git",                rev: master     }
     cv_x_if:            { git: "https://github.com/alex2kameboss/core-v-xif-fix.git",     rev: demo       }

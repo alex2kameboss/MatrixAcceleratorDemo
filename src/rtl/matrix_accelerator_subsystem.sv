@@ -3,7 +3,12 @@
 `include "cva6_parameters.svh"
 `include "cvxif_types.svh"
 
-module matrix_accelerator_subsystem (
+module matrix_accelerator_subsystem #(
+    parameter PRF_LOG_P =   1   ,
+    parameter PRF_LOG_Q =   2   ,
+    parameter PRF_LOG_N =   10  ,
+    parameter PRF_LOG_M =   10  
+) (
     input                                       clk         ,
     input                                       rst_n       ,
     input logic [`CVA6_AXI_ADDR_WIDTH - 1 : 0]  boot_addr   ,
@@ -139,10 +144,10 @@ matrix_accelerator #(
     .OPCODE             ( 7'h2B                 ),
     .ADDR_WIDTH         ( `CVA6_AXI_ADDR_WIDTH  ),
     .REGISTER_NUMBERS   ( 32                    ),
-    .PRF_LOG_P          ( 1                     ),
-    .PRF_LOG_Q          ( 2                     ),
-    .PRF_LOG_N          ( 10                    ),
-    .PRF_LOG_M          ( 10                    )
+    .PRF_LOG_P          ( PRF_LOG_P             ),
+    .PRF_LOG_Q          ( PRF_LOG_Q             ),
+    .PRF_LOG_N          ( PRF_LOG_N             ),
+    .PRF_LOG_M          ( PRF_LOG_M             )
 ) i_matrix_accelerator (
     .clk             ( clk      ),
     .rst_n           ( rst_n    ),

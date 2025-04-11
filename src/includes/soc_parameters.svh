@@ -1,10 +1,10 @@
 `ifndef SOC_PARAMETERS_SVH
 `define SOC_PARAMETERS_SVH
 
-`define SOC_AXI_DATA_WIDTH  128
+`define SOC_AXI_DATA_WIDTH  256
 `define SOC_AXI_ADDR_WIDTH  64
 `define SOC_AXI_USER_WIDTH  4
-`define SOC_AXI_ID_WIDTH    4
+`define SOC_AXI_ID_WIDTH    5
 
 // 1GB RAM
 `define SOC_RAM_BASE        64'h8000_0000

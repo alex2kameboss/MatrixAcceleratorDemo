@@ -17,13 +17,13 @@ _stack_start   = ORIGIN(ram) + LENGTH(ram);
 SECTIONS
 {
     .text : {
-        . = ALIGN(16);
+        . = ALIGN(32);
         *(.text)
         *(.text.*)
     }  > ram
 
     .rodata : {
-        . = ALIGN(16);
+        . = ALIGN(32);
         /* Small RO data before large RO data */
         *(.srodata)
         *(.srodata.*)
@@ -32,7 +32,7 @@ SECTIONS
     } > ram
 
     .data : {
-        . = ALIGN(16);
+        . = ALIGN(32);
         /* Small data before large data */
         *(.sdata)
         *(.sdata.*)
@@ -42,7 +42,7 @@ SECTIONS
 
     .bss :
     {
-        . = ALIGN(16);
+        . = ALIGN(32);
         _bss_start = .;
         /* Small BSS before large BSS */
         *(.sbss)
@@ -55,9 +55,9 @@ SECTIONS
 
     /* ensure there is enough room for stack */
     .stack (NOLOAD): {
-        . = ALIGN(16);
+        . = ALIGN(32);
         . = . + _stack_len ;
-        . = ALIGN(16);
+        . = ALIGN(32);
         stack = . ;
         _stack = . ;
     } > ram

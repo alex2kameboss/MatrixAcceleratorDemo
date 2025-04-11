@@ -1,9 +1,14 @@
 `include "soc_parameters.svh"
 `include "axi/typedef.svh"
 
-module matrix_accelerator_soc (
+module matrix_accelerator_soc #(
+    parameter PRF_LOG_P =   1   ,
+    parameter PRF_LOG_Q =   2   ,
+    parameter PRF_LOG_N =   10  ,
+    parameter PRF_LOG_M =   10  
+) (
 `ifdef TARGET_VIVADO
-    input           hbm_clk ,
+    input           clk_hbm ,
 `endif
     input           clk     ,
     input           rst_n   ,
@@ -126,7 +131,12 @@ assign ctrl_in = '0;
 
 
 // Modules Instantiation ------------------------------------------------------
-matrix_accelerator_subsystem  i_core (
+matrix_accelerator_subsystem #(
+    .PRF_LOG_P  ( PRF_LOG_P ),
+    .PRF_LOG_Q  ( PRF_LOG_Q ),
+    .PRF_LOG_N  ( PRF_LOG_N ),
+    .PRF_LOG_M  ( PRF_LOG_M )
+) i_core (
     .clk         ( clk      ),
     .rst_n       ( rst_n    ),
     .boot_addr   ( RAM_BASE ),
@@ -153,7 +163,7 @@ axi_xbar_intf #(
 // memory
 ram_wrapper i_ram (
 `ifdef TARGET_VIVADO
-    .hbm_clk( hbm_clk       ),
+    .hbm_clk( clk_hbm       ),
 `endif
     .clk    ( clk           ),
     .rst_n  ( rst_n         ),

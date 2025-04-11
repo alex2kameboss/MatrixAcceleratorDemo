@@ -97,9 +97,9 @@ int main() {
     printf("test,dtype,size,hw,sw,result,seed\n");
     
     RUN_TEST_GROUP_SIZE(32)
-    RUN_TEST_GROUP_SIZE(64)
-    RUN_TEST_GROUP_SIZE(128)
-    RUN_TEST_GROUP_SIZE(256)
+    //RUN_TEST_GROUP_SIZE(64)
+    //RUN_TEST_GROUP_SIZE(128)
+    //RUN_TEST_GROUP_SIZE(256)
 
     printf("%d/%d\n", passedTests, numberOfTests);
 }

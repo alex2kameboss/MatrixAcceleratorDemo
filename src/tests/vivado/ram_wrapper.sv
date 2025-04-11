@@ -12,7 +12,7 @@ localparam AXI_NO_SLAVES = 4; // 1GB of HBM
 localparam AXI_ID_WIDTH_SLAVE = axi.AXI_ID_WIDTH + $clog2(AXI_NO_MASTERS);
 localparam AXI_DATA_WIDTH   = 256; // HBM width
 localparam AXI_ADDR_WIDTH   = axi.AXI_ADDR_WIDTH;
-localparam AXI_USER_WIDTH   = axi.SOC_AXI_USER_WIDTH;
+localparam AXI_USER_WIDTH   = axi.AXI_USER_WIDTH;
 
 localparam axi_pkg::xbar_cfg_t xbar_cfg = '{
     NoSlvPorts:         AXI_NO_MASTERS,
@@ -35,7 +35,7 @@ AXI_BUS #(
     .AXI_DATA_WIDTH ( AXI_DATA_WIDTH    ),
     .AXI_ID_WIDTH   ( axi.AXI_ID_WIDTH  ),
     .AXI_USER_WIDTH ( AXI_USER_WIDTH    )
-) axi_256;
+) axi_256 [0:0] ();
 
 AXI_BUS #(
     .AXI_ADDR_WIDTH ( AXI_ADDR_WIDTH        ),
@@ -65,7 +65,7 @@ axi_dw_converter_intf #(
     .clk_i  ( clk       ),
     .rst_ni ( rst_n     ),
     .slv    ( axi       ),
-    .mst    ( axi_256   )
+    .mst    ( axi_256[0])
 );
 
 axi_xbar_intf #(
