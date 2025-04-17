@@ -1,78 +1,78 @@
 packages:
   ariane:
-    revision: null
+    revision: 733743da0f9d945e9f6122b50e1050e0f6613d89
     version: null
     source:
-      Path: src/ips/ariane
+      Git: https://github.com/openhwgroup/cva6.git
     dependencies:
     - axi
     - common_cells
     - fpnew
     - tech_cells_generic
   axi:
-    revision: null
+    revision: f14349315fe1bc5f0ac93156baaab9d9d3bd06d0
     version: null
     source:
-      Path: src/ips/axi
+      Git: https://github.com/pulp-platform/axi.git
     dependencies:
     - common_cells
     - common_verification
     - tech_cells_generic
   common_cells:
-    revision: null
-    version: null
+    revision: 9afda9abb565971649c2aa0985639c096f351171
+    version: 1.38.0
     source:
-      Path: src/ips/common_cells
+      Git: https://github.com/pulp-platform/common_cells.git
     dependencies:
     - common_verification
     - tech_cells_generic
   common_verification:
-    revision: null
-    version: null
+    revision: fb1885f48ea46164a10568aeff51884389f67ae3
+    version: 0.2.5
     source:
-      Path: src/ips/common_verification
+      Git: https://github.com/pulp-platform/common_verification.git
     dependencies: []
   cv_x_if:
-    revision: null
+    revision: 21509e100f80607dd6b17113242af376118b06a9
     version: null
     source:
-      Path: src/ips/cv_x_if
+      Git: https://github.com/alex2kameboss/core-v-xif-fix.git
     dependencies: []
   fpnew:
-    revision: null
-    version: null
+    revision: 3116391bf66660f806b45e212b9949c528b4e270
+    version: 0.7.0
     source:
-      Path: src/ips/fpnew
+      Git: https://github.com/openhwgroup/cvfpu.git
     dependencies:
     - common_cells
     - fpu_div_sqrt_mvp
   fpu_div_sqrt_mvp:
-    revision: null
-    version: null
+    revision: 86e1f558b3c95e91577c41b2fc452c86b04e85ac
+    version: 1.0.4
     source:
-      Path: src/ips/fpu_div_sqrt_mvp
+      Git: https://github.com/pulp-platform/fpu_div_sqrt_mvp.git
     dependencies:
     - common_cells
   matrix_accelerator:
-    revision: null
+    revision: a984a8d76ffb1a11d68531c538461d41bbfb4583
     version: null
     source:
-      Path: src/ips/matrix_accelerator
+      Git: https://github.com/alex2kameboss/MatrixAccelerator.git
     dependencies:
     - axi
     - common_cells
     - cv_x_if
     - poly_mem
   poly_mem:
-    revision: null
+    revision: 86b9764d1540d30b86038e599d5964efb9e49a21
     version: null
     source:
-      Path: src/ips/poly_mem
+      Git: https://gitlab.com/catalin.ciobanu/PolyMem_System_Verilog.git
     dependencies: []
   tech_cells_generic:
-    revision: null
-    version: null
+    revision: 7968dd6e6180df2c644636bc6d2908a49f2190cf
+    version: 0.2.13
     source:
-      Path: src/ips/tech_cells_generic
+      Git: https://github.com/pulp-platform/tech_cells_generic.git
     dependencies:
     - common_verification
