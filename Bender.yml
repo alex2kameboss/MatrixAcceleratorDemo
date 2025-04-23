@@ -8,6 +8,7 @@ dependencies:
     ariane:             { git: "https://github.com/openhwgroup/cva6.git",                 rev: master     }
     axi:                { git: "https://github.com/pulp-platform/axi.git",                rev: master     }
     cv_x_if:            { git: "https://github.com/alex2kameboss/core-v-xif-fix.git",     rev: demo       }
+    riscv-dbg:          { git: "https://github.com/pulp-platform/riscv-dbg.git",          rev: master     }
   
 workspace:
   checkout_dir: "src/ips"
@@ -17,11 +18,13 @@ sources:
     - src/includes
   
   files:
-    - target: sim_demo
+    - target: any(vsim, vcs, verilator)
       files:
         - src/packages/ma_cv32a6_imac_sv0_config_pkg.sv
         - src/tests/sim/uart_mock.sv
         - src/tests/sim/ram_wrapper.sv
+    - target: sim_demo
+      files:
         - src/tests/sim/soc_tb.sv
 
     - target: fpga_demo
@@ -33,10 +36,7 @@ sources:
 
     - target: verilator
       files:
-        - src/packages/ma_cv32a6_imac_sv0_config_pkg.sv
         - src/tests/verilator/soc_tb.sv
-        - src/tests/sim/uart_mock.sv
-        - src/tests/sim/ram_wrapper.sv
 
     - src/rtl/matrix_accelerator_subsystem.sv
     - src/rtl/counter.sv
