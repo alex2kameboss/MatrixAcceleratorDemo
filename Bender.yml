@@ -31,6 +31,13 @@ sources:
         - src/tests/vivado/ram_wrapper.sv
         - src/tests/vivado/top.sv
 
+    - target: verilator
+      files:
+        - src/packages/ma_cv32a6_imac_sv0_config_pkg.sv
+        - src/tests/verilator/soc_tb.sv
+        - src/tests/sim/uart_mock.sv
+        - src/tests/sim/ram_wrapper.sv
+
     - src/rtl/matrix_accelerator_subsystem.sv
     - src/rtl/counter.sv
     - src/rtl/matrix_accelerator_soc.sv

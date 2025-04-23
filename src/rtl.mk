@@ -44,3 +44,6 @@ bender_vivado:
 
 vivado: bender_vivado
 	cd ${PROJ_ROOT}/runs ; vivado -mode batch -source ${PROJ_ROOT}/scripts/vivado/create_project.tcl -nojournal -nolog -tclargs ${ARGS} -noGui
+
+bender_verilator:
+	bender script ${DEFINES} -D COMMON_CELLS_ASSERTS_OFF -t tech_cells_generic_include_tc_sram -t tech_cells_generic_include_tc_clk -t exclude_first_pass_decoder -t cv32a6_imac_sv0 -t verilator -t rtl verilator > ${SIM_DIR}/../verilator/verialtor.f

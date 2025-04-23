@@ -1,7 +1,7 @@
 `include "axi/typedef.svh"
 `include "axi/assign.svh"
 `include "cva6_parameters.svh"
-`include "cvxif_types.svh"
+`include "ma_cvxif_types.svh"
 
 module matrix_accelerator_subsystem #(
     parameter PRF_LOG_P =   1   ,
@@ -38,19 +38,19 @@ typedef logic [core_axi.AXI_USER_WIDTH-1:0] axi_user_t;
 `AXI_TYPEDEF_ALL(core_wide_axi, axi_addr_t, axi_id_t, axi_wide_data_t, axi_wide_strb_t, axi_user_t)
 `AXI_TYPEDEF_ALL(core_narrow_axi, axi_addr_t, axi_id_t, axi_narrow_data_t, axi_narrow_strb_t, axi_user_t)
 
-typedef `READREGFLAGS_T(CVA6Cfg) xif_readregflags_t;
-typedef `WRITEREGFLAGS_T(CVA6Cfg) xif_writeregflags_t;
-typedef `ID_T(CVA6Cfg) xif_id_t;
-typedef `HARTID_T(CVA6Cfg) xif_hartid_t;
-typedef `X_COMPRESSED_REQ_T(CVA6Cfg, xif_hartid_t) xif_compressed_req_t;
-typedef `X_COMPRESSED_RESP_T(CVA6Cfg) xif_compressed_resp_t;
-typedef `X_ISSUE_REQ_T(CVA6Cfg, xif_hartid_t, xif_id_t) xif_issue_req_t;
-typedef `X_ISSUE_RESP_T(CVA6Cfg, xif_writeregflags_t, xif_readregflags_t) xif_issue_resp_t;
-typedef `X_REGISTER_T(CVA6Cfg, xif_hartid_t, xif_id_t, xif_readregflags_t) xif_register_req_t;
-typedef `X_COMMIT_T(CVA6Cfg, xif_hartid_t, xif_id_t) xif_commit_t;
-typedef `X_RESULT_T(CVA6Cfg, xif_hartid_t, xif_id_t, xif_writeregflags_t) xif_result_t;
-typedef `CVXIF_REQ_T(CVA6Cfg, xif_compressed_req_t, xif_issue_req_t, xif_register_req_t, xif_commit_t) xif_req_t;
-typedef `CVXIF_RESP_T(CVA6Cfg, xif_compressed_resp_t, xif_issue_resp_t, xif_result_t) xif_resp_t;
+typedef `MA_READREGFLAGS_T(CVA6Cfg) xif_readregflags_t;
+typedef `MA_WRITEREGFLAGS_T(CVA6Cfg) xif_writeregflags_t;
+typedef `MA_ID_T(CVA6Cfg) xif_id_t;
+typedef `MA_HARTID_T(CVA6Cfg) xif_hartid_t;
+typedef `MA_X_COMPRESSED_REQ_T(CVA6Cfg, xif_hartid_t) xif_compressed_req_t;
+typedef `MA_X_COMPRESSED_RESP_T(CVA6Cfg) xif_compressed_resp_t;
+typedef `MA_X_ISSUE_REQ_T(CVA6Cfg, xif_hartid_t, xif_id_t) xif_issue_req_t;
+typedef `MA_X_ISSUE_RESP_T(CVA6Cfg, xif_writeregflags_t, xif_readregflags_t) xif_issue_resp_t;
+typedef `MA_X_REGISTER_T(CVA6Cfg, xif_hartid_t, xif_id_t, xif_readregflags_t) xif_register_req_t;
+typedef `MA_X_COMMIT_T(CVA6Cfg, xif_hartid_t, xif_id_t) xif_commit_t;
+typedef `MA_X_RESULT_T(CVA6Cfg, xif_hartid_t, xif_id_t, xif_writeregflags_t) xif_result_t;
+typedef `MA_CVXIF_REQ_T(CVA6Cfg, xif_compressed_req_t, xif_issue_req_t, xif_register_req_t, xif_commit_t) xif_req_t;
+typedef `MA_CVXIF_RESP_T(CVA6Cfg, xif_compressed_resp_t, xif_issue_resp_t, xif_result_t) xif_resp_t;
 
 
 // Wires ----------------------------------------------------------------------
