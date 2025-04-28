@@ -12,6 +12,7 @@ module matrix_accelerator_subsystem #(
     input                                       clk         ,
     input                                       rst_n       ,
     input logic [`CVA6_AXI_ADDR_WIDTH - 1 : 0]  boot_addr   ,
+    input logic                                 debug_req   ,
     // core axi
     AXI_BUS.Master                              core_axi    ,
     // accelerator axi
@@ -132,7 +133,7 @@ cva6 #(
     .irq_i          ( '0                    ),
     .ipi_i          ( '0                    ),
     .time_irq_i     ( '0                    ),
-    .debug_req_i    ( '0                    ),
+    .debug_req_i    ( debug_req             ),
     .rvfi_probes_o  ( /* empty */           ),
     .cvxif_req_o    ( xif_req               ),
     .cvxif_resp_i   ( xif_resp              ),

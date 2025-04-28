@@ -12,21 +12,39 @@ module matrix_accelerator_soc #(
 `endif
     input           clk     ,
     input           rst_n   ,
+`ifdef TARGET_JTAG
+    input           tck     ,
+    input           tms     ,
+    input           trstn   ,
+    input           tdi     ,
+    output          tdo     ,
+`endif
     output          tx      ,
     input           rx      
 );
 
 typedef enum int unsigned {
+`ifdef TARGET_JTAG
+    S_JATG          ,
+`endif
     RAM             ,
     UART            ,
     CTRL            ,
     AXI_NO_SLAVES   
-} axi_slaves_e;
+} axi_slaves_t;
+
+typedef enum int unsigned {
+`ifdef TARGET_JTAG
+    M_JTAG        ,
+`endif
+    CORE          ,
+    MA            ,
+    AXI_NO_MASTERS   
+} axi_masters_t;
 
 // Local Parameters -----------------------------------------------------------
 localparam COUNTER_WIDTH = 64;
 localparam COUNTER_WIDTH_BYTES = COUNTER_WIDTH / 8;
-localparam AXI_NO_MASTERS = 2;
 
 localparam AXI_DATA_WIDTH   = `SOC_AXI_DATA_WIDTH;
 localparam AXI_STROBE_WIDTH = AXI_DATA_WIDTH / 8;
@@ -76,6 +94,9 @@ typedef enum logic [`SOC_AXI_ADDR_WIDTH - 1 : 0] {
 
 
 // Wires ----------------------------------------------------------------------
+logic internal_rst_n, rst_n_req;
+logic debug_req;
+
 AXI_BUS #(
     .AXI_ADDR_WIDTH ( AXI_ADDR_WIDTH    ),
     .AXI_DATA_WIDTH ( AXI_DATA_WIDTH    ),
@@ -118,10 +139,20 @@ logic [CTRL_LENGTH - 1 : 0][7 : 0] ctrl_out;
 wor [CTRL_LENGTH - 1 : 0][7 : 0] ctrl_in;
 
 // Combinatorial Logic --------------------------------------------------------
+`ifdef TARGET_JTAG
+assign internal_rst_n = rst_n & rst_n_req;
+`else
+assign internal_rst_n = rst_n;
+assign debug_req = 'd0;
+`endif
+
 assign routing_rules = '{
-    '{idx: RAM , start_addr: RAM_BASE , end_addr: RAM_BASE + RAM_LENGTH  },
-    '{idx: UART, start_addr: UART_BASE, end_addr: UART_BASE + UART_LENGTH},
-    '{idx: CTRL, start_addr: CTRL_BASE, end_addr: CTRL_BASE + CTRL_LENGTH}
+`ifdef TARGET_JTAG
+    '{idx: S_JATG , start_addr: 'd0      , end_addr: 'h1000                 },
+`endif
+    '{idx: RAM    , start_addr: RAM_BASE , end_addr: RAM_BASE + RAM_LENGTH  },
+    '{idx: UART   , start_addr: UART_BASE, end_addr: UART_BASE + UART_LENGTH},
+    '{idx: CTRL   , start_addr: CTRL_BASE, end_addr: CTRL_BASE + CTRL_LENGTH}
 };
 
 assign ctrl_in = '0;
@@ -137,11 +168,12 @@ matrix_accelerator_subsystem #(
     .PRF_LOG_N  ( PRF_LOG_N ),
     .PRF_LOG_M  ( PRF_LOG_M )
 ) i_core (
-    .clk         ( clk      ),
-    .rst_n       ( rst_n    ),
-    .boot_addr   ( RAM_BASE ),
-    .core_axi    ( master[0]),
-    .acc_axi     ( master[1])
+    .clk        ( clk           ),
+    .rst_n      ( internal_rst_n),
+    .boot_addr  ( RAM_BASE      ),
+    .debug_req  ( debug_req     ),
+    .core_axi   ( master[CORE]  ),
+    .acc_axi    ( master[MA]    )
 );
 
 // axi interconnect
@@ -151,7 +183,7 @@ axi_xbar_intf #(
     .rule_t         ( axi_pkg::xbar_rule_64_t   )
 ) i_xbar (
     .clk_i                  ( clk           ),
-    .rst_ni                 ( rst_n         ),
+    .rst_ni                 ( internal_rst_n),
     .test_i                 ( 1'b0          ),
     .slv_ports              ( master        ),
     .mst_ports              ( slave         ),
@@ -166,7 +198,7 @@ ram_wrapper i_ram (
     .hbm_clk( clk_hbm       ),
 `endif
     .clk    ( clk           ),
-    .rst_n  ( rst_n         ),
+    .rst_n  ( internal_rst_n),
     .axi    ( slave[RAM]    )   
 );
 
@@ -180,7 +212,7 @@ axi_dw_converter_intf #(
     .AXI_MAX_READS          ( 1                     )
 ) i_uart_axi_dw (
     .clk_i  ( clk           ),
-    .rst_ni ( rst_n         ),
+    .rst_ni ( internal_rst_n),
     .slv    ( slave[UART]   ),
     .mst    ( uart_axi      )
 );
@@ -195,7 +227,7 @@ axi_to_axi_lite_intf #(
     .FALL_THROUGH       ( 1'b0              )
 ) i_uart_axi_to_lite (
     .clk_i      ( clk           ),
-    .rst_ni     ( rst_n         ),
+    .rst_ni     ( internal_rst_n),
     .testmode_i ( '0            ),
     .slv        ( uart_axi      ),
     .mst        ( uart_axi_lite )
@@ -203,7 +235,7 @@ axi_to_axi_lite_intf #(
 
 uart_mock i_uart (
     .clk    ( clk           ),
-    .rst_n  ( rst_n         ),
+    .rst_n  ( internal_rst_n),
     .axi    ( uart_axi_lite ),
     .tx     ( tx            ),
     .rx     ( rx            )
@@ -219,7 +251,7 @@ axi_dw_converter_intf #(
     .AXI_MAX_READS          ( 1                     )
 ) i_ctrl_axi_dw (
     .clk_i  ( clk           ),
-    .rst_ni ( rst_n         ),
+    .rst_ni ( internal_rst_n),
     .slv    ( slave[CTRL]   ),
     .mst    ( ctrl_axi      )
 );
@@ -234,7 +266,7 @@ axi_to_axi_lite_intf #(
     .FALL_THROUGH       ( 1'b0              )
 ) i_ctrl_axi_to_lite (
     .clk_i      ( clk           ),
-    .rst_ni     ( rst_n         ),
+    .rst_ni     ( internal_rst_n),
     .testmode_i ( '0            ),
     .slv        ( ctrl_axi      ),
     .mst        ( ctrl_axi_lite )
@@ -246,7 +278,7 @@ axi_lite_regs_intf #(
     .AXI_DATA_WIDTH (AXI_UART_DATA_WIDTH)
 ) i_ctrl_regs (
     .clk_i      ( clk           ),
-    .rst_ni     ( rst_n         ),
+    .rst_ni     ( internal_rst_n),
     .slv        ( ctrl_axi_lite ),
     .wr_active_o(               ),
     .rd_active_o(               ),
@@ -262,10 +294,26 @@ metrics_counter #(
     .COUNTER_WIDTH  ( COUNTER_WIDTH )
 ) i_metrics_counter (
     .clk    ( clk                                               ),
-    .rst_n  ( rst_n                                             ),
+    .rst_n  ( internal_rst_n                                    ),
     .en     ( ctrl_out[1][0]                                    ),
     .clear  ( ctrl_out[1][1]                                    ),
     .cnt    ( {ctrl_in[CTRL_LENGTH - 1 -: COUNTER_WIDTH_BYTES]} )
 );
+
+`ifdef TARGET_JTAG
+jtag_debugger i_debugger (
+    .clk        ( clk           ),
+    .rst_n      ( rst_n         ),
+    .tck        ( tck           ),
+    .tms        ( tms           ),
+    .trstn      ( trstn         ),
+    .tdi        ( tdi           ),
+    .tdo        ( tdo           ),
+    .master     ( master[M_JTAG]),
+    .slave      ( slave[S_JATG] ),
+    .ndmreset   ( rst_n_req     ),
+    .debug_req  ( debug_req     ) 
+);
+`endif
 
 endmodule
