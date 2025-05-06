@@ -22,4 +22,4 @@ vsim_cli: vsim_build
 	cd ${SIM_DIR} ; vsim -c -l ${LOG_PATH}/sim.log -do "${VSIM_CMD}"
 
 sim: vsim_build
-		cd ${SIM_DIR} ; vsim -c -l ${LOG_PATH}/sim.log -do "${VSIM_CMD} ; run -a"
+	cd ${SIM_DIR} ; vsim -c -l ${LOG_PATH}/sim.log -do "${VSIM_CMD} ; run -a"

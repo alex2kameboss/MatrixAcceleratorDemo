@@ -1,5 +1,6 @@
 `include "axi/typedef.svh"
 `include "axi/assign.svh"
+`include "soc_parameters.svh"
 
 module jtag_debugger (
     // global signals
@@ -25,7 +26,7 @@ localparam dm::hartinfo_t info = '{
     zero0       :   'd0,
     dataaccess  :   'd1,
     datasize    :   dm::DataCount,
-    dataaddr    :   0'h380
+    dataaddr    :   dm::DataAddr
 };
 
 localparam config_pkg::cva6_cfg_t CVA6Cfg = build_config_pkg::build_config(ma_cva6_config_pkg::cva6_cfg);
@@ -42,6 +43,8 @@ typedef logic [master.AXI_USER_WIDTH-1:0]   axi_user_t;
 `AXI_TYPEDEF_ALL(master_narrow_axi, axi_addr_t, axi_id_t, axi_narrow_data_t, axi_narrow_strb_t, axi_user_t)
 
 
+logic ndmreset_inv;
+
 master_narrow_axi_req_t  master_narrow_axi_req  ;
 master_narrow_axi_resp_t master_narrow_axi_resp ;
 
@@ -53,12 +56,12 @@ logic           dmi_resp_valid  ;
 logic           dmi_resp_ready  ;
 dm::dmi_resp_t  dmi_resp        ;
 
-logic                       dm_slave_req    ;
-logic                       dm_slave_we     ;
-logic       [XLEN - 1 : 0]  dm_slave_addr   ;
-logic   [XLEN / 8 - 1 : 0]  dm_slave_be     ;
-logic       [XLEN - 1 : 0]  dm_slave_wdata  ;
-logic       [XLEN - 1 : 0]  dm_slave_rdata  ;
+logic                               dm_slave_req    ;
+logic                               dm_slave_we     ;
+logic [`SOC_AXI_ADDR_WIDTH - 1 : 0] dm_slave_addr   ;
+logic            [XLEN / 8 - 1 : 0] dm_slave_be     ;
+logic                [XLEN - 1 : 0] dm_slave_wdata  ;
+logic                [XLEN - 1 : 0] dm_slave_rdata  ;
 
 logic                       dm_master_req       ;
 logic       [XLEN - 1 : 0]  dm_master_add       ;
@@ -90,18 +93,19 @@ AXI_BUS #(
 `AXI_ASSIGN_TO_RESP(master_narrow_axi_resp, master_debugger_axi)
 
 assign axi_adapter_size = (CVA6Cfg.XLEN == 64) ? 2'b11 : 2'b10;
+assign ndmreset = ~ndmreset_inv;
 
 
 dmi_jtag #(
     .IdcodeValue    ( 32'hDEADBEEF  )
-) (
+) i_dmi_jtag (
     .clk_i              ( clk               ),  
     .rst_ni             ( rst_n             ),
     .testmode_i         ( 1'b0              ),
     .dmi_rst_no         ( dmi_rst_n         ),
     .dmi_req_o          ( dmi_req           ),
-    .dmi_req_valid_o    ( dmi_req_ready     ),
-    .dmi_req_ready_i    ( dmi_req_valid     ),
+    .dmi_req_valid_o    ( dmi_req_valid     ),
+    .dmi_req_ready_i    ( dmi_req_ready     ),
     .dmi_resp_i         ( dmi_resp          ),
     .dmi_resp_ready_o   ( dmi_resp_ready    ),
     .dmi_resp_valid_i   ( dmi_resp_valid    ),
@@ -114,51 +118,54 @@ dmi_jtag #(
 );
 
 dm_top #(
-    .BusWidth   ( XLEN  )
+    .BusWidth           ( XLEN  ),
+    .NrHarts            ( 1     ),
+    .SelectableHarts    ( 1     )
 ) i_dm_top (
-    .clk_i                  ( clk               ),
-    .rst_ni                 ( rst_n             ),
-    .next_dm_addr_i         ( 'd0               ),
-    .testmode_i             ( 'd0               ),
-    .ndmreset_o             ( ~ndmreset         ), // non-debug module reset
-    .ndmreset_ack_i         ( 1'b1              ), // non-debug module reset acknowledgement pulse
-    .dmactive_o             ( /*NOT CONNECTED*/ ), // debug module is active
-    .debug_req_o            ( debug_req         ), // async debug request
-    .unavailable_i          ( 'd0               ),
-    .hartinfo_i             ( {info}            ),
+    .clk_i                  ( clk                           ),
+    .rst_ni                 ( rst_n                         ),
+    .next_dm_addr_i         ( 'd0                           ),
+    .testmode_i             ( 1'b0                          ),
+    .ndmreset_o             ( ndmreset_inv                  ), // non-debug module reset
+    .ndmreset_ack_i         ( 1'b1                          ), // non-debug module reset acknowledgement pulse
+    .dmactive_o             ( /*NOT CONNECTED*/             ), // debug module is active
+    .debug_req_o            ( debug_req                     ), // async debug request
+    .unavailable_i          ( 1'b0                          ),
+    .hartinfo_i             ( info                          ),
 
-    .slave_req_i            ( dm_slave_req      ),
-    .slave_we_i             ( dm_slave_we       ),
-    .slave_addr_i           ( dm_slave_addr     ),
-    .slave_be_i             ( dm_slave_be       ),
-    .slave_wdata_i          ( dm_slave_wdata    ),
-    .slave_rdata_o          ( dm_slave_rdata    ),
+    .slave_req_i            ( dm_slave_req                  ),
+    .slave_we_i             ( dm_slave_we                   ),
+    .slave_addr_i           ( dm_slave_addr[XLEN - 1 : 0]   ),
+    .slave_be_i             ( dm_slave_be                   ),
+    .slave_wdata_i          ( dm_slave_wdata                ),
+    .slave_rdata_o          ( dm_slave_rdata                ),
 
-    .master_req_o           ( dm_master_req     ),
-    .master_add_o           ( dm_master_add     ),
-    .master_we_o            ( dm_master_we      ),
-    .master_wdata_o         ( dm_master_wdata   ),
-    .master_be_o            ( dm_master_be      ),
-    .master_gnt_i           ( dm_master_gnt     ),
-    .master_r_valid_i       ( dm_master_r_valid ),
-    .master_r_rdata_i       ( dm_master_r_rdata ),
-    .master_r_err_i         ( 'd0               ),
-    .master_r_other_err_i   ( 'd0               ),
+    .master_req_o           ( dm_master_req                 ),
+    .master_add_o           ( dm_master_add                 ),
+    .master_we_o            ( dm_master_we                  ),
+    .master_wdata_o         ( dm_master_wdata               ),
+    .master_be_o            ( dm_master_be                  ),
+    .master_gnt_i           ( dm_master_gnt                 ),
+    .master_r_valid_i       ( dm_master_r_valid             ),
+    .master_r_rdata_i       ( dm_master_r_rdata             ),
+    .master_r_err_i         ( 1'b0                          ),
+    .master_r_other_err_i   ( 1'b0                          ),
 
-    .dmi_rst_ni             ( dmi_rst_n         ),
-    .dmi_req_valid_i        ( dmi_req_valid     ),
-    .dmi_req_ready_o        ( dmi_req_ready     ),
-    .dmi_req_i              ( dmi_req           ),
-    .dmi_resp_valid_o       ( dmi_resp_valid    ),
-    .dmi_resp_ready_i       ( dmi_resp_ready    ),
-    .dmi_resp_o             ( dmi_resp          )
+    .dmi_rst_ni             ( dmi_rst_n                     ),
+    .dmi_req_valid_i        ( dmi_req_valid                 ),
+    .dmi_req_ready_o        ( dmi_req_ready                 ),
+    .dmi_req_i              ( dmi_req                       ),
+    .dmi_resp_valid_o       ( dmi_resp_valid                ),
+    .dmi_resp_ready_i       ( dmi_resp_ready                ),
+    .dmi_resp_o             ( dmi_resp                      )
 );
 
 axi_to_mem_intf #(
     .ADDR_WIDTH ( slave.AXI_ADDR_WIDTH  ),
     .DATA_WIDTH ( XLEN                  ),
     .ID_WIDTH   ( slave.AXI_ID_WIDTH    ),
-    .USER_WIDTH ( slave.AXI_USER_WIDTH  )
+    .USER_WIDTH ( slave.AXI_USER_WIDTH  ),
+    .NUM_BANKS  ( 1                     )
 ) i_slave_dm_axi_adapter (
     .clk_i          ( clk               ),
     .rst_ni         ( rst_n             ),
