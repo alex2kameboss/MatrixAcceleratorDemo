@@ -24,8 +24,6 @@ lib: dirs
 vsim_dpi: lib
 	vlog ${VSIM_OPT} -l ${LOG_PATH}/elf_dpi.log ${PROJ_ROOT}/src/tests/dpi/elfloader.cc -ccflags "-I${PROJ_ROOT}/src/ips/ariane/verif/core-v-verif/vendor/riscv/riscv-isa-sim/ -I${PROJ_ROOT}/src/ips/ariane/verif/core-v-verif/lib/dpi_dasm/ -lfesvr -lriscv -lyaml-cpp -W -std=gnu++17"
 	vlog ${VSIM_OPT} -l ${LOG_PATH}/remote_bitbang_dpi.log ${PROJ_ROOT}/src/ips/riscv-dbg/tb/remote_bitbang/sim_jtag.c ${PROJ_ROOT}/src/ips/riscv-dbg/tb/remote_bitbang/remote_bitbang.c -ccflags "-I${PROJ_ROOT}/src/ips/riscv-dbg/tb/remote_bitbang -lfesvr -lriscv -lyaml-cpp -W"
-	vlog ${VSIM_OPT} -dpiheader dpiheader.h src/tests/dpi/jtag/jtag_dpi.sv
-	vlog ${VSIM_OPT} -l ${LOG_PATH}/jtag_dpi.log src/tests/dpi/jtag/jtag_dpi.c
 
 vsim_build: lib vsim_dpi bender_vsim
 	cd ${SIM_DIR} ; vsim ${VSIM_OPT} -sv_lib ${PROJ_ROOT}/src/ips/riscv-dbg/tb/remote_bitbang/librbs -l ${LOG_PATH}/build.log -c -do "source ${SIM_DIR}/compile.tcl; exit"

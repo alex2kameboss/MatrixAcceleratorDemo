@@ -139,7 +139,7 @@ package ma_cva6_config_pkg;
       CachedRegionAddrBase: {`SOC_RAM_BASE},
       CachedRegionLength: {`SOC_RAM_LENGTH},
       MaxOutstandingStores: unsigned'(7),
-      DebugEn: bit'(0),
+      DebugEn: bit'(1),
       AxiBurstWriteEn: bit'(1),
       IcacheByteSize: unsigned'(CVA6ConfigIcacheByteSize),
       IcacheSetAssoc: unsigned'(CVA6ConfigIcacheSetAssoc),

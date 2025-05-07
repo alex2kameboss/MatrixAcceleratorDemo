@@ -21,10 +21,10 @@ module jtag_debugger (
 );
 
 localparam dm::hartinfo_t info = '{
-    zero1       :   'd0,
-    nscratch    :   2,
-    zero0       :   'd0,
-    dataaccess  :   'd1,
+    zero1       :   8'd0,
+    nscratch    :   4'h2,
+    zero0       :   3'd0,
+    dataaccess  :   1'd1,
     datasize    :   dm::DataCount,
     dataaddr    :   dm::DataAddr
 };
@@ -97,7 +97,7 @@ assign ndmreset = ~ndmreset_inv;
 
 
 dmi_jtag #(
-    .IdcodeValue    ( 32'hDEADBEEF  )
+    .IdcodeValue    ( 32'h249511C3  )
 ) i_dmi_jtag (
     .clk_i              ( clk               ),  
     .rst_ni             ( rst_n             ),
@@ -127,7 +127,7 @@ dm_top #(
     .next_dm_addr_i         ( 'd0                           ),
     .testmode_i             ( 1'b0                          ),
     .ndmreset_o             ( ndmreset_inv                  ), // non-debug module reset
-    .ndmreset_ack_i         ( 1'b1                          ), // non-debug module reset acknowledgement pulse
+    //.ndmreset_ack_i         ( 1'b1                          ), // non-debug module reset acknowledgement pulse
     .dmactive_o             ( /*NOT CONNECTED*/             ), // debug module is active
     .debug_req_o            ( debug_req                     ), // async debug request
     .unavailable_i          ( 1'b0                          ),
