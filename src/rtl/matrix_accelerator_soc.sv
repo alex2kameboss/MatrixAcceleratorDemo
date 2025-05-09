@@ -25,7 +25,7 @@ module matrix_accelerator_soc #(
 
 typedef enum int unsigned {
 `ifdef TARGET_JTAG
-    S_JATG          ,
+    S_JTAG          ,
 `endif
     RAM             ,
     UART            ,
@@ -90,7 +90,7 @@ typedef enum logic [`SOC_AXI_ADDR_WIDTH - 1 : 0] {
     RAM_BASE  = `SOC_RAM_BASE       ,
     UART_BASE = `SOC_UART_BASE      ,
     CTRL_BASE = `SOC_CTRL_REG_BASE  
-} soc_bus_start_e;
+} soc_bus_start_t;
 
 
 // Wires ----------------------------------------------------------------------
@@ -138,6 +138,7 @@ AXI_LITE #(
 logic [CTRL_LENGTH - 1 : 0][7 : 0] ctrl_out;
 wor [CTRL_LENGTH - 1 : 0][7 : 0] ctrl_in;
 
+
 // Combinatorial Logic --------------------------------------------------------
 `ifdef TARGET_JTAG
 assign internal_rst_n = rst_n & rst_n_req;
@@ -148,7 +149,7 @@ assign debug_req = 'd0;
 
 assign routing_rules = '{
 `ifdef TARGET_JTAG
-    '{idx: S_JATG , start_addr: 'd0      , end_addr: 'h1000                 },
+    '{idx: S_JTAG , start_addr: 'd0      , end_addr: 'h1000                 },
 `endif
     '{idx: RAM    , start_addr: RAM_BASE , end_addr: RAM_BASE + RAM_LENGTH  },
     '{idx: UART   , start_addr: UART_BASE, end_addr: UART_BASE + UART_LENGTH},
@@ -310,7 +311,7 @@ jtag_debugger i_debugger (
     .tdi        ( tdi           ),
     .tdo        ( tdo           ),
     .master     ( master[M_JTAG]),
-    .slave      ( slave[S_JATG] ),
+    .slave      ( slave[S_JTAG] ),
     .ndmreset   ( rst_n_req     ),
     .debug_req  ( debug_req     ) 
 );

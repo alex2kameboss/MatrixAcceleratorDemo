@@ -30,7 +30,7 @@ localparam dm::hartinfo_t info = '{
 };
 
 localparam config_pkg::cva6_cfg_t CVA6Cfg = build_config_pkg::build_config(ma_cva6_config_pkg::cva6_cfg);
-localparam XLEN = CVA6Cfg.XLEN;
+localparam XLEN = 64;
 localparam AxiNarrowDataWidth = XLEN;
 localparam AxiNarrowStrbWidth = AxiNarrowDataWidth / 8;
 
@@ -57,6 +57,7 @@ logic           dmi_resp_ready  ;
 dm::dmi_resp_t  dmi_resp        ;
 
 logic                               dm_slave_req    ;
+logic                               dm_slave_rvalid ;
 logic                               dm_slave_we     ;
 logic [`SOC_AXI_ADDR_WIDTH - 1 : 0] dm_slave_addr   ;
 logic            [XLEN / 8 - 1 : 0] dm_slave_be     ;
@@ -94,6 +95,11 @@ AXI_BUS #(
 
 assign axi_adapter_size = (CVA6Cfg.XLEN == 64) ? 2'b11 : 2'b10;
 assign ndmreset = ~ndmreset_inv;
+
+
+always_ff @(posedge clk, negedge rst_n)
+    if ( ~rst_n )               dm_slave_rvalid <= 1'b0;        else
+                                dm_slave_rvalid <= dm_slave_req;
 
 
 dmi_jtag #(
@@ -176,7 +182,7 @@ axi_to_mem_intf #(
     .mem_wdata_o    ( dm_slave_wdata    ),
     .mem_strb_o     ( dm_slave_be       ),
     .mem_we_o       ( dm_slave_we       ),
-    .mem_rvalid_i   ( dm_slave_req      ),
+    .mem_rvalid_i   ( dm_slave_rvalid   ),
     .mem_rdata_i    ( dm_slave_rdata    ),
     .busy_o         ( /* Unused */      ),
     .mem_atop_o     ( /* Unused */      )
@@ -208,7 +214,7 @@ axi_adapter #(
     .type_i                ( ariane_pkg::SINGLE_REQ ),
     .amo_i                 ( ariane_pkg::AMO_NONE   ),
     .gnt_o                 ( dm_master_gnt          ),
-    .addr_i                ( dm_master_add          ),
+    .addr_i                ( dm_master_add[31 : 0]  ),
     .we_i                  ( dm_master_we           ),
     .wdata_i               ( dm_master_wdata        ),
     .be_i                  ( dm_master_be           ),
