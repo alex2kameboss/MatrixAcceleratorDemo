@@ -29,8 +29,8 @@ localparam dm::hartinfo_t info = '{
     dataaddr    :   dm::DataAddr
 };
 
-localparam config_pkg::cva6_cfg_t CVA6Cfg = build_config_pkg::build_config(ma_cva6_config_pkg::cva6_cfg);
-localparam XLEN = 64;
+localparam config_pkg::cva6_cfg_t CVA6Cfg = build_config_pkg::build_config(ma_debug_cva6_config_pkg::cva6_cfg);
+localparam XLEN = CVA6Cfg.XLEN;
 localparam AxiNarrowDataWidth = XLEN;
 localparam AxiNarrowStrbWidth = AxiNarrowDataWidth / 8;
 

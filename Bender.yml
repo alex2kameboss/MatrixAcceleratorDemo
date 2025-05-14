@@ -36,6 +36,7 @@ sources:
 
     - target: any(vivado, jtag)
       files:
+        - src/packages/ma_cv32a6_imac_debug_config_pkg.sv
         - src/rtl/jtag_debugger.sv
 
     - target: vivado
