@@ -196,11 +196,11 @@ axi_xbar_intf #(
 // memory
 ram_wrapper i_ram (
 `ifdef TARGET_VIVADO
-    .hbm_clk( clk_hbm       ),
+    .hbm_clk( clk_hbm   ),
 `endif
-    .clk    ( clk           ),
-    .rst_n  ( internal_rst_n),
-    .axi    ( slave[RAM]    )   
+    .clk    ( clk       ),
+    .rst_n  ( rst_n     ),
+    .axi    ( slave[RAM])   
 );
 
 // uart
