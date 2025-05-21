@@ -87,7 +87,7 @@ synth_ip [get_ips]
 # synthesis
 update_compile_order -fileset sources_1
 synth_design
-launch_runs synth_1 -jobs 16
+launch_runs synth_1 -jobs $THREADS
 wait_on_run synth_1
 open_run synth_1
 
