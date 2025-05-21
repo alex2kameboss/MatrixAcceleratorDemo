@@ -1,3 +1,5 @@
 src/ips/
 .bender/
-runs/sim/
+runs/
+toolchain/install/
+toolchain/openocd/

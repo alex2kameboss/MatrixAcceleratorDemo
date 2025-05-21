@@ -1,10 +1,25 @@
-default: vsim_cli
+default: sim hello_dummy_build
 
-bender:
-	bender script -t cv32a6_imac_sv0 vsim > runs/sim/compile.tcl
+PROJ_ROOT = $(PWD)
 
-vsim_gui: bender
-	cd runs/sim ; vsim -do "vlib work; source compile.tcl"
+include toolchain/toolchain.mk
+include src/rtl.mk
+include apps/apps.mk
 
-vsim_cli: bender
-	cd runs/sim ; vsim -c -do "vlib work; source compile.tcl"
+VSIM_CMD = vsim soc_tb +PRELOAD=${APP_ELF} -voptargs=+acc
+
+clean:
+	rm -rf ${SIM_DIR}/* ${BUILD_DIR}
+
+git_submodules:
+	git submodule init 
+	git submodule update
+
+vsim_gui: vsim_build
+	cd ${SIM_DIR} ; vsim -l ${LOG_PATH}/sim.log -do "${VSIM_CMD}"
+
+vsim_cli: vsim_build
+	cd ${SIM_DIR} ; vsim -c -l ${LOG_PATH}/sim.log -do "${VSIM_CMD}"
+
+sim: vsim_build
+	cd ${SIM_DIR} ; vsim -c -l ${LOG_PATH}/sim.log -do "${VSIM_CMD} ; run -a"

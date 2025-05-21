@@ -4,10 +4,12 @@ package:
     - "Alexandru Puscasu <alexandru.puscasu@imt.ro>"
 
 dependencies:
-    matrix_accelerator: { git: "https://github.com/alex2kameboss/MatrixAccelerator.git",  version: 1.0.0  }
-    cva6:               { git: "https://github.com/openhwgroup/cva6.git",                 version: 5.3.0  }
-
-
+    matrix_accelerator: { git: "https://github.com/alex2kameboss/MatrixAccelerator.git",  rev: demo       }
+    ariane:             { git: "https://github.com/openhwgroup/cva6.git",                 rev: master     }
+    axi:                { git: "https://github.com/pulp-platform/axi.git",                rev: master     }
+    cv_x_if:            { git: "https://github.com/alex2kameboss/core-v-xif-fix.git",     rev: demo       }
+    riscv-dbg:          { git: "https://github.com/pulp-platform/riscv-dbg.git",          rev: master     }
+  
 workspace:
   checkout_dir: "src/ips"
 
@@ -16,4 +18,38 @@ sources:
     - src/includes
   
   files:
+    - target: simulation
+      files:
+        - src/packages/ma_cv32a6_imac_sv0_config_pkg.sv
+        - src/tests/sim/uart_mock.sv
+        - src/tests/sim/ram_wrapper.sv
+
+    - target: all(sim_demo, not(jtag))
+      files:
+        - src/tests/sim/soc_tb.sv
+
+    - target: all(simulation, jtag)
+      files:
+        - src/tests/sim/jtag_dpi_test.sv
+        - src/tests/sim/soc_tb_jtag.sv
+        - src/ips/riscv-dbg/tb/SimJTAG.sv
+
+    - target: any(vivado, jtag)
+      files:
+        - src/packages/ma_cv32a6_imac_debug_config_pkg.sv
+        - src/rtl/jtag_debugger.sv
+
+    - target: vivado
+      files:
+        - src/packages/ma_cv32a6_imac_sv0_config_pkg_xilinx.sv
+        - src/tests/vivado/uart_mock.sv
+        - src/tests/vivado/ram_wrapper.sv
+        - src/tests/vivado/top.sv
+
+    - target: verilator
+      files:
+        - src/tests/verilator/soc_tb.sv
+
     - src/rtl/matrix_accelerator_subsystem.sv
+    - src/rtl/counter.sv
+    - src/rtl/matrix_accelerator_soc.sv
