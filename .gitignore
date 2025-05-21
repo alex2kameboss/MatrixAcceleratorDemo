@@ -2,3 +2,4 @@ src/ips/
 .bender/
 runs/
 toolchain/install/
+toolchain/openocd/

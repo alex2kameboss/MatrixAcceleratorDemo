@@ -7,6 +7,10 @@ RISCV_MIN_C_SOURCES = apps/common/crt0.S apps/common/printf.c apps/common/serial
 BUILD_DIR = ${PROJ_ROOT}/runs/build
 APP_ELF = ${BUILD_DIR}/app
 
+flash:
+	${RISCV}/bin/riscv32-unknown-elf-objcopy -O binary ${APP_ELF} ${APP_ELF}.bin
+	${RISCV}/bin/openocd -f apps/cfg/ma_sim_old.cfg -f apps/cfg/flash.tcl
+
 app_dump:
 	${RISCV}/bin/riscv32-unknown-elf-objdump -d ${APP_ELF} > ${BUILD_DIR}/dump.txt
 
