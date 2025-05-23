@@ -10,6 +10,7 @@ module matrix_accelerator_subsystem #(
     parameter PRF_LOG_M =   10  
 ) (
     input                                       clk         ,
+    input                                       clk_2x      ,
     input                                       rst_n       ,
     input logic [`CVA6_AXI_ADDR_WIDTH - 1 : 0]  boot_addr   ,
     input logic                                 debug_req   ,
@@ -151,6 +152,7 @@ matrix_accelerator #(
     .PRF_LOG_M          ( PRF_LOG_M             )
 ) i_matrix_accelerator (
     .clk             ( clk      ),
+    .clk_2x          ( clk_2x   ),
     .rst_n           ( rst_n    ),
     .instr_if        ( xif      ),
     .registers_if    ( xif      ),

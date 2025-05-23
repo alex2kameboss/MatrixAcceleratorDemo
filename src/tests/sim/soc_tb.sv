@@ -11,7 +11,7 @@ import "DPI-C" context function byte read_section(input longint address, inout b
 
 module soc_tb ();
 
-localparam CLOCK_PERIOD  = 2ns;
+localparam CLOCK_PERIOD  = 4ns;
 localparam AXI_DATA_WIDTH   = `SOC_AXI_DATA_WIDTH;
 localparam AXI_ADDR_WIDTH   = `SOC_AXI_ADDR_WIDTH;
 localparam AXI_DATA_BYTE_WIDTH = AXI_DATA_WIDTH / 8;
@@ -26,23 +26,26 @@ typedef logic [AXI_ADDR_WIDTH-1:0] axi_addr_t;
 
 
 logic clk;
+logic clk_2x;
 logic rst_n;
 
 initial begin
+    clk_2x= 1'b0;
+    forever #(CLOCK_PERIOD/4) clk_2x = ~clk_2x;
+end
+
+initial begin
     clk   = 1'b0;
+    forever #(CLOCK_PERIOD/2) clk = ~clk;
+end
+
+initial begin
     rst_n = 1'b0;
     // Synch reset for TB memories
-    repeat (10) #(CLOCK_PERIOD/2) clk = ~clk;
-    clk = 1'b0;
-
-    // Asynch reset for main system
-    repeat (5) #(CLOCK_PERIOD);
-    rst_n = 1'b1;
-    repeat (5) #(CLOCK_PERIOD);
+    repeat (5) #CLOCK_PERIOD;
+    #(CLOCK_PERIOD / 2) rst_n = 1'b1;
     $display("LOG_P: %d, LOG_Q: %d", `PRF_LOG_P, `PRF_LOG_Q);
     $display("-------- STDOUT --------");
-    // Start the clock
-    forever #(CLOCK_PERIOD/2) clk = ~clk;
 end
 
 initial begin : dram_init
@@ -98,6 +101,7 @@ matrix_accelerator_soc #(
     .PRF_LOG_Q  ( `PRF_LOG_Q)
 ) i_dut (
     .clk    ( clk   ),
+    .clk_2x ( clk_2x),
     .rst_n  ( rst_n ),
     .tx     (       ),
     .rx     ( 1'b1  )

@@ -39,13 +39,13 @@ set_property board_part xilinx.com:vcu128:part0:1.0 [current_project]
 
 source ${PATH}/vivado.tcl
 puts [get_property verilog_define [current_fileset]]
-set_property verilog_define [lappend {*}[get_property verilog_define [current_fileset]] "PRF_LOG_P=${PRF_LOG_P}"] [current_fileset]
+set_property verilog_define [concat [get_property verilog_define [current_fileset]] "PRF_LOG_P=${PRF_LOG_P}"] [current_fileset]
 puts [get_property verilog_define [current_fileset]]
-set_property verilog_define [lappend {*}[get_property verilog_define [current_fileset]] "PRF_LOG_Q=${PRF_LOG_Q}"] [current_fileset]
+set_property verilog_define [concat [get_property verilog_define [current_fileset]] "PRF_LOG_Q=${PRF_LOG_Q}"] [current_fileset]
 puts [get_property verilog_define [current_fileset]]
 
 if { ${USE_URAM} } {
-    set_property verilog_define [lappend {*}[get_property verilog_define [current_fileset]] USE_ULTRA_RAM] [current_fileset]
+    set_property verilog_define [concat [get_property verilog_define [current_fileset]] USE_ULTRA_RAM] [current_fileset]
     puts [get_property verilog_define [current_fileset]]
 }
 

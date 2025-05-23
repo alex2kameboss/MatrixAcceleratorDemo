@@ -20,16 +20,13 @@ create_clock -period 8680 -name uart_tx_clk_virt
 set_output_delay -clock { uart_tx_clk_virt } 0 [get_ports tx]
 
 # jtag
-current_instance -quiet
-current_instance design_1_i/mdm_1/U0
-create_clock -period 33.333 [get_pins Use*.BSCAN*/*/INTERNAL_TCK]
-create_generated_clock -source [get_pins Use*.BSCAN*/*/INTERNAL_TCK] -divide_by 2 [get_pins Use*.BSCAN*/*/UPDATE]
-create_generated_clock -source [get_pins Use*.BSCAN*/*/INTERNAL_TCK] -divide_by 1 [get_pins Use*.BSCAN*/*/DRCK]
-create_generated_clock -source [get_pins Use*.BSCAN*/*/INTERNAL_TCK] -divide_by 1 [get_pins Use*.BSCAN*/*/TCK]
-create_generated_clock -source [get_pins Use*.BSCAN*/*/INTERNAL_TCK] -divide_by 2 [get_pins */*/*.BUFG_UPDATE/*/O]
-set_clock_groups -asynchronous -group [get_clocks -of_objects [get_pins Use*.BSCAN*/*/INTERNAL_TCK]]
-set_clock_groups -asynchronous -group [get_clocks -of_objects [get_pins Use*.BSCAN*/*/UPDATE]]
-set_clock_groups -asynchronous -group [get_clocks -of_objects [get_pins Use*.BSCAN*/*/DRCK]]
-set_clock_groups -asynchronous -group [get_clocks -of_objects [get_pins Use*.BSCAN*/*/TCK]]
-set_clock_groups -asynchronous -group [get_clocks -quiet -of_objects [get_pins */*/*.BUFG_UPDATE/*/O]]
-set_input_delay -clock [get_clocks -of_objects [get_pins Use*.BSCAN*/*/DRCK]] 1.000 [get_pins Use*.BSCAN*/*/INTERNAL_TDI]
+create_clock -period 100.000 -name tck -waveform {0.000 50.000} [get_ports tck]
+set_input_jitter tck 1.000
+
+set_input_delay  -clock tck -clock_fall 5 [get_ports tdi    ]
+set_input_delay  -clock tck -clock_fall 5 [get_ports tms    ]
+set_output_delay -clock tck             5 [get_ports tdo    ]
+set_false_path   -from                    [get_ports trstn  ] 
+
+# i_mem multi clock cycle
+set_multicycle_path -from [get_clocks clk_out200_pll] -to [get_clocks clk_out100_pll] 2
