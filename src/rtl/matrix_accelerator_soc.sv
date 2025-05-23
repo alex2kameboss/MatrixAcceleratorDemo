@@ -6,6 +6,7 @@ module matrix_accelerator_soc (
     input           hbm_clk ,
 `endif
     input           clk     ,
+    input           clk_2x  ,
     input           rst_n   ,
 `ifdef TARGET_JTAG
     input           tck     ,
@@ -162,6 +163,7 @@ matrix_accelerator_subsystem #(
     .PRF_LOG_M  ( PRF_LOG_M )
 ) i_core (
     .clk        ( clk           ),
+    .clk_2x     ( clk_2x        ),
     .rst_n      ( internal_rst_n),
     .boot_addr  ( RAM_BASE      ),
     .debug_req  ( debug_req     ),

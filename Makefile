@@ -6,7 +6,7 @@ include toolchain/toolchain.mk
 include src/rtl.mk
 include apps/apps.mk
 
-VSIM_CMD = vsim soc_tb +PRELOAD=${APP_ELF} -voptargs=+acc
+VSIM_CMD = vsim soc_tb +PRELOAD=${APP_ELF} -voptargs=+acc -suppress vsim-8315
 
 clean:
 	rm -rf ${SIM_DIR}/* ${BUILD_DIR}
