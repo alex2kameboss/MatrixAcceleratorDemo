@@ -353,7 +353,7 @@ hbm_ram i_hbm (
     .AXI_00_ARLEN       ( slave[0].ar_len[3 : 0]    ),  // input wire [3 : 0] AXI_00_ARLEN
     .AXI_00_ARSIZE      ( slave[0].ar_size          ),  // input wire [2 : 0] AXI_00_ARSIZE
     .AXI_00_ARVALID     ( slave[0].ar_valid         ),  // input wire AXI_00_ARVALID
-    .AXI_00_AWADDR      ( slave[0].aw_addr          ),  // input wire [32 : 0] AXI_00_AWADDR
+    .AXI_00_AWADDR      ( slave[0].aw_addr[32:0]    ),  // input wire [32 : 0] AXI_00_AWADDR
     .AXI_00_AWBURST     ( slave[0].aw_burst         ),  // input wire [1 : 0] AXI_00_AWBURST
     .AXI_00_AWID        ( slave[0].aw_id            ),  // input wire [5 : 0] AXI_00_AWID
     .AXI_00_AWLEN       ( slave[0].aw_len[3 : 0]    ),  // input wire [3 : 0] AXI_00_AWLEN
@@ -375,7 +375,7 @@ hbm_ram i_hbm (
     .AXI_01_ARLEN       ( slave[1].ar_len[3 : 0]    ),  // input wire [3 : 0] AXI_01_ARLEN
     .AXI_01_ARSIZE      ( slave[1].ar_size          ),  // input wire [2 : 0] AXI_01_ARSIZE
     .AXI_01_ARVALID     ( slave[1].ar_valid         ),  // input wire AXI_01_ARVALID
-    .AXI_01_AWADDR      ( slave[1].aw_addr          ),  // input wire [32 : 0] AXI_01_AWADDR
+    .AXI_01_AWADDR      ( slave[1].aw_addr[32:0]    ),  // input wire [32 : 0] AXI_01_AWADDR
     .AXI_01_AWBURST     ( slave[1].aw_burst         ),  // input wire [1 : 0] AXI_01_AWBURST
     .AXI_01_AWID        ( slave[1].aw_id            ),  // input wire [5 : 0] AXI_01_AWID
     .AXI_01_AWLEN       ( slave[1].aw_len[3 : 0]    ),  // input wire [3 : 0] AXI_01_AWLEN
@@ -397,7 +397,7 @@ hbm_ram i_hbm (
     .AXI_02_ARLEN       ( slave[2].ar_len[3 : 0]    ),  // input wire [3 : 0] AXI_02_ARLEN
     .AXI_02_ARSIZE      ( slave[2].ar_size          ),  // input wire [2 : 0] AXI_02_ARSIZE
     .AXI_02_ARVALID     ( slave[2].ar_valid         ),  // input wire AXI_02_ARVALID
-    .AXI_02_AWADDR      ( slave[2].aw_addr          ),  // input wire [32 : 0] AXI_02_AWADDR
+    .AXI_02_AWADDR      ( slave[2].aw_addr[32:0]    ),  // input wire [32 : 0] AXI_02_AWADDR
     .AXI_02_AWBURST     ( slave[2].aw_burst         ),  // input wire [1 : 0] AXI_02_AWBURST
     .AXI_02_AWID        ( slave[2].aw_id            ),  // input wire [5 : 0] AXI_02_AWID
     .AXI_02_AWLEN       ( slave[2].aw_len[3 : 0]    ),  // input wire [3 : 0] AXI_02_AWLEN
@@ -419,7 +419,7 @@ hbm_ram i_hbm (
     .AXI_03_ARLEN       ( slave[3].ar_len[3 : 0]    ),  // input wire [3 : 0] AXI_03_ARLEN
     .AXI_03_ARSIZE      ( slave[3].ar_size          ),  // input wire [2 : 0] AXI_03_ARSIZE
     .AXI_03_ARVALID     ( slave[3].ar_valid         ),  // input wire AXI_03_ARVALID
-    .AXI_03_AWADDR      ( slave[3].aw_addr          ),  // input wire [32 : 0] AXI_03_AWADDR
+    .AXI_03_AWADDR      ( slave[3].aw_addr[32:0]    ),  // input wire [32 : 0] AXI_03_AWADDR
     .AXI_03_AWBURST     ( slave[3].aw_burst         ),  // input wire [1 : 0] AXI_03_AWBURST
     .AXI_03_AWID        ( slave[3].aw_id            ),  // input wire [5 : 0] AXI_03_AWID
     .AXI_03_AWLEN       ( slave[3].aw_len[3 : 0]    ),  // input wire [3 : 0] AXI_03_AWLEN
