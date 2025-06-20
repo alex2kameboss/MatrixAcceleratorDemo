@@ -54,10 +54,10 @@ packages:
     dependencies:
     - common_cells
   matrix_accelerator:
-    revision: null
+    revision: e46b2ee332a01a15afcae4fc556774cb12c04132
     version: null
     source:
-      Path: src/ips/matrix_accelerator
+      Git: https://github.com/alex2kameboss/MatrixAccelerator.git
     dependencies:
     - axi
     - common_cells
@@ -70,10 +70,10 @@ packages:
       Path: src/ips/poly_mem
     dependencies: []
   riscv-dbg:
-    revision: 618ee6e0e2610ef47e0dcc4df6748af3dffff731
+    revision: null
     version: null
     source:
-      Git: https://github.com/pulp-platform/riscv-dbg.git
+      Path: src/ips/riscv-dbg
     dependencies:
     - common_cells
     - tech_cells_generic
