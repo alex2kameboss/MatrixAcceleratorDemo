@@ -22,7 +22,7 @@ xilinx_uart i_real_uart (
     .s_axi_bresp    ( axi.b_resp        ),  // output wire [1 : 0] s_axi_bresp
     .s_axi_bvalid   ( axi.b_valid       ),  // output wire s_axi_bvalid
     .s_axi_bready   ( axi.b_ready       ),  // input wire s_axi_bready
-    .s_axi_araddr   ( axi.ar_addr       ),  // input wire [3 : 0] s_axi_araddr
+    .s_axi_araddr   ( axi.ar_addr[3 : 0]),  // input wire [3 : 0] s_axi_araddr
     .s_axi_arvalid  ( axi.ar_valid      ),  // input wire s_axi_arvalid
     .s_axi_arready  ( axi.ar_ready      ),  // output wire s_axi_arready
     .s_axi_rdata    ( axi.r_data        ),  // output wire [31 : 0] s_axi_rdata
