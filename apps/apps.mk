@@ -25,3 +25,6 @@ ma_ld_st_test_build:
 
 ma_test_build:
 	${RISCV_GCC} -Wpointer-sign ${RISCV_CFLAGS} ${RISCV_LD_FLAGS} ${RISCV_GCC_INCLUDES} -Iapps/matrix_accelerator/include ${RISCV_MIN_C_SOURCES} apps/matrix_accelerator/ma_test.c -o ${APP_ELF}
+
+clang_ma_test_build:
+	./toolchain/llvm/bin/clang -fuse-ld=lld -Wpointer-sign -lm -lgcc -march=rv32imacv_zvl32768b_zicsr -mabi=ilp32 -static -mcmodel=medany -Wall -fvisibility=hidden -nostartfiles -ffreestanding ${RISCV_LD_FLAGS} ${RISCV_GCC_INCLUDES} -Iapps/matrix_accelerator/include ${RISCV_MIN_C_SOURCES} apps/matrix_accelerator/ma_test.c -o ${APP_ELF}
