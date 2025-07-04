@@ -64,10 +64,10 @@ packages:
     - cv_x_if
     - poly_mem
   poly_mem:
-    revision: null
+    revision: e8f0646d18b68df40792a3c14dcd36bb67000fb3
     version: null
     source:
-      Path: src/ips/poly_mem
+      Git: https://gitlab.com/catalin.ciobanu/PolyMem_System_Verilog.git
     dependencies: []
   riscv-dbg:
     revision: null
