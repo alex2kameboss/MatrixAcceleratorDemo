@@ -122,6 +122,33 @@
         ); \
     })
 
+#define MA_VS_SLL(RID, S1ID, S2) ({ \
+        asm volatile \
+        ( \
+            "v2dsll.vs x" _STR(RID) ", x" _STR(S1ID) ", %[x]\n\t" \
+            : \
+            : [x] "r" (S2) \
+        ); \
+    })
+
+#define MA_VS_SRL(RID, S1ID, S2) ({ \
+        asm volatile \
+        ( \
+            "v2dsrl.vs x" _STR(RID) ", x" _STR(S1ID) ", %[x]\n\t" \
+            : \
+            : [x] "r" (S2) \
+        ); \
+    })
+
+#define MA_VS_SRA(RID, S1ID, S2) ({ \
+        asm volatile \
+        ( \
+            "v2dsra.vs x" _STR(RID) ", x" _STR(S1ID) ", %[x]\n\t" \
+            : \
+            : [x] "r" (S2) \
+        ); \
+    })
+
 #define MA_VS_MULT(RID, S1ID, S2) ({ \
         asm volatile \
         ( \
