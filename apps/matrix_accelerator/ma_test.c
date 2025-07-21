@@ -9,6 +9,10 @@
 #define SEED 0
 #endif
 
+#define N_LANES 8
+#define DATA_WIDTH 4
+#define BUS_WIDTH (N_LANES * DATA_WIDTH)
+
 int seed = SEED;
 
 int numberOfTests = 0;
@@ -24,9 +28,9 @@ INIT(int32_t)
     init_array_##DTYPE_I(a, n, m); \
     init_array_##DTYPE_I(b, p, n); \
     start_timer(); \
-    MA_DEFINE_##DTYPE_I(0, n, m); \
-    MA_DEFINE_##DTYPE_I(1, p, n); \
-    MA_DEFINE_##DTYPE_O(2, p, m); \
+    MA_DEFINE_##DTYPE_I(0, m, n); \
+    MA_DEFINE_##DTYPE_I(1, n, p); \
+    MA_DEFINE_##DTYPE_O(2, m, p); \
     MA_LOC_RECT(0, 0, 0); \
     MA_LOC_RECT(1, 0, MAX_HEIGHT/2); \
     MA_LOC_RECT(2, MAX_WIDTH/2, MAX_HEIGHT/2); \
@@ -48,6 +52,41 @@ INIT(int32_t)
     debug_##DTYPE_I(a, b, res_sw, res_hw, m, n, p); \
     return cmp_##DTYPE_O(res_hw, res_sw, m * p);
 
+#define CNV_TEST_BASE(DTYPE_I, DTYPE_O) \
+    int kernel_n = BUS_WIDTH / sizeof(DTYPE_I); \
+    DTYPE_I a[m * n], b[k_m * kernel_n]; \
+    int res_m = m - k_m + 1; \
+    int res_n = n - k_n + 1; \
+    DTYPE_O res_sw[m * n], res_hw[m * n]; \
+    init_array_##DTYPE_I(a, n, m); \
+    init_array_##DTYPE_I(b, kernel_n, k_m); \
+    start_timer(); \
+    MA_DEFINE_##DTYPE_I(0, m, n); \
+    MA_DEFINE_##DTYPE_I(1, k_m, kernel_n); \
+    MA_DEFINE_##DTYPE_O(2, res_m, res_n); \
+    MA_LOC_RECT(0, 0, 0); \
+    MA_LOC_RECT(1, 0, MAX_HEIGHT/2); \
+    MA_LOC_RECT(2, MAX_WIDTH/2, MAX_HEIGHT/2); \
+    MA_LOAD_REGISTER(0, a); \
+    MA_LOAD_REGISTER(1, b); \
+    MA_DEFINE_##DTYPE_I(1, k_m, k_n); \
+    MA_VV_CNV(2, 0, 1); \
+    MA_DEFINE_##DTYPE_I(2, m, n); \
+    MA_STORE_REGISTER(2, res_hw); \
+    stop_timer(); \
+    print_timer_value_dec(); \
+    clear_timer(); \
+    printf(","); \
+    start_timer(); \
+    cnv_##DTYPE_O(a, b, res_sw, m, n, k_m, k_n, kernel_n); \
+    stop_timer(); \
+    print_timer_value_dec(); \
+    clear_timer(); \
+    printf(","); \
+    FLUSH_D_CACHE(); \
+    debug_cnv_##DTYPE_I(a, b, res_sw, res_hw, m, n, k_m, k_n, kernel_n); \
+    return cmp_cnv_##DTYPE_O(res_hw, res_sw, res_m, res_n, n);
+
 #define ADD_TEST_BASE(DTYPE_I, DTYPE_O) TEST_BASE(DTYPE_I, DTYPE_O, MA_VV_ADD, add)
 #define SUB_TEST_BASE(DTYPE_I, DTYPE_O) TEST_BASE(DTYPE_I, DTYPE_O, MA_VV_SUB, sub)
 #define MULT_TEST_BASE(DTYPE_I, DTYPE_O) TEST_BASE(DTYPE_I, DTYPE_O, MA_VV_MULT, mult)
@@ -57,12 +96,16 @@ INIT(int32_t)
 #define SUB_TEST(DTYPE) bool sub_test_##DTYPE(int m, int n, int p) { SUB_TEST_BASE(DTYPE, DTYPE) }
 #define MULT_TEST(DTYPE) bool mult_test_##DTYPE(int m, int n, int p) { MULT_TEST_BASE(DTYPE, DTYPE) }
 #define SMULT_TEST(DTYPE) bool smult_test_##DTYPE(int m, int n, int p) { SMULT_TEST_BASE(DTYPE, DTYPE) }
+#define CNV_GENERIC_TEST(DTYPE) bool cnv_generic_test_##DTYPE(int m, int n, int k_m, int k_n) { CNV_TEST_BASE(DTYPE, DTYPE) }
+#define CNV_TEST(DTYPE) bool cnv_test_4x4_##DTYPE(int m, int n, int p) { return cnv_generic_test_##DTYPE(m, n, 4, 4); }
 
 #define GROUP_TEST(DTYPE) \
     ADD_TEST(DTYPE) \
     SUB_TEST(DTYPE) \
     MULT_TEST(DTYPE) \
-    SMULT_TEST(DTYPE) 
+    SMULT_TEST(DTYPE) \
+    CNV_GENERIC_TEST(DTYPE) \
+    CNV_TEST(DTYPE) 
 
 GROUP_TEST(int8_t)
 GROUP_TEST(int16_t)
@@ -85,6 +128,7 @@ int printResult(bool result) {
     RUN_TEST(Substraction, DTYPE, sub_test_##DTYPE, SIZE) \
     RUN_TEST(Multiplication, DTYPE, mult_test_##DTYPE, SIZE) \
     RUN_TEST(SMultiplication, DTYPE, smult_test_##DTYPE, SIZE) \
+    RUN_TEST(Convolution_4x4, DTYPE, cnv_test_4x4_##DTYPE, SIZE) \
 }
 
 #define RUN_TEST_GROUP_SIZE(SIZE) { \
