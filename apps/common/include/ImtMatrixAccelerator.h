@@ -7,57 +7,57 @@
     asm volatile("csrwi 0x7C1, 0"); \
     asm volatile("csrwi 0x7C1, 1");})
 
-#define MA_DEFINE_int8_t(ID, W, H) ({ \
+#define MA_DEFINE_int8_t(ID, H, W) ({ \
         asm volatile \
         ( \
             "v2ddef8 x" _STR(ID) " , %[x], %[y]\n\t" \
             : \
-            : [x] "r" (W), [y] "r" (H) \
+            : [x] "r" (H), [y] "r" (W) \
         ); \
     })
 
-#define MA_DEFINE_uint8_t(ID, W, H) ({ \
+#define MA_DEFINE_uint8_t(ID, H, W) ({ \
         asm volatile \
         ( \
             "v2ddefu8 x" _STR(ID) " , %[x], %[y]\n\t" \
             : \
-            : [x] "r" (W), [y] "r" (H) \
+            : [x] "r" (H), [y] "r" (W) \
         ); \
     })
 
-#define MA_DEFINE_int16_t(ID, W, H) ({ \
+#define MA_DEFINE_int16_t(ID, H, W) ({ \
         asm volatile \
         ( \
             "v2ddef16 x" _STR(ID) " , %[x], %[y]\n\t" \
             : \
-            : [x] "r" (W), [y] "r" (H) \
+            : [x] "r" (H), [y] "r" (W) \
         ); \
     })
 
-#define MA_DEFINE_uint16_t(ID, W, H) ({ \
+#define MA_DEFINE_uint16_t(ID, H, W) ({ \
         asm volatile \
         ( \
             "v2ddef16 x" _STR(ID) " , %[x], %[y]\n\t" \
             : \
-            : [x] "r" (W), [y] "r" (H) \
+            : [x] "r" (H), [y] "r" (W) \
         ); \
     })
 
-#define MA_DEFINE_int32_t(ID, W, H) ({ \
+#define MA_DEFINE_int32_t(ID, H, W) ({ \
         asm volatile \
         ( \
             "v2ddef32 x" _STR(ID) " , %[x], %[y]\n\t" \
             : \
-            : [x] "r" (W), [y] "r" (H) \
+            : [x] "r" (H), [y] "r" (W) \
         ); \
     })
 
-#define MA_DEFINE_uint32_t(ID, W, H) ({ \
+#define MA_DEFINE_uint32_t(ID, H, W) ({ \
         asm volatile \
         ( \
             "v2ddefu32 x" _STR(ID) " , %[x], %[y]\n\t" \
             : \
-            : [x] "r" (W), [y] "r" (H) \
+            : [x] "r" (H), [y] "r" (W) \
         ); \
     })
 
