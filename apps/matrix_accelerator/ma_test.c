@@ -144,10 +144,26 @@ int printResult(bool result) {
 int main() {
     printf("test,dtype,size,hw,sw,result,seed\n");
     
-    RUN_TEST_GROUP_SIZE(32)
-    //RUN_TEST_GROUP_SIZE(64)
-    //RUN_TEST_GROUP_SIZE(128)
-    //RUN_TEST_GROUP_SIZE(256)
+#ifdef TEST_16
+    RUN_TEST_GROUP_SIZE(16)
+#endif
+
+#ifdef TEST_32
+    RUN_TEST_GROUP_SIZE(32) 
+#endif
+
+#ifdef TEST_64
+    RUN_TEST_GROUP_SIZE(64) 
+#endif
+
+#ifdef TEST_128
+    RUN_TEST_GROUP_SIZE(128)
+#endif
+
+#ifdef TEST_256
+    RUN_TEST_GROUP_SIZE(256)
+#endif
+
 
     printf("%d/%d\n", passedTests, numberOfTests);
 }

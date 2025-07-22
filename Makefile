@@ -6,6 +6,7 @@ include toolchain/toolchain.mk
 include src/rtl.mk
 include apps/apps.mk
 
+LOG_FILE ?= sim.log
 VSIM_CMD = vsim soc_tb +PRELOAD=${APP_ELF} -suppress vsim-8315
 
 clean:
@@ -22,4 +23,4 @@ vsim_cli: vsim_build
 	cd ${SIM_DIR} ; vsim -c -l ${LOG_PATH}/sim.log -do "${VSIM_CMD} -voptargs=+acc"
 
 sim: vsim_build
-	cd ${SIM_DIR} ; vsim -c -l ${LOG_PATH}/sim.log -do "${VSIM_CMD} ; run -a"
+	cd ${SIM_DIR} ; vsim -c -l ${LOG_PATH}/${LOG_FILE} -do "${VSIM_CMD} ; run -a"
