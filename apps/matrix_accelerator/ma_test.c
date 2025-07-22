@@ -23,8 +23,10 @@ INIT(int16_t)
 INIT(int32_t)
 
 #define TEST_BASE(DTYPE_I, DTYPE_O, ACC, REF) \
-    DTYPE_I a[m * n], b[n * p]; \
-    DTYPE_O res_sw[m * p], res_hw[m * p]; \
+    DTYPE_I a[m * n] __attribute__((aligned(512))); \
+    DTYPE_I b[n * p] __attribute__((aligned(512))); \
+    DTYPE_O res_sw[m * p]; \
+    DTYPE_O res_hw[m * p] __attribute__((aligned(512))); \
     init_array_##DTYPE_I(a, n, m); \
     init_array_##DTYPE_I(b, p, n); \
     start_timer(); \
@@ -52,10 +54,12 @@ INIT(int32_t)
 
 #define CNV_TEST_BASE(DTYPE_I, DTYPE_O) \
     int kernel_n = BUS_WIDTH / sizeof(DTYPE_I); \
-    DTYPE_I a[m * n], b[k_m * kernel_n]; \
+    DTYPE_I a[m * n] __attribute__((aligned(512))); \
+    DTYPE_I b[k_m * kernel_n] __attribute__((aligned(512))); \
     int res_m = m - k_m + 1; \
     int res_n = n - k_n + 1; \
-    DTYPE_O res_sw[m * n], res_hw[m * n]; \
+    DTYPE_O res_sw[m * n]; \
+    DTYPE_O res_hw[m * n] __attribute__((aligned(512))); \
     init_array_##DTYPE_I(a, n, m); \
     init_array_##DTYPE_I(b, kernel_n, k_m); \
     start_timer(); \
@@ -69,7 +73,7 @@ INIT(int32_t)
     MA_LOAD_REGISTER(1, b); \
     MA_DEFINE_##DTYPE_I(1, k_m, k_n); \
     MA_VV_CNV(2, 0, 1); \
-    MA_DEFINE_##DTYPE_I(2, m, n); \
+    MA_DEFINE_##DTYPE_I(2, res_m, n); \
     MA_STORE_REGISTER(2, res_hw); \
     stop_timer(); \
     print_timer_value_dec(); \
@@ -83,7 +87,7 @@ INIT(int32_t)
     printf(","); \
     FLUSH_D_CACHE(); \
     debug_cnv_##DTYPE_I(a, b, res_sw, res_hw, m, n, k_m, k_n, kernel_n); \
-    return cmp_cnv_##DTYPE_O(res_hw, res_sw, res_m, res_n, n);
+    return cmp_cnv_##DTYPE_O(res_hw, res_sw, res_n, res_m, n);
 
 #define ADD_TEST_BASE(DTYPE_I, DTYPE_O) TEST_BASE(DTYPE_I, DTYPE_O, MA_VV_ADD, add)
 #define SUB_TEST_BASE(DTYPE_I, DTYPE_O) TEST_BASE(DTYPE_I, DTYPE_O, MA_VV_SUB, sub)
@@ -124,8 +128,8 @@ int printResult(bool result) {
 #define RUN_TEST_GROUP(DTYPE, SIZE) {\
     RUN_TEST(Addition, DTYPE, add_test_##DTYPE, SIZE) \
     RUN_TEST(Substraction, DTYPE, sub_test_##DTYPE, SIZE) \
-    RUN_TEST(Multiplication, DTYPE, mult_test_##DTYPE, SIZE) \
-    RUN_TEST(SMultiplication, DTYPE, smult_test_##DTYPE, SIZE) \
+    RUN_TEST(DotProduct, DTYPE, mult_test_##DTYPE, SIZE) \
+    RUN_TEST(CrossProduct, DTYPE, smult_test_##DTYPE, SIZE) \
     RUN_TEST(Convolution_4x4, DTYPE, cnv_test_4x4_##DTYPE, SIZE) \
 }
 
