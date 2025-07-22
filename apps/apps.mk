@@ -3,6 +3,7 @@ RISCV_CFLAGS = -lm -lgcc -march=rv32im_zicsr -mabi=ilp32 -static -mcmodel=medany
 RISCV_LD_FLAGS = -Tapps/common/link.ld
 RISCV_GCC_INCLUDES = -Iapps/common/include
 RISCV_MIN_C_SOURCES = apps/common/crt0.S apps/common/printf.c apps/common/serial.c
+GCC_ARGS ?= -DTEST_32
 
 BUILD_DIR = ${PROJ_ROOT}/runs/build
 APP_ELF = ${BUILD_DIR}/app
@@ -24,4 +25,4 @@ ma_ld_st_test_build:
 	${RISCV_GCC} ${RISCV_CFLAGS} ${RISCV_LD_FLAGS} ${RISCV_GCC_INCLUDES} ${RISCV_MIN_C_SOURCES} apps/matrix_accelerator/ld_st_test.c -o ${APP_ELF}
 
 ma_test_build:
-	${RISCV_GCC} -Wpointer-sign ${RISCV_CFLAGS} ${RISCV_LD_FLAGS} ${RISCV_GCC_INCLUDES} -Iapps/matrix_accelerator/include ${RISCV_MIN_C_SOURCES} apps/matrix_accelerator/ma_test.c -o ${APP_ELF}
+	${RISCV_GCC} ${GCC_ARGS} -Wpointer-sign ${RISCV_CFLAGS} ${RISCV_LD_FLAGS} ${RISCV_GCC_INCLUDES} -Iapps/matrix_accelerator/include ${RISCV_MIN_C_SOURCES} apps/matrix_accelerator/ma_test.c -o ${APP_ELF}
