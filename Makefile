@@ -6,7 +6,7 @@ include toolchain/toolchain.mk
 include src/rtl.mk
 include apps/apps.mk
 
-VSIM_CMD = vsim soc_tb +PRELOAD=${APP_ELF} -voptargs=+acc -suppress vsim-8315
+VSIM_CMD = vsim soc_tb +PRELOAD=${APP_ELF} -suppress vsim-8315
 
 clean:
 	rm -rf ${SIM_DIR}/* ${BUILD_DIR}
@@ -16,10 +16,10 @@ git_submodules:
 	git submodule update
 
 vsim_gui: vsim_build
-	cd ${SIM_DIR} ; vsim -l ${LOG_PATH}/sim.log -do "${VSIM_CMD}"
+	cd ${SIM_DIR} ; vsim -l ${LOG_PATH}/sim.log -do "${VSIM_CMD} -voptargs=+acc"
 
 vsim_cli: vsim_build
-	cd ${SIM_DIR} ; vsim -c -l ${LOG_PATH}/sim.log -do "${VSIM_CMD}"
+	cd ${SIM_DIR} ; vsim -c -l ${LOG_PATH}/sim.log -do "${VSIM_CMD} -voptargs=+acc"
 
 sim: vsim_build
 	cd ${SIM_DIR} ; vsim -c -l ${LOG_PATH}/sim.log -do "${VSIM_CMD} ; run -a"
