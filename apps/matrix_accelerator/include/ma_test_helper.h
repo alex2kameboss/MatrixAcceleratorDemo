@@ -63,12 +63,12 @@ void NAME##_##DTYPE(DTYPE *a, DTYPE *b, DTYPE *c, int m, int n, int p) { \
             printf("sw = \n"); \
             print_array_cnv_##DTYPE(res_sw, m - k_m + 1, n - k_n + 1, n); \
             printf("hw = \n"); \
-            print_array_cnv_##DTYPE(res_sw, m - k_m + 1, n - k_n + 1, n); \
+            print_array_cnv_##DTYPE(res_hw, m - k_m + 1, n - k_n + 1, n); \
         } \
     } \
     void cnv_##DTYPE(DTYPE *a, DTYPE *b, DTYPE *c, int m, int n, int k_m, int k_n, int kernel_n) { \
-        for (int i = 0; i + k_m < m; ++i) { \
-            for (int j = 0; j + k_n < n; ++j) { \
+        for (int i = 0; i < m - k_m + 1; ++i) { \
+            for (int j = 0; j < n - k_n + 1; ++j) { \
                 c[i * n + j] = 0; \
                 for ( int ii = 0; ii < k_m; ++ii ) \
                     for ( int jj = 0; jj < k_n; ++jj ) \
@@ -76,10 +76,10 @@ void NAME##_##DTYPE(DTYPE *a, DTYPE *b, DTYPE *c, int m, int n, int p) { \
             } \
         } \
     } \
-    bool cmp_cnv_##DTYPE(DTYPE* src1, DTYPE* src2, int m, int n, int hw_n) { \
-        for (int i = 0; i < m; ++i) \
-            for (int j = 0; j < n; ++j) \
-                if (src1[i * hw_n + j] != src2[i * hw_n + j]) \
+    bool cmp_cnv_##DTYPE(DTYPE* src1, DTYPE* src2, int w, int h, int hw_w) { \
+        for (int i = 0; i < h; ++i) \
+            for (int j = 0; j < w; ++j) \
+                if (src1[i * hw_w + j] != src2[i * hw_w + j]) \
                     return false; \
         return true; \
     } \
