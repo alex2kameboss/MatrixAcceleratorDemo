@@ -26,6 +26,17 @@ void debug_##DTYPE(DTYPE *a, DTYPE *b, DTYPE *res_sw, DTYPE *res_hw, int m, int 
         printf("hw = \n"); \
         print_array_##DTYPE(res_hw, p, m); \
     } \
+} \
+void debug_vs_##DTYPE(DTYPE *a, DTYPE b, DTYPE *res_sw, DTYPE *res_hw, int m, int n, int p) { \
+    if ( DEBUG_EN ) { \
+        printf("\na = \n"); \
+        print_array_##DTYPE(a, n, m); \
+        printf("b = %d\n", b); \
+        printf("sw = \n"); \
+        print_array_##DTYPE(res_sw, p, m); \
+        printf("hw = \n"); \
+        print_array_##DTYPE(res_hw, p, m); \
+    } \
 } 
 
 #define PRINT_ARRAY(DTYPE) \
@@ -37,11 +48,20 @@ void print_array_##DTYPE(DTYPE *ptr, int w, int h) { \
     } \
 } 
 
-#define SCALAR_OPERATION_FN(DTYPE, NAME, OP) \
+#define VECTOR_VECTOR_OPERATION_FN(DTYPE, NAME, OP) \
 void __attribute__((optimize("Ofast"))) NAME##_##DTYPE(DTYPE *a, DTYPE *b, DTYPE *c, int m, int n, int p) { \
     for (int i = 0; i < m; ++i) { \
         for (int j = 0; j < n; ++j) { \
             c[i * n + j] = a[i * n + j] OP b[i * n + j]; \
+        } \
+    } \
+} 
+
+#define VECTOR_SCALAR_OPERATION_FN(DTYPE, NAME, OP) \
+void __attribute__((optimize("Ofast"))) NAME##_##DTYPE(DTYPE *a, DTYPE b, DTYPE *c, int m, int n, int p) { \
+    for (int i = 0; i < m; ++i) { \
+        for (int j = 0; j < n; ++j) { \
+            c[i * n + j] = a[i * n + j] OP b; \
         } \
     } \
 } 
@@ -105,10 +125,12 @@ void __attribute__((optimize("Ofast"))) NAME##_##DTYPE(DTYPE *a, DTYPE *b, DTYPE
             } \
         } \
     } \
-    SCALAR_OPERATION_FN(DTYPE, add, +) \
-    SCALAR_OPERATION_FN(DTYPE, sub, -) \
-    SCALAR_OPERATION_FN(DTYPE, div, /) \
-    SCALAR_OPERATION_FN(DTYPE, smult, *) \
+    VECTOR_VECTOR_OPERATION_FN(DTYPE, add, +) \
+    VECTOR_VECTOR_OPERATION_FN(DTYPE, sub, -) \
+    VECTOR_VECTOR_OPERATION_FN(DTYPE, div, /) \
+    VECTOR_VECTOR_OPERATION_FN(DTYPE, smult, *) \
+    VECTOR_SCALAR_OPERATION_FN(DTYPE, sll, <<) \
+    VECTOR_SCALAR_OPERATION_FN(DTYPE, sra, >>) \
     PRINT_ARRAY(DTYPE) \
     DEBUG(DTYPE) \
     CONVOLUTION(DTYPE)
