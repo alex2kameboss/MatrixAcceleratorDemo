@@ -9,7 +9,10 @@
 #define SEED 0
 #endif
 
+#ifndef N_LANES
 #define N_LANES 8
+#endif
+
 #define DATA_WIDTH 4
 #define BUS_WIDTH (N_LANES * DATA_WIDTH)
 
