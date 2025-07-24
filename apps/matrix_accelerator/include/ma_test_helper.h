@@ -92,7 +92,7 @@ void __attribute__((optimize("Ofast"))) NAME##_##DTYPE(DTYPE *a, DTYPE b, DTYPE 
                 c[i * n + j] = 0; \
                 for ( int ii = 0; ii < k_m; ++ii ) \
                     for ( int jj = 0; jj < k_n; ++jj ) \
-                        c[i * n + j] += a[(i + ii) * m + j + jj] * b[ii * kernel_n + jj]; \
+                        c[i * n + j] += a[(i + ii) * n + j + jj] * b[ii * kernel_n + jj]; \
             } \
         } \
     } \
