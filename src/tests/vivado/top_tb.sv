@@ -65,6 +65,7 @@ SimJTAG #(
 top i_dut (
     .clk_in_p   ( clk   ),
     .clk_in_n   ( ~clk  ),
+    .hbm_clk    ( clk   ),
     .rst_n_in   ( rst_n ),
     .tx         ( tx    ),
     .rx         ( 1'b1  ),
