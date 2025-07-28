@@ -4,12 +4,13 @@
 package require cmdline
 
 set parameters {
-    {path.arg       "."     "Set path where to create vivado project, default current dir"}
-    {threads.arg    "16"    "Number of threads for synthesis, in range [1, 16]"}
-    {prfLogP.arg    "1"     "Polymorphic memory log P parameter"}
-    {prfLogQ.arg    "2"     "Polymorphic memory log Q parameter"}
-    {useUram                "Use URAM for polymorphic memory"}
-    {noGui                  "Do not open gui in the end, default off"}
+    {path.arg       "."         "Set path where to create vivado project, default current dir"}
+    {name.arg       "unknown"   "Set vivado project name"}
+    {threads.arg    "16"        "Number of threads for synthesis, in range [1, 16]"}
+    {prfLogP.arg    "1"         "Polymorphic memory log P parameter"}
+    {prfLogQ.arg    "2"         "Polymorphic memory log Q parameter"}
+    {useUram                    "Use URAM for polymorphic memory"}
+    {noGui                      "Do not open gui in the end, default off"}
 }
 set usage "- Script to simplify matrix accelerator design exploration"
 
@@ -23,21 +24,17 @@ if {[catch {array set options [::cmdline::getoptions ::argv $parameters $usage]}
 parray options
 
 # project parameters
-set PATH            $options(path)
+set PROJECT_NAME    $options(name)
+set PROJECT_PATH    $options(path)
 set THREADS         $options(threads)
 set PRF_LOG_P       $options(prfLogP)
 set PRF_LOG_Q       $options(prfLogQ)
 set USE_URAM        $options(useUram)
 
-set PROJECT_NAME "run_[clock format [clock seconds] -format {%d-%m-%Y-%H%M%S}]"
-set PROJECT_PATH "${PATH}/${PROJECT_NAME}"
-
-exec mkdir -p ${PROJECT_PATH}
-
 create_project ${PROJECT_NAME} ${PROJECT_PATH} -part xcvu37p-fsvh2892-2L-e
 set_property board_part xilinx.com:vcu128:part0:1.0 [current_project]
 
-source ${PATH}/vivado.tcl
+source ${PROJECT_PATH}/vivado.tcl
 puts [get_property verilog_define [current_fileset]]
 set_property verilog_define [concat [get_property verilog_define [current_fileset]] "PRF_LOG_P=${PRF_LOG_P}"] [current_fileset]
 puts [get_property verilog_define [current_fileset]]
@@ -86,16 +83,52 @@ synth_ip [get_ips]
 
 # synthesis
 update_compile_order -fileset sources_1
-synth_design
 launch_runs synth_1 -jobs $THREADS
 wait_on_run synth_1
 open_run synth_1
 
-exec mkdir -p ${PROJECT_PATH}/reports/
-report_utilization -hierarchical                                                                                    -file ${PROJECT_PATH}/reports/utilization.rpt
-check_timing -verbose                                                                                               -file ${PROJECT_PATH}/reports/check_timing.rpt
-report_timing_summary -delay_type max -max_paths 1                                                                  -file ${PROJECT_PATH}/reports/top_timing.rpt
-report_timing_summary -delay_type max -max_paths 1 -cells [get_cells i_soc/i_core/i_matrix_accelerator/i_memory]    -file ${PROJECT_PATH}/reports/poly_mem_timing.rpt
-report_timing_summary -delay_type max -max_paths 1 -cells [get_cells i_soc/i_core/i_matrix_accelerator]             -file ${PROJECT_PATH}/reports/matrix_acc_timing.rpt
+set REPORTS_DIR             ${PROJECT_PATH}/reports
+set SYNTHESIS_REPORTS_DIR   ${REPORTS_DIR}/synthesis/
+
+exec mkdir -p ${SYNTHESIS_REPORTS_DIR}
+report_utilization -hierarchical                                                                                    -file ${SYNTHESIS_REPORTS_DIR}/utilization.rpt
+check_timing -verbose                                                                                               -file ${SYNTHESIS_REPORTS_DIR}/check_timing.rpt
+report_timing_summary -delay_type max -max_paths 1                                                                  -file ${SYNTHESIS_REPORTS_DIR}/top_timing.rpt
+report_timing_summary -delay_type max -max_paths 1 -cells [get_cells i_soc/i_core/i_matrix_accelerator/i_memory]    -file ${SYNTHESIS_REPORTS_DIR}/poly_mem_timing.rpt
+report_timing_summary -delay_type max -max_paths 1 -cells [get_cells i_soc/i_core/i_matrix_accelerator]             -file ${SYNTHESIS_REPORTS_DIR}/matrix_acc_timing.rpt
+report_ram_utilization -csv ${SYNTHESIS_REPORTS_DIR}/ram_util.csv                                                   -file ${SYNTHESIS_REPORTS_DIR}/ram_util.rpt
+
+write_checkpoint ${PROJECT_PATH}/synth -force
+
+puts "-----START OPTIMIZING DESIGN-----"
+opt_design -verbose -debug_log
+
+set OPT_REPORTS_DIR   ${REPORTS_DIR}/opt_design/
+
+exec mkdir -p ${OPT_REPORTS_DIR}
+report_utilization -hierarchical                                                                                    -file ${OPT_REPORTS_DIR}/utilization.rpt
+check_timing -verbose                                                                                               -file ${OPT_REPORTS_DIR}/check_timing.rpt
+report_timing_summary -delay_type max -max_paths 1                                                                  -file ${OPT_REPORTS_DIR}/top_timing.rpt
+report_timing_summary -delay_type max -max_paths 1 -cells [get_cells i_soc/i_core/i_matrix_accelerator/i_memory]    -file ${OPT_REPORTS_DIR}/poly_mem_timing.rpt
+report_timing_summary -delay_type max -max_paths 1 -cells [get_cells i_soc/i_core/i_matrix_accelerator]             -file ${OPT_REPORTS_DIR}/matrix_acc_timing.rpt
+report_ram_utilization -csv ${OPT_REPORTS_DIR}/ram_util.csv                                                         -file ${OPT_REPORTS_DIR}/ram_util.rpt
+
+write_checkpoint ${PROJECT_PATH}/opt -force
+
+launch_runs impl_1 -jobs $THREADS
+wait_on_run impl_1
+open_run impl_1
+
+set IMPL_REPORTS_DIR   ${REPORTS_DIR}/implementation/
+
+exec mkdir -p ${IMPL_REPORTS_DIR}
+report_utilization -hierarchical                                                                                    -file ${IMPL_REPORTS_DIR}/utilization.rpt
+check_timing -verbose                                                                                               -file ${IMPL_REPORTS_DIR}/check_timing.rpt
+report_timing_summary -delay_type max -max_paths 1                                                                  -file ${IMPL_REPORTS_DIR}/top_timing.rpt
+report_timing_summary -delay_type max -max_paths 1 -cells [get_cells i_soc/i_core/i_matrix_accelerator/i_memory]    -file ${IMPL_REPORTS_DIR}/poly_mem_timing.rpt
+report_timing_summary -delay_type max -max_paths 1 -cells [get_cells i_soc/i_core/i_matrix_accelerator]             -file ${IMPL_REPORTS_DIR}/matrix_acc_timing.rpt
+report_ram_utilization -csv ${IMPL_REPORTS_DIR}/ram_util.csv                                                        -file ${IMPL_REPORTS_DIR}/ram_util.rpt
+
+write_checkpoint ${PROJECT_PATH}/impl -force
 
 exit
