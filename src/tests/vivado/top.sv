@@ -1,5 +1,7 @@
 module top(
-    input   clk_in  ,
+    input   clk_in_p,
+    input   clk_in_n,
+    input   hbm_clk ,
     input   rst_n_in,
     output  tx      ,
     input   rx      ,
@@ -26,8 +28,11 @@ pll i_pll (
     .clk_out200 ( clk_2x    )
 );
 
-matrix_accelerator_soc i_soc (
-    .clk_hbm( clk_hbm   ),
+matrix_accelerator_soc # (
+    .PRF_LOG_P  ( `PRF_LOG_P),
+    .PRF_LOG_Q  ( `PRF_LOG_Q)
+) i_soc (
+    .clk_hbm( hbm_clk   ),
     .clk    ( clk       ),
     .clk_2x ( clk_2x    ),
     .rst_n  ( rst_n     ),
