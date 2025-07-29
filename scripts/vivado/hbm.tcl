@@ -1,13 +1,18 @@
-create_ip -name hbm -vendor xilinx.com -library ip -version 1.0 -module_name hbm_ram
+set hbm_ram [create_ip -name hbm -vendor xilinx.com -library ip -module_name hbm_ram]
+
+# User Parameters
 set_property -dict [list \
   CONFIG.USER_APB_EN {false} \
   CONFIG.USER_AUTO_POPULATE {yes} \
-  CONFIG.USER_AXI_CLK_FREQ {400} \
+  CONFIG.USER_AXI_CLK_FREQ {450} \
+  CONFIG.USER_DEBUG_EN {FALSE} \
   CONFIG.USER_EXAMPLE_TG {SYNTHESIZABLE} \
-  CONFIG.USER_HBM_TCK_0 {800} \
+  CONFIG.USER_HBM_TCK_0 {900} \
   CONFIG.USER_MC0_BG_INTERLEAVE_EN {false} \
-  CONFIG.USER_MC0_DQ_PARITY_EN {true} \
-  CONFIG.USER_MC0_EN_DATA_MASK {true} \
+  CONFIG.USER_MC0_CA_PARITY_EN {false} \
+  CONFIG.USER_MC0_DQ_PARITY_EN {false} \
+  CONFIG.USER_MC0_ECC_BYPASS {true} \
+  CONFIG.USER_MC0_EN_DATA_MASK {false} \
   CONFIG.USER_MC0_MANUAL_ADDR_MAP_SEL {false} \
   CONFIG.USER_MC0_TEMP_CTRL_SELF_REF_INTVL {true} \
   CONFIG.USER_MC0_TRAFFIC_OPTION {Linear} \
@@ -20,5 +25,27 @@ set_property -dict [list \
   CONFIG.USER_SAXI_14 {false} \
   CONFIG.USER_SAXI_15 {false} \
   CONFIG.USER_SWITCH_ENABLE_00 {FALSE} \
-  CONFIG.USER_XSDB_INTF_EN {FALSE} \
+  CONFIG.USER_XSDB_INTF_EN {TRUE} \
 ] [get_ips hbm_ram]
+
+set riscv_loop [create_ip -name axi_memory_init -vendor xilinx.com -library ip -module_name riscv_loop]
+
+# User Parameters
+set_property -dict [list \
+  CONFIG.ADDR_SIZE {9} \
+  CONFIG.ADDR_WIDTH {30} \
+  CONFIG.ARUSER_WIDTH {4} \
+  CONFIG.AWUSER_WIDTH {4} \
+  CONFIG.BUSER_WIDTH {4} \
+  CONFIG.DATA_WIDTH {256} \
+  CONFIG.HAS_ACLKEN {0} \
+  CONFIG.HAS_CACHE {0} \
+  CONFIG.HAS_LOCK {0} \
+  CONFIG.HAS_PROT {0} \
+  CONFIG.HAS_QOS {0} \
+  CONFIG.HAS_REGION {0} \
+  CONFIG.ID_WIDTH {6} \
+  CONFIG.INIT_VALUE {0x0000006f0000006f0000006f0000006f0000006f0000006f0000006f0000006f} \
+  CONFIG.RUSER_WIDTH {4} \
+  CONFIG.WUSER_WIDTH {4} \
+] [get_ips riscv_loop]

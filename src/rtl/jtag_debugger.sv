@@ -102,7 +102,7 @@ always_ff @(posedge clk, negedge rst_n)
                                 dm_slave_rvalid <= dm_slave_req;
 
 
-dmi_jtag #(
+(* DONT_TOUCH = "yes" *) dmi_jtag #(
     .IdcodeValue    ( 32'h249511C3  )
 ) i_dmi_jtag (
     .clk_i              ( clk               ),  
@@ -123,7 +123,7 @@ dmi_jtag #(
     .tdo_oe_o           (                   ) 
 );
 
-dm_top #(
+(* DONT_TOUCH = "yes" *) dm_top #(
     .BusWidth           ( XLEN  ),
     .NrHarts            ( 1     ),
     .SelectableHarts    ( 1     )
