@@ -32,10 +32,10 @@ initial begin
     rst_n = 1'b1;
 end
 
-initial begin : wait_for_stop
-    wait(i_dut.i_soc.i_ctrl_regs.reg_q_o[0] == 'hFF);
-    $finish();
-end
+//initial begin : wait_for_stop
+//    wait(i_dut.i_soc.i_ctrl_regs.reg_q_o[0] == 'hFF);
+//    $finish();
+//end
 
 always_ff @(posedge clk)
     if ( uart_rcv ) $write("%c", uart_data);

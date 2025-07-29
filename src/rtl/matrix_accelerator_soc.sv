@@ -95,6 +95,7 @@ typedef enum logic [`SOC_AXI_ADDR_WIDTH - 1 : 0] {
 
 
 // Wires ----------------------------------------------------------------------
+logic init_done;
 logic internal_rst_n, rst_n_req;
 logic debug_req;
 
@@ -147,6 +148,10 @@ assign internal_rst_n = rst_n;
 assign debug_req = 'd0;
 `endif
 
+`ifndef TARGET_VIVADO
+assign init_done = 1'b1;
+`endif
+
 assign routing_rules = '{
 `ifdef TARGET_JTAG
     '{idx: S_JTAG , start_addr: 'd0      , end_addr: 'h1000                 },
@@ -169,13 +174,13 @@ matrix_accelerator_subsystem #(
     .PRF_LOG_N  ( PRF_LOG_N ),
     .PRF_LOG_M  ( PRF_LOG_M )
 ) i_core (
-    .clk        ( clk           ),
-    .clk_2x     ( clk_2x        ),
-    .rst_n      ( internal_rst_n),
-    .boot_addr  ( RAM_BASE      ),
-    .debug_req  ( debug_req     ),
-    .core_axi   ( master[CORE]  ),
-    .acc_axi    ( master[MA]    )
+    .clk        ( clk                           ),
+    .clk_2x     ( clk_2x                        ),
+    .rst_n      ( internal_rst_n & init_done    ),
+    .boot_addr  ( RAM_BASE                      ),
+    .debug_req  ( debug_req                     ),
+    .core_axi   ( master[CORE]                  ),
+    .acc_axi    ( master[MA]                    )
 );
 
 // axi interconnect
@@ -197,11 +202,12 @@ axi_xbar_intf #(
 // memory
 ram_wrapper i_ram (
 `ifdef TARGET_VIVADO
-    .hbm_clk( clk_hbm   ),
+    .hbm_clk        ( clk_hbm   ),
+    .init_complete  ( init_done ),
 `endif
-    .clk    ( clk       ),
-    .rst_n  ( rst_n     ),
-    .axi    ( slave[RAM])   
+    .clk            ( clk       ),
+    .rst_n          ( rst_n     ),
+    .axi            ( slave[RAM])   
 );
 
 // uart
