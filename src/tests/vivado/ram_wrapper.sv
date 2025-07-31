@@ -66,13 +66,6 @@ AXI_BUS #(
     .AXI_DATA_WIDTH ( AXI_DATA_WIDTH    ),
     .AXI_ID_WIDTH   ( axi.AXI_ID_WIDTH  ),
     .AXI_USER_WIDTH ( AXI_USER_WIDTH    )
-) axi_256_master [0:0] ();
-
-AXI_BUS #(
-    .AXI_ADDR_WIDTH ( AXI_ADDR_WIDTH    ),
-    .AXI_DATA_WIDTH ( AXI_DATA_WIDTH    ),
-    .AXI_ID_WIDTH   ( axi.AXI_ID_WIDTH  ),
-    .AXI_USER_WIDTH ( AXI_USER_WIDTH    )
 ) axi_256_slave [0:0] ();
 
 AXI_BUS #(
@@ -347,6 +340,15 @@ axi_vip_0 i_axi_vip (
     .m_axi_rvalid   (axi_256_slave[0].r_valid),    // input wire m_axi_rvalid
     .m_axi_rready   (axi_256_slave[0].r_ready)    // output wire m_axi_rready
 );
+
+`ifdef HBM
+
+AXI_BUS #(
+    .AXI_ADDR_WIDTH ( AXI_ADDR_WIDTH    ),
+    .AXI_DATA_WIDTH ( AXI_DATA_WIDTH    ),
+    .AXI_ID_WIDTH   ( axi.AXI_ID_WIDTH  ),
+    .AXI_USER_WIDTH ( AXI_USER_WIDTH    )
+) axi_256_master [0:0] ();
 
 rama_0 i_rama (
   .axi_aclk     ( clk                           ),  // input wire axi_aclk
