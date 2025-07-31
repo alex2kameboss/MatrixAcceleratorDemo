@@ -38,7 +38,12 @@ end
 //end
 
 always_ff @(posedge clk)
-    if ( uart_rcv ) $write("%c", uart_data);
+    if ( uart_rcv ) begin
+        if ( uart_data == 8'hff )
+            $finish();
+        else
+            $write("%c", uart_data);
+    end
 
 always_comb begin : jtag_exit_handler
     if (jtag_exit)
@@ -77,7 +82,7 @@ top i_dut (
 );
 
 uart_rx #(
-    .CLKS_PER_BIT ( 868 )
+    .CLKS_PER_BIT ( 862 )
 ) i_rx_decoder (
     .i_Clock    ( clk       ),
     .i_Rx_Serial( tx        ),
