@@ -48,4 +48,12 @@ always_ff @( posedge clk )
     if ( addr_valid & data_valid & addr == 'h04 )
         $write("%c", data);
 
+always_ff @( posedge clk, negedge rst_n )
+    if ( ~rst_n )       axi.r_valid <= 'd0;         else
+    if ( axi.ar_valid ) axi.r_valid <= 'd1;         else
+    if ( axi.r_valid )  axi.r_valid <= 'd0;
+
+assign axi.r_data = 'd4;
+assign axi.ar_ready = 1'b1;
+
 endmodule

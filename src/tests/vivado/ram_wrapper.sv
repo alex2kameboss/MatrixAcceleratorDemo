@@ -530,137 +530,137 @@ assign AXI_03_WDATA_PARITY = {{^(slave[3].w_data[255:248])},{^(slave[3].w_data[2
                               {^(slave[3].w_data[31:24])},  {^(slave[3].w_data[23:16])},  {^(slave[3].w_data[15:8])},   {^(slave[3].w_data[7:0])}};
 `else
 
-AXI_BUS #(
-    .AXI_ADDR_WIDTH ( 30                ),
-    .AXI_DATA_WIDTH ( AXI_DATA_WIDTH    ),
-    .AXI_ID_WIDTH   ( axi.AXI_ID_WIDTH  ),
-    .AXI_USER_WIDTH ( AXI_USER_WIDTH    )
-) axi_256_master [0:0] ();
-
-riscv_loop_bram i_loop_init (
-    .init_complete_in   ( 1'b1                          ),  // input wire init_complete_in
-    .init_complete_out  ( init_complete                 ),  // output wire init_complete_out
-    .aclk               ( clk                           ),  // input wire aclk
-    .aresetn            ( rst_n                         ),  // input wire aresetn
-// slave
-    .s_axi_awid         ( axi_256[0].aw_id    ),  // input wire [3 : 0] s_axi_awid
-    .s_axi_awaddr       ( axi_256[0].aw_addr  ),  // input wire [63 : 0] s_axi_awaddr
-    .s_axi_awlen        ( axi_256[0].aw_len   ),  // input wire [7 : 0] s_axi_awlen
-    .s_axi_awsize       ( axi_256[0].aw_size  ),  // input wire [2 : 0] s_axi_awsize
-    .s_axi_awburst      ( axi_256[0].aw_burst ),  // input wire [1 : 0] s_axi_awburst
-    .s_axi_awuser       ( axi_256[0].aw_user  ),  // input wire [4 : 0] s_axi_awuser
-    .s_axi_awvalid      ( axi_256[0].aw_valid ),  // input wire s_axi_awvalid
-    .s_axi_awready      ( axi_256[0].aw_ready ),  // output wire s_axi_awready
-    
-    .s_axi_wdata        ( axi_256[0].w_data   ),  // input wire [255 : 0] s_axi_wdata
-    .s_axi_wstrb        ( axi_256[0].w_strb   ),  // input wire [31 : 0] s_axi_wstrb
-    .s_axi_wlast        ( axi_256[0].w_last   ),  // input wire s_axi_wlast
-    .s_axi_wuser        ( axi_256[0].w_user   ),  // input wire [4 : 0] s_axi_wuser
-    .s_axi_wvalid       ( axi_256[0].w_valid  ),  // input wire s_axi_wvalid
-    .s_axi_wready       ( axi_256[0].w_ready  ),  // output wire s_axi_wready
-    
-    .s_axi_bid          ( axi_256[0].b_id     ),  // output wire [3 : 0] s_axi_bid
-    .s_axi_bresp        ( axi_256[0].b_resp   ),  // output wire [1 : 0] s_axi_bresp
-    .s_axi_buser        ( axi_256[0].b_user   ),  // output wire [4 : 0] s_axi_buser
-    .s_axi_bvalid       ( axi_256[0].b_valid  ),  // output wire s_axi_bvalid
-    .s_axi_bready       ( axi_256[0].b_ready  ),  // input wire s_axi_bready
-    
-    .s_axi_arid         ( axi_256[0].ar_id    ),  // input wire [3 : 0] s_axi_arid
-    .s_axi_araddr       ( axi_256[0].ar_addr  ),  // input wire [63 : 0] s_axi_araddr
-    .s_axi_arlen        ( axi_256[0].ar_len   ),  // input wire [7 : 0] s_axi_arlen
-    .s_axi_arsize       ( axi_256[0].ar_size  ),  // input wire [2 : 0] s_axi_arsize
-    .s_axi_arburst      ( axi_256[0].ar_burst ),  // input wire [1 : 0] s_axi_arburst
-    .s_axi_aruser       ( axi_256[0].ar_user  ),  // input wire [4 : 0] s_axi_aruser
-    .s_axi_arvalid      ( axi_256[0].ar_valid ),  // input wire s_axi_arvalid
-    .s_axi_arready      ( axi_256[0].ar_ready ),  // output wire s_axi_arready
-
-    .s_axi_rid          ( axi_256[0].r_id     ),  // output wire [3 : 0] s_axi_rid
-    .s_axi_rdata        ( axi_256[0].r_data   ),  // output wire [255 : 0] s_axi_rdata
-    .s_axi_rresp        ( axi_256[0].r_resp   ),  // output wire [1 : 0] s_axi_rresp
-    .s_axi_rlast        ( axi_256[0].r_last   ),  // output wire s_axi_rlast
-    .s_axi_ruser        ( axi_256[0].r_user   ),  // output wire [4 : 0] s_axi_ruser
-    .s_axi_rvalid       ( axi_256[0].r_valid  ),  // output wire s_axi_rvalid
-    .s_axi_rready       ( axi_256[0].r_ready  ),  // input wire s_axi_rready
-// master
-    .m_axi_awid         ( axi_256_master[0].aw_id       ),  // output wire [3 : 0] m_axi_awid
-    .m_axi_awaddr       ( axi_256_master[0].aw_addr     ),  // output wire [63 : 0] m_axi_awaddr
-    .m_axi_awlen        ( axi_256_master[0].aw_len      ),  // output wire [7 : 0] m_axi_awlen
-    .m_axi_awsize       ( axi_256_master[0].aw_size     ),  // output wire [2 : 0] m_axi_awsize
-    .m_axi_awburst      ( axi_256_master[0].aw_burst    ),  // output wire [1 : 0] m_axi_awburst
-    .m_axi_awuser       ( axi_256_master[0].aw_user     ),  // output wire [4 : 0] m_axi_awuser
-    .m_axi_awvalid      ( axi_256_master[0].aw_valid    ),  // output wire m_axi_awvalid
-    .m_axi_awready      ( axi_256_master[0].aw_ready    ),  // input wire m_axi_awready
-    
-    .m_axi_wdata        ( axi_256_master[0].w_data      ),  // output wire [255 : 0] m_axi_wdata
-    .m_axi_wstrb        ( axi_256_master[0].w_strb      ),  // output wire [31 : 0] m_axi_wstrb
-    .m_axi_wlast        ( axi_256_master[0].w_last      ),  // output wire m_axi_wlast
-    .m_axi_wuser        ( axi_256_master[0].w_user      ),  // output wire [4 : 0] m_axi_wuser
-    .m_axi_wvalid       ( axi_256_master[0].w_valid     ),  // output wire m_axi_wvalid
-    .m_axi_wready       ( axi_256_master[0].w_ready     ),  // input wire m_axi_wready
-    
-    .m_axi_bid          ( axi_256_master[0].b_id        ),  // input wire [3 : 0] m_axi_bid
-    .m_axi_bresp        ( axi_256_master[0].b_resp      ),  // input wire [1 : 0] m_axi_bresp
-    .m_axi_buser        ( axi_256_master[0].b_user      ),  // input wire [4 : 0] m_axi_buser
-    .m_axi_bvalid       ( axi_256_master[0].b_valid     ),  // input wire m_axi_bvalid
-    .m_axi_bready       ( axi_256_master[0].b_ready     ),  // output wire m_axi_bready
-    
-    .m_axi_arid         ( axi_256_master[0].ar_id       ),  // output wire [3 : 0] m_axi_arid
-    .m_axi_araddr       ( axi_256_master[0].ar_addr     ),  // output wire [63 : 0] m_axi_araddr
-    .m_axi_arlen        ( axi_256_master[0].ar_len      ),  // output wire [7 : 0] m_axi_arlen
-    .m_axi_arsize       ( axi_256_master[0].ar_size     ),  // output wire [2 : 0] m_axi_arsize
-    .m_axi_arburst      ( axi_256_master[0].ar_burst    ),  // output wire [1 : 0] m_axi_arburst
-    .m_axi_aruser       ( axi_256_master[0].ar_user     ),  // output wire [4 : 0] m_axi_aruser
-    .m_axi_arvalid      ( axi_256_master[0].ar_valid    ),  // output wire m_axi_arvalid
-    .m_axi_arready      ( axi_256_master[0].ar_ready    ),  // input wire m_axi_arready
-    
-    .m_axi_rid          ( axi_256_master[0].r_id        ),  // input wire [3 : 0] m_axi_rid
-    .m_axi_rdata        ( axi_256_master[0].r_data      ),  // input wire [255 : 0] m_axi_rdata
-    .m_axi_rresp        ( axi_256_master[0].r_resp      ),  // input wire [1 : 0] m_axi_rresp
-    .m_axi_rlast        ( axi_256_master[0].r_last      ),  // input wire m_axi_rlast
-    .m_axi_ruser        ( axi_256_master[0].r_user      ),  // input wire [4 : 0] m_axi_ruser
-    .m_axi_rvalid       ( axi_256_master[0].r_valid     ),  // input wire m_axi_rvalid
-    .m_axi_rready       ( axi_256_master[0].r_ready     )   // output wire m_axi_rready
-);
-
+//AXI_BUS #(
+//    .AXI_ADDR_WIDTH ( 30                ),
+//    .AXI_DATA_WIDTH ( AXI_DATA_WIDTH    ),
+//    .AXI_ID_WIDTH   ( axi.AXI_ID_WIDTH  ),
+//    .AXI_USER_WIDTH ( AXI_USER_WIDTH    )
+//) axi_256_master [0:0] ();
+//
+//riscv_loop_bram i_loop_init (
+//    .init_complete_in   ( 1'b1                          ),  // input wire init_complete_in
+//    .init_complete_out  ( init_complete                 ),  // output wire init_complete_out
+//    .aclk               ( clk                           ),  // input wire aclk
+//    .aresetn            ( rst_n                         ),  // input wire aresetn
+//// slave
+//    .s_axi_awid         ( axi_256[0].aw_id    ),  // input wire [3 : 0] s_axi_awid
+//    .s_axi_awaddr       ( axi_256[0].aw_addr  ),  // input wire [63 : 0] s_axi_awaddr
+//    .s_axi_awlen        ( axi_256[0].aw_len   ),  // input wire [7 : 0] s_axi_awlen
+//    .s_axi_awsize       ( axi_256[0].aw_size  ),  // input wire [2 : 0] s_axi_awsize
+//    .s_axi_awburst      ( axi_256[0].aw_burst ),  // input wire [1 : 0] s_axi_awburst
+//    .s_axi_awuser       ( axi_256[0].aw_user  ),  // input wire [4 : 0] s_axi_awuser
+//    .s_axi_awvalid      ( axi_256[0].aw_valid ),  // input wire s_axi_awvalid
+//    .s_axi_awready      ( axi_256[0].aw_ready ),  // output wire s_axi_awready
+//    
+//    .s_axi_wdata        ( axi_256[0].w_data   ),  // input wire [255 : 0] s_axi_wdata
+//    .s_axi_wstrb        ( axi_256[0].w_strb   ),  // input wire [31 : 0] s_axi_wstrb
+//    .s_axi_wlast        ( axi_256[0].w_last   ),  // input wire s_axi_wlast
+//    .s_axi_wuser        ( axi_256[0].w_user   ),  // input wire [4 : 0] s_axi_wuser
+//    .s_axi_wvalid       ( axi_256[0].w_valid  ),  // input wire s_axi_wvalid
+//    .s_axi_wready       ( axi_256[0].w_ready  ),  // output wire s_axi_wready
+//    
+//    .s_axi_bid          ( axi_256[0].b_id     ),  // output wire [3 : 0] s_axi_bid
+//    .s_axi_bresp        ( axi_256[0].b_resp   ),  // output wire [1 : 0] s_axi_bresp
+//    .s_axi_buser        ( axi_256[0].b_user   ),  // output wire [4 : 0] s_axi_buser
+//    .s_axi_bvalid       ( axi_256[0].b_valid  ),  // output wire s_axi_bvalid
+//    .s_axi_bready       ( axi_256[0].b_ready  ),  // input wire s_axi_bready
+//    
+//    .s_axi_arid         ( axi_256[0].ar_id    ),  // input wire [3 : 0] s_axi_arid
+//    .s_axi_araddr       ( axi_256[0].ar_addr  ),  // input wire [63 : 0] s_axi_araddr
+//    .s_axi_arlen        ( axi_256[0].ar_len   ),  // input wire [7 : 0] s_axi_arlen
+//    .s_axi_arsize       ( axi_256[0].ar_size  ),  // input wire [2 : 0] s_axi_arsize
+//    .s_axi_arburst      ( axi_256[0].ar_burst ),  // input wire [1 : 0] s_axi_arburst
+//    .s_axi_aruser       ( axi_256[0].ar_user  ),  // input wire [4 : 0] s_axi_aruser
+//    .s_axi_arvalid      ( axi_256[0].ar_valid ),  // input wire s_axi_arvalid
+//    .s_axi_arready      ( axi_256[0].ar_ready ),  // output wire s_axi_arready
+//
+//    .s_axi_rid          ( axi_256[0].r_id     ),  // output wire [3 : 0] s_axi_rid
+//    .s_axi_rdata        ( axi_256[0].r_data   ),  // output wire [255 : 0] s_axi_rdata
+//    .s_axi_rresp        ( axi_256[0].r_resp   ),  // output wire [1 : 0] s_axi_rresp
+//    .s_axi_rlast        ( axi_256[0].r_last   ),  // output wire s_axi_rlast
+//    .s_axi_ruser        ( axi_256[0].r_user   ),  // output wire [4 : 0] s_axi_ruser
+//    .s_axi_rvalid       ( axi_256[0].r_valid  ),  // output wire s_axi_rvalid
+//    .s_axi_rready       ( axi_256[0].r_ready  ),  // input wire s_axi_rready
+//// master
+//    .m_axi_awid         ( axi_256_master[0].aw_id       ),  // output wire [3 : 0] m_axi_awid
+//    .m_axi_awaddr       ( axi_256_master[0].aw_addr     ),  // output wire [63 : 0] m_axi_awaddr
+//    .m_axi_awlen        ( axi_256_master[0].aw_len      ),  // output wire [7 : 0] m_axi_awlen
+//    .m_axi_awsize       ( axi_256_master[0].aw_size     ),  // output wire [2 : 0] m_axi_awsize
+//    .m_axi_awburst      ( axi_256_master[0].aw_burst    ),  // output wire [1 : 0] m_axi_awburst
+//    .m_axi_awuser       ( axi_256_master[0].aw_user     ),  // output wire [4 : 0] m_axi_awuser
+//    .m_axi_awvalid      ( axi_256_master[0].aw_valid    ),  // output wire m_axi_awvalid
+//    .m_axi_awready      ( axi_256_master[0].aw_ready    ),  // input wire m_axi_awready
+//    
+//    .m_axi_wdata        ( axi_256_master[0].w_data      ),  // output wire [255 : 0] m_axi_wdata
+//    .m_axi_wstrb        ( axi_256_master[0].w_strb      ),  // output wire [31 : 0] m_axi_wstrb
+//    .m_axi_wlast        ( axi_256_master[0].w_last      ),  // output wire m_axi_wlast
+//    .m_axi_wuser        ( axi_256_master[0].w_user      ),  // output wire [4 : 0] m_axi_wuser
+//    .m_axi_wvalid       ( axi_256_master[0].w_valid     ),  // output wire m_axi_wvalid
+//    .m_axi_wready       ( axi_256_master[0].w_ready     ),  // input wire m_axi_wready
+//    
+//    .m_axi_bid          ( axi_256_master[0].b_id        ),  // input wire [3 : 0] m_axi_bid
+//    .m_axi_bresp        ( axi_256_master[0].b_resp      ),  // input wire [1 : 0] m_axi_bresp
+//    .m_axi_buser        ( axi_256_master[0].b_user      ),  // input wire [4 : 0] m_axi_buser
+//    .m_axi_bvalid       ( axi_256_master[0].b_valid     ),  // input wire m_axi_bvalid
+//    .m_axi_bready       ( axi_256_master[0].b_ready     ),  // output wire m_axi_bready
+//    
+//    .m_axi_arid         ( axi_256_master[0].ar_id       ),  // output wire [3 : 0] m_axi_arid
+//    .m_axi_araddr       ( axi_256_master[0].ar_addr     ),  // output wire [63 : 0] m_axi_araddr
+//    .m_axi_arlen        ( axi_256_master[0].ar_len      ),  // output wire [7 : 0] m_axi_arlen
+//    .m_axi_arsize       ( axi_256_master[0].ar_size     ),  // output wire [2 : 0] m_axi_arsize
+//    .m_axi_arburst      ( axi_256_master[0].ar_burst    ),  // output wire [1 : 0] m_axi_arburst
+//    .m_axi_aruser       ( axi_256_master[0].ar_user     ),  // output wire [4 : 0] m_axi_aruser
+//    .m_axi_arvalid      ( axi_256_master[0].ar_valid    ),  // output wire m_axi_arvalid
+//    .m_axi_arready      ( axi_256_master[0].ar_ready    ),  // input wire m_axi_arready
+//    
+//    .m_axi_rid          ( axi_256_master[0].r_id        ),  // input wire [3 : 0] m_axi_rid
+//    .m_axi_rdata        ( axi_256_master[0].r_data      ),  // input wire [255 : 0] m_axi_rdata
+//    .m_axi_rresp        ( axi_256_master[0].r_resp      ),  // input wire [1 : 0] m_axi_rresp
+//    .m_axi_rlast        ( axi_256_master[0].r_last      ),  // input wire m_axi_rlast
+//    .m_axi_ruser        ( axi_256_master[0].r_user      ),  // input wire [4 : 0] m_axi_ruser
+//    .m_axi_rvalid       ( axi_256_master[0].r_valid     ),  // input wire m_axi_rvalid
+//    .m_axi_rready       ( axi_256_master[0].r_ready     )   // output wire m_axi_rready
+//);
+assign init_complete = 1'b1;
 
 mem_2MB i_ram (
     .rsta_busy(),          // output wire rsta_busy
     .rstb_busy(),          // output wire rstb_busy
     .s_aclk(clk),                // input wire s_aclk
     .s_aresetn(rst_n),          // input wire s_aresetn
-    .s_axi_awid     (axi_256_master[0].aw_id),        // input wire [5 : 0] s_axi_awid
-    .s_axi_awaddr   ({2'd0, axi_256_master[0].aw_addr}),    // input wire [31 : 0] s_axi_awaddr
-    .s_axi_awlen    (axi_256_master[0].aw_len),      // input wire [7 : 0] s_axi_awlen
-    .s_axi_awsize   (axi_256_master[0].aw_size),    // input wire [2 : 0] s_axi_awsize
-    .s_axi_awburst  (axi_256_master[0].aw_burst),  // input wire [1 : 0] s_axi_awburst
-    .s_axi_awvalid  (axi_256_master[0].aw_valid),  // input wire s_axi_awvalid
-    .s_axi_awready  (axi_256_master[0].aw_ready),  // output wire s_axi_awready
+    .s_axi_awid     (axi_256[0].aw_id),        // input wire [5 : 0] s_axi_awid
+    .s_axi_awaddr   ({2'd0, axi_256[0].aw_addr}),    // input wire [31 : 0] s_axi_awaddr
+    .s_axi_awlen    (axi_256[0].aw_len),      // input wire [7 : 0] s_axi_awlen
+    .s_axi_awsize   (axi_256[0].aw_size),    // input wire [2 : 0] s_axi_awsize
+    .s_axi_awburst  (axi_256[0].aw_burst),  // input wire [1 : 0] s_axi_awburst
+    .s_axi_awvalid  (axi_256[0].aw_valid),  // input wire s_axi_awvalid
+    .s_axi_awready  (axi_256[0].aw_ready),  // output wire s_axi_awready
     
-    .s_axi_wdata    (axi_256_master[0].w_data),      // input wire [255 : 0] s_axi_wdata
-    .s_axi_wstrb    (axi_256_master[0].w_strb),      // input wire [31 : 0] s_axi_wstrb
-    .s_axi_wlast    (axi_256_master[0].w_last),      // input wire s_axi_wlast
-    .s_axi_wvalid   (axi_256_master[0].w_valid),    // input wire s_axi_wvalid
-    .s_axi_wready   (axi_256_master[0].w_ready),    // output wire s_axi_wready
+    .s_axi_wdata    (axi_256[0].w_data),      // input wire [255 : 0] s_axi_wdata
+    .s_axi_wstrb    (axi_256[0].w_strb),      // input wire [31 : 0] s_axi_wstrb
+    .s_axi_wlast    (axi_256[0].w_last),      // input wire s_axi_wlast
+    .s_axi_wvalid   (axi_256[0].w_valid),    // input wire s_axi_wvalid
+    .s_axi_wready   (axi_256[0].w_ready),    // output wire s_axi_wready
     
-    .s_axi_bid      (axi_256_master[0].b_id),          // output wire [5 : 0] s_axi_bid
-    .s_axi_bresp    (axi_256_master[0].b_resp),      // output wire [1 : 0] s_axi_bresp
-    .s_axi_bvalid   (axi_256_master[0].b_valid),    // output wire s_axi_bvalid
-    .s_axi_bready   (axi_256_master[0].b_ready),    // input wire s_axi_bready
+    .s_axi_bid      (axi_256[0].b_id),          // output wire [5 : 0] s_axi_bid
+    .s_axi_bresp    (axi_256[0].b_resp),      // output wire [1 : 0] s_axi_bresp
+    .s_axi_bvalid   (axi_256[0].b_valid),    // output wire s_axi_bvalid
+    .s_axi_bready   (axi_256[0].b_ready),    // input wire s_axi_bready
     
-    .s_axi_arid     (axi_256_master[0].ar_id),        // input wire [5 : 0] s_axi_arid
-    .s_axi_araddr   ({2'd0, axi_256_master[0].ar_addr}),    // input wire [31 : 0] s_axi_araddr
-    .s_axi_arlen    (axi_256_master[0].ar_len),      // input wire [7 : 0] s_axi_arlen
-    .s_axi_arsize   (axi_256_master[0].ar_size),    // input wire [2 : 0] s_axi_arsize
-    .s_axi_arburst  (axi_256_master[0].ar_burst),  // input wire [1 : 0] s_axi_arburst
-    .s_axi_arvalid  (axi_256_master[0].ar_valid),  // input wire s_axi_arvalid
-    .s_axi_arready  (axi_256_master[0].ar_ready),  // output wire s_axi_arready
+    .s_axi_arid     (axi_256[0].ar_id),        // input wire [5 : 0] s_axi_arid
+    .s_axi_araddr   ({2'd0, axi_256[0].ar_addr}),    // input wire [31 : 0] s_axi_araddr
+    .s_axi_arlen    (axi_256[0].ar_len),      // input wire [7 : 0] s_axi_arlen
+    .s_axi_arsize   (axi_256[0].ar_size),    // input wire [2 : 0] s_axi_arsize
+    .s_axi_arburst  (axi_256[0].ar_burst),  // input wire [1 : 0] s_axi_arburst
+    .s_axi_arvalid  (axi_256[0].ar_valid),  // input wire s_axi_arvalid
+    .s_axi_arready  (axi_256[0].ar_ready),  // output wire s_axi_arready
     
-    .s_axi_rid      (axi_256_master[0].r_id),          // output wire [5 : 0] s_axi_rid
-    .s_axi_rdata    (axi_256_master[0].r_data),      // output wire [255 : 0] s_axi_rdata
-    .s_axi_rresp    (axi_256_master[0].r_resp),      // output wire [1 : 0] s_axi_rresp
-    .s_axi_rlast    (axi_256_master[0].r_last),      // output wire s_axi_rlast
-    .s_axi_rvalid   (axi_256_master[0].r_valid),    // output wire s_axi_rvalid
-    .s_axi_rready   (axi_256_master[0].r_ready)    // input wire s_axi_rready
+    .s_axi_rid      (axi_256[0].r_id),          // output wire [5 : 0] s_axi_rid
+    .s_axi_rdata    (axi_256[0].r_data),      // output wire [255 : 0] s_axi_rdata
+    .s_axi_rresp    (axi_256[0].r_resp),      // output wire [1 : 0] s_axi_rresp
+    .s_axi_rlast    (axi_256[0].r_last),      // output wire s_axi_rlast
+    .s_axi_rvalid   (axi_256[0].r_valid),    // output wire s_axi_rvalid
+    .s_axi_rready   (axi_256[0].r_ready)    // input wire s_axi_rready
 );
 
 `endif
