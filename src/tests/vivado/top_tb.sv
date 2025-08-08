@@ -50,22 +50,22 @@ always_comb begin : jtag_exit_handler
         $finish(2);
 end
 
-SimJTAG #(
-    .TICK_DELAY ( 1     ),
-    .PORT       ( PORT  )
-) i_jtag (
-    .clock          ( clk           ),
-    .reset          ( ~rst_n        ),
-    .enable         ( rst_n         ),
-    .init_done      ( rst_n         ),
-    .jtag_TCK       ( tck           ),
-    .jtag_TMS       ( tms           ),
-    .jtag_TDI       ( tdi           ),
-    .jtag_TRSTn     ( trstn         ),
-    .jtag_TDO_data  ( tdo           ),
-    .jtag_TDO_driven( 1'b1          ),
-    .exit           ( jtag_exit     )
-);
+//SimJTAG #(
+//    .TICK_DELAY ( 1     ),
+//    .PORT       ( PORT  )
+//) i_jtag (
+//    .clock          ( clk           ),
+//    .reset          ( ~i_dut.locked        ),
+//    .enable         ( rst_n         ),
+//    .init_done      ( rst_n         ),
+//    .jtag_TCK       ( tck           ),
+//    .jtag_TMS       ( tms           ),
+//    .jtag_TDI       ( tdi           ),
+//    .jtag_TRSTn     ( trstn         ),
+//    .jtag_TDO_data  ( tdo           ),
+//    .jtag_TDO_driven( 1'b1          ),
+//    .exit           ( jtag_exit     )
+//);
 
 top i_dut (
     .clk_in_p   ( clk   ),
@@ -81,8 +81,11 @@ top i_dut (
     .tdo        ( tdo   )
 );
 
+// 862 for 100MHz
+// 86 for 10MHz
+
 uart_rx #(
-    .CLKS_PER_BIT ( 862 )
+    .CLKS_PER_BIT ( 86 )
 ) i_rx_decoder (
     .i_Clock    ( clk       ),
     .i_Rx_Serial( tx        ),
