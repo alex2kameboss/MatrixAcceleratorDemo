@@ -97,20 +97,9 @@ report_ram_utilization -csv ${SYNTHESIS_REPORTS_DIR}/ram_util.csv               
 
 write_checkpoint ${PROJECT_PATH}/synth -force
 
-puts "-----START OPTIMIZING DESIGN-----"
-opt_design -verbose -debug_log
 
-set OPT_REPORTS_DIR   ${REPORTS_DIR}/opt_design/
-
-exec mkdir -p ${OPT_REPORTS_DIR}
-report_utilization -hierarchical                                                                                    -file ${OPT_REPORTS_DIR}/utilization.rpt
-check_timing -verbose                                                                                               -file ${OPT_REPORTS_DIR}/check_timing.rpt
-report_timing_summary -delay_type max -max_paths 1                                                                  -file ${OPT_REPORTS_DIR}/top_timing.rpt
-report_timing_summary -delay_type max -max_paths 1 -cells [get_cells i_soc/i_core/i_matrix_accelerator/i_memory]    -file ${OPT_REPORTS_DIR}/poly_mem_timing.rpt
-report_timing_summary -delay_type max -max_paths 1 -cells [get_cells i_soc/i_core/i_matrix_accelerator]             -file ${OPT_REPORTS_DIR}/matrix_acc_timing.rpt
-report_ram_utilization -csv ${OPT_REPORTS_DIR}/ram_util.csv                                                         -file ${OPT_REPORTS_DIR}/ram_util.rpt
-
-write_checkpoint ${PROJECT_PATH}/opt -force
+set_property AUTO_INCREMENTAL_CHECKPOINT 1 [get_runs impl_1]
+set_property -name {STEPS.PHYS_OPT_DESIGN.ARGS.MORE OPTIONS} -value -hold_fix -objects [get_runs impl_1]
 
 launch_runs impl_1 -jobs $THREADS
 wait_on_run impl_1
