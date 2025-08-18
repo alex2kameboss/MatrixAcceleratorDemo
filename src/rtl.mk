@@ -47,7 +47,7 @@ vcs_sim: vcs_build
 	cd ${VCS_DIR} ; ./simv +PRELOAD=../build/app -fgp=num_threads:14
 
 bender_vivado:
-	bender script ${DEFINES} -D PRF_DOUBLE_FREQ -D COMMON_CELLS_ASSERTS_OFF -t xilinx -t bscane -t tech_cells_generic_include_tc_sram -t tech_cells_generic_include_tc_clk -t exclude_first_pass_decoder -t cv32a6_imac_sv0 -t rtl -t fpga -t xilinx -t fpga_demo -t vcu128 vivado > ${PROJECT_PATH}/vivado.tcl
+	bender script ${DEFINES} -D PRF_DOUBLE_FREQ -D COMMON_CELLS_ASSERTS_OFF -t xilinx -t tech_cells_generic_include_tc_sram -t tech_cells_generic_include_tc_clk -t exclude_first_pass_decoder -t cv32a6_imac_sv0 -t rtl -t fpga -t xilinx -t fpga_demo -t vcu128 vivado > ${PROJECT_PATH}/vivado.tcl
 
 vivado: run_dir bender_vivado
 	vivado -mode batch -log ${PROJECT_PATH}/vivado.makefile.log -source ${PROJ_ROOT}/scripts/vivado/create_project.tcl -nojournal -tclargs ${ARGS} -path ${PROJECT_PATH} -name ${PROJECT_NAME} -noGui | tee create_project.log

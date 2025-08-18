@@ -16,7 +16,7 @@ set_property IOSTANDARD  LVCMOS12  [get_ports "rst_n_in"] ;# Bank  64 VCCO - DDR
 
 # jtag
 set_property CLOCK_BUFFER_TYPE BUFG [get_ports tck]
-create_clock -period 1000 -name tck -waveform {0.000 50.000}
+create_clock -period 1000 -name tck -waveform {0.000 50.000} [get_ports tck]
 set_input_jitter tck 1.000
 
 set_input_delay  -clock tck -clock_fall 5 [get_ports tdi    ]
@@ -60,3 +60,5 @@ set_property CLOCK_DEDICATED_ROUTE FALSE [get_nets tck_IBUF_inst/O]
 #set_property ALLOW_COMBINATORIAL_LOOPS TRUE [get_nets i_soc/i_debugger/i_slave_dm_axi_adapter/i_axi_to_mem/i_axi_to_detailed_mem/i_fork/inp_state_q_reg_0]
 #set_property ALLOW_COMBINATORIAL_LOOPS TRUE [get_nets i_soc/i_debugger/i_slave_dm_axi_adapter/i_axi_to_mem/i_axi_to_detailed_mem/i_fork_dynamic/i_fork/gen_oup_state[0].oup_state_q_reg_1]
 set_property ALLOW_COMBINATORIAL_LOOPS TRUE [get_nets i_soc/i_debugger/*]
+
+set_clock_groups -asynchronous -group [get_clocks [list clk_in_p  [get_clocks -of_objects [get_pins i_pll/inst/plle4_adv_inst/CLKOUT0]] [get_clocks -of_objects [get_pins i_pll/inst/plle4_adv_inst/CLKOUT1]]]] -group [get_clocks tck] -group [get_clocks uart_rx_clk_virt] -group [get_clocks uart_tx_clk_virt]
