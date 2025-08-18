@@ -21,6 +21,6 @@ openocd:
 		git checkout af3a034b57279d2a400d87e7508c9a92254ec165 ; \
 		git apply ../openocd.patch ; \
 		./bootstrap ; \
-		./configure --prefix=${RISCV} --disable-werror --disable-wextra --enable-remote-bitbang ; \
+		./configure --prefix=${RISCV} --disable-werror --disable-wextra --enable-remote-bitbang --enable-ftdi ; \
 		make -j$(nproc) ; \
 		make install

@@ -82,6 +82,7 @@ generate_target all [get_ips]
 synth_ip [get_ips]
 
 # synthesis
+set_property strategy Flow_RuntimeOptimized [get_runs synth_1]
 update_compile_order -fileset sources_1
 launch_runs synth_1 -jobs $THREADS
 wait_on_run synth_1
@@ -102,7 +103,9 @@ write_checkpoint ${PROJECT_PATH}/synth -force
 
 
 set_property AUTO_INCREMENTAL_CHECKPOINT 1 [get_runs impl_1]
+set_property strategy Flow_RuntimeOptimized [get_runs impl_1]
 set_property -name {STEPS.PHYS_OPT_DESIGN.ARGS.MORE OPTIONS} -value -hold_fix -objects [get_runs impl_1]
+set_property STEPS.POST_ROUTE_PHYS_OPT_DESIGN.IS_ENABLED true [get_runs impl_1]
 
 launch_runs impl_1 -jobs $THREADS
 wait_on_run impl_1
@@ -119,5 +122,8 @@ report_timing_summary -delay_type max -max_paths 1 -cells [get_cells i_soc/i_cor
 report_ram_utilization -csv ${IMPL_REPORTS_DIR}/ram_util.csv                                                        -file ${IMPL_REPORTS_DIR}/ram_util.rpt
 
 write_checkpoint ${PROJECT_PATH}/impl -force
+
+set_property IS_ENABLED 0 [get_drc_checks {LUTLP-1}]
+write_bitstream -force ${PROJECT_PATH}/${PROJECT_NAME}.bit
 
 exit
