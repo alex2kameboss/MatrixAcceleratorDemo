@@ -1,5 +1,14 @@
 # Matrix Accelerator Demonstrator
 
+![SOC ARchitecture](imgs/ma_demo_arch+debug.png)
+
+Components:
+* [CVA6 RISC-V Core](https://github.com/openhwgroup/cva6)
+* [Matrix Accelerator](https://github.com/alex2kameboss/MatrixAccelerator)
+* [RISC-V DBG](https://github.com/alex2kameboss/MatrixAccelerator)
+* [CV-X-IF](https://github.com/openhwgroup/core-v-xif)
+* [AXI Crossbar](https://github.com/pulp-platform/axi)
+
 ## Software
 
 1. [Bender](https://github.com/pulp-platform/bender)
@@ -40,3 +49,17 @@ make sim # for modelsim
 ```bash
 make vivado
 ```
+
+## Project structure
+
+- **src** - all project sorces
+    - **rtl** - all synthetizable source code
+    - **tests** - all test sources (non-synthetizable)
+    - **includes** - *svh* files
+    - **interfaces** - project interface definitions
+    - **ips** - directory for all submodules, bender will download here all dependencies 
+    - **packages** - project packages definitions
+- **runs** - simulation running directory
+- **scripts** - multiple script for various tools
+- **apps** - C source files
+- **toolchain** - GCC and openocd folder
