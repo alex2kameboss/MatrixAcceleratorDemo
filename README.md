@@ -38,6 +38,10 @@ Project arguments, configure with defines:
 * PRF_LOG_P (default 1) - log2 number of internal memory banks, rows
 * PRF_LOG_Q (default 2) - log2 number of internal memory banks, columns
 
+```
+make <target> DEFINES="-D PRF_LOG_P=1 -D PRF_LOG_Q=1"
+```
+
 ### RTL simulation
 
 ```bash
@@ -47,19 +51,23 @@ make sim # for modelsim
 ### Vivado run
 
 ```bash
-make vivado
+make vivado # outputs in runs/run_<date> directory
 ```
+
+### Examples
+
+More examples available in sh files: *demo_batch.sh*, *syn_batch.sh* and *speed-up.sh*
 
 ## Project structure
 
-- **src** - all project sorces
+- **src** - all project sources
     - **rtl** - all synthetizable source code
     - **tests** - all test sources (non-synthetizable)
     - **includes** - *svh* files
     - **interfaces** - project interface definitions
     - **ips** - directory for all submodules, bender will download here all dependencies 
     - **packages** - project packages definitions
-- **runs** - simulation running directory
+- **runs** - vivado and simulation running directory
 - **scripts** - multiple script for various tools
 - **apps** - C source files
 - **toolchain** - GCC and openocd folder
