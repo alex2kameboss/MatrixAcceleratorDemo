@@ -84,6 +84,13 @@ AXI_BUS #(
 ) slave_debugger_axi ();
 
 AXI_BUS #(
+    .AXI_ADDR_WIDTH ( slave.AXI_ADDR_WIDTH  ),
+    .AXI_DATA_WIDTH ( slave.AXI_DATA_WIDTH  ),
+    .AXI_ID_WIDTH   ( slave.AXI_ID_WIDTH    ),
+    .AXI_USER_WIDTH ( slave.AXI_USER_WIDTH  )
+) slave_dw ();
+
+AXI_BUS #(
     .AXI_ADDR_WIDTH ( master.AXI_ADDR_WIDTH ),
     .AXI_DATA_WIDTH ( XLEN                  ),
     .AXI_ID_WIDTH   ( master.AXI_ID_WIDTH   ),
@@ -200,6 +207,18 @@ axi_dw_converter_intf #(
     .rst_ni ( rst_n             ),
     .slv    ( slave             ),
     .mst    ( slave_debugger_axi)
+);
+
+axi_cut_intf #(
+    .ADDR_WIDTH ( slave.AXI_ADDR_WIDTH  ),
+    .DATA_WIDTH ( slave.AXI_DATA_WIDTH  ),
+    .ID_WIDTH   ( slave.AXI_ID_WIDTH    ),
+    .USER_WIDTH ( slave.AXI_USER_WIDTH  )
+) i_axi_slave_cut (
+    .clk_i  ( clk       ),
+    .rst_ni ( rst_n     ),
+    .in     ( slave     ),
+    .out    ( slave_dw  )  
 );
 
 axi_adapter #(
