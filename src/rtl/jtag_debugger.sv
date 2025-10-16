@@ -84,13 +84,6 @@ AXI_BUS #(
 ) slave_debugger_axi ();
 
 AXI_BUS #(
-    .AXI_ADDR_WIDTH ( slave.AXI_ADDR_WIDTH  ),
-    .AXI_DATA_WIDTH ( slave.AXI_DATA_WIDTH  ),
-    .AXI_ID_WIDTH   ( slave.AXI_ID_WIDTH    ),
-    .AXI_USER_WIDTH ( slave.AXI_USER_WIDTH  )
-) slave_dw ();
-
-AXI_BUS #(
     .AXI_ADDR_WIDTH ( master.AXI_ADDR_WIDTH ),
     .AXI_DATA_WIDTH ( XLEN                  ),
     .AXI_ID_WIDTH   ( master.AXI_ID_WIDTH   ),
@@ -173,26 +166,21 @@ dm_top #(
     .dmi_resp_o             ( dmi_resp                      )
 );
 
-axi_to_mem_intf #(
-    .ADDR_WIDTH ( slave.AXI_ADDR_WIDTH  ),
-    .DATA_WIDTH ( XLEN                  ),
-    .ID_WIDTH   ( slave.AXI_ID_WIDTH    ),
-    .USER_WIDTH ( slave.AXI_USER_WIDTH  ),
-    .NUM_BANKS  ( 1                     )
-) i_slave_dm_axi_adapter (
-    .clk_i          ( clk               ),
-    .rst_ni         ( rst_n             ),
-    .slv            ( slave_debugger_axi),
-    .mem_req_o      ( dm_slave_req      ),
-    .mem_gnt_i      ( dm_slave_req      ),
-    .mem_addr_o     ( dm_slave_addr     ),
-    .mem_wdata_o    ( dm_slave_wdata    ),
-    .mem_strb_o     ( dm_slave_be       ),
-    .mem_we_o       ( dm_slave_we       ),
-    .mem_rvalid_i   ( dm_slave_rvalid   ),
-    .mem_rdata_i    ( dm_slave_rdata    ),
-    .busy_o         ( /* Unused */      ),
-    .mem_atop_o     ( /* Unused */      )
+axi2mem #(
+    .AXI_ID_WIDTH   ( slave.AXI_ID_WIDTH    ),
+    .AXI_ADDR_WIDTH ( slave.AXI_ADDR_WIDTH),
+    .AXI_DATA_WIDTH ( XLEN        ),
+    .AXI_USER_WIDTH ( slave.AXI_USER_WIDTH        )
+) i_dm_axi2mem (
+    .clk_i      ( clk                       ),
+    .rst_ni     ( rst_n                     ),
+    .slave      ( slave_debugger_axi        ),
+    .req_o      ( dm_slave_req              ),
+    .we_o       ( dm_slave_we               ),
+    .addr_o     ( dm_slave_addr             ),
+    .be_o       ( dm_slave_be               ),
+    .data_o     ( dm_slave_wdata            ),
+    .data_i     ( dm_slave_rdata            )
 );
 
 axi_dw_converter_intf #(
@@ -207,18 +195,6 @@ axi_dw_converter_intf #(
     .rst_ni ( rst_n             ),
     .slv    ( slave             ),
     .mst    ( slave_debugger_axi)
-);
-
-axi_cut_intf #(
-    .ADDR_WIDTH ( slave.AXI_ADDR_WIDTH  ),
-    .DATA_WIDTH ( slave.AXI_DATA_WIDTH  ),
-    .ID_WIDTH   ( slave.AXI_ID_WIDTH    ),
-    .USER_WIDTH ( slave.AXI_USER_WIDTH  )
-) i_axi_slave_cut (
-    .clk_i  ( clk       ),
-    .rst_ni ( rst_n     ),
-    .in     ( slave     ),
-    .out    ( slave_dw  )  
 );
 
 axi_adapter #(
