@@ -5,7 +5,7 @@ module top(
     input   clk_in_p,
     input   clk_in_n,
     input   hbm_clk ,
-    input   rst_n_in,
+    input   rst_in  ,
     output  tx      ,
     input   rx      ,
     input   tck     ,
@@ -15,10 +15,13 @@ module top(
     output  tdo     
 );
 
+logic rst_n_in;
 logic clk, clk_2x;
 logic rst_n;
 logic locked;
 logic clk_hbm;
+
+assign rst_n_in = ~rst_in;
 
 assign rst_n = locked & rst_n_in;
 
@@ -33,7 +36,9 @@ pll i_pll (
 
 matrix_accelerator_soc # (
     .PRF_LOG_P  ( `PRF_LOG_P),
-    .PRF_LOG_Q  ( `PRF_LOG_Q)
+    .PRF_LOG_Q  ( `PRF_LOG_Q),
+    .PRF_LOG_N  ( 10        ),
+    .PRF_LOG_M  ( 10        )
 ) i_soc (
     .clk_hbm( hbm_clk   ),
     .clk    ( clk       ),
