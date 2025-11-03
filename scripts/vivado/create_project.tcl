@@ -103,9 +103,7 @@ write_checkpoint ${PROJECT_PATH}/synth -force
 
 
 set_property AUTO_INCREMENTAL_CHECKPOINT 1 [get_runs impl_1]
-set_property strategy Flow_RuntimeOptimized [get_runs impl_1]
-set_property -name {STEPS.PHYS_OPT_DESIGN.ARGS.MORE OPTIONS} -value -hold_fix -objects [get_runs impl_1]
-set_property STEPS.POST_ROUTE_PHYS_OPT_DESIGN.IS_ENABLED true [get_runs impl_1]
+set_property strategy Performance_ExploreWithRemap [get_runs impl_1]
 
 launch_runs impl_1 -jobs $THREADS
 wait_on_run impl_1
