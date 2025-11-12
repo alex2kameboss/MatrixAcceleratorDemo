@@ -10,6 +10,7 @@ set parameters {
     {prfLogP.arg    "1"         "Polymorphic memory log P parameter"}
     {prfLogQ.arg    "2"         "Polymorphic memory log Q parameter"}
     {useUram                    "Use URAM for polymorphic memory"}
+    {hbm                        "Use HBM instead of BRAM"}
     {noGui                      "Do not open gui in the end, default off"}
 }
 set usage "- Script to simplify matrix accelerator design exploration"
@@ -30,6 +31,7 @@ set THREADS         $options(threads)
 set PRF_LOG_P       $options(prfLogP)
 set PRF_LOG_Q       $options(prfLogQ)
 set USE_URAM        $options(useUram)
+set HBM             $options(hbm)
 
 create_project ${PROJECT_NAME} ${PROJECT_PATH} -part xcvu37p-fsvh2892-2L-e
 set_property board_part xilinx.com:vcu128:part0:1.0 [current_project]
@@ -43,6 +45,11 @@ puts [get_property verilog_define [current_fileset]]
 
 if { ${USE_URAM} } {
     set_property verilog_define [concat [get_property verilog_define [current_fileset]] USE_ULTRA_RAM] [current_fileset]
+    puts [get_property verilog_define [current_fileset]]
+}
+
+if { ${HBM} } {
+    set_property verilog_define [concat [get_property verilog_define [current_fileset]] HBM] [current_fileset]
     puts [get_property verilog_define [current_fileset]]
 }
 
@@ -69,17 +76,20 @@ add_files "
 add_files -fileset constrs_1 -norecurse $ROOT/src/sdc/vivado_demo.sdc
 
 # create ips
-source $ROOT/scripts/vivado/hbm.tcl
+source $ROOT/scripts/vivado/hbm_subsystem.tcl
 source $ROOT/scripts/vivado/pll.tcl
 source $ROOT/scripts/vivado/uart.tcl
+
+# generate HBM wrapper
+make_wrapper -import -top [get_files hbm_subsystem.bd]
 
 # set top
 set_property top top [current_fileset]
 reorder_files -auto -disable_unused
 
 # generate ips
-generate_target all [get_ips]
-synth_ip [get_ips]
+#generate_target all [get_ips]
+#synth_ip [get_ips]
 
 # synthesis
 set_property strategy Flow_RuntimeOptimized [get_runs synth_1]
@@ -99,11 +109,8 @@ report_timing_summary -delay_type max -max_paths 1 -cells [get_cells i_soc/i_cor
 report_timing_summary -delay_type max -max_paths 1 -cells [get_cells i_soc/i_core/i_matrix_accelerator]             -file ${SYNTHESIS_REPORTS_DIR}/matrix_acc_timing.rpt
 report_ram_utilization -csv ${SYNTHESIS_REPORTS_DIR}/ram_util.csv                                                   -file ${SYNTHESIS_REPORTS_DIR}/ram_util.rpt
 
-write_checkpoint ${PROJECT_PATH}/synth -force
-
-
-set_property AUTO_INCREMENTAL_CHECKPOINT 1 [get_runs impl_1]
-set_property strategy Performance_ExploreWithRemap [get_runs impl_1]
+#set_property AUTO_INCREMENTAL_CHECKPOINT 1 [get_runs impl_1]
+#set_property strategy Performance_ExploreWithRemap [get_runs impl_1]
 
 launch_runs impl_1 -jobs $THREADS
 wait_on_run impl_1
@@ -119,9 +126,6 @@ report_timing_summary -delay_type max -max_paths 1 -cells [get_cells i_soc/i_cor
 report_timing_summary -delay_type max -max_paths 1 -cells [get_cells i_soc/i_core/i_matrix_accelerator]             -file ${IMPL_REPORTS_DIR}/matrix_acc_timing.rpt
 report_ram_utilization -csv ${IMPL_REPORTS_DIR}/ram_util.csv                                                        -file ${IMPL_REPORTS_DIR}/ram_util.rpt
 
-write_checkpoint ${PROJECT_PATH}/impl -force
-
-set_property IS_ENABLED 0 [get_drc_checks {LUTLP-1}]
-write_bitstream -force ${PROJECT_PATH}/${PROJECT_NAME}.bit
+launch_runs impl_1 -to_step write_bitstream -jobs $THREADS
 
 exit

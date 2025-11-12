@@ -26,10 +26,10 @@ initial begin
 end
 
 initial begin
-    rst_n = 1'b0;
+    rst_n = 1'b1;
 
     repeat(5) @(negedge clk);
-    rst_n = 1'b1;
+    rst_n = 1'b0;
 end
 
 //initial begin : wait_for_stop
@@ -74,7 +74,7 @@ top i_dut (
     .clk_in_p   ( clk   ),
     .clk_in_n   ( ~clk  ),
     .hbm_clk    ( clk   ),
-    .rst_n_in   ( rst_n ),
+    .rst_in     ( rst_n ),
     .tx         ( tx    ),
     .rx         ( 1'b1  ),
     .tck        ( tck   ),
