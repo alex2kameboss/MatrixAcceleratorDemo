@@ -8,8 +8,10 @@ GCC_ARGS ?= -DTEST_32
 BUILD_DIR = ${PROJ_ROOT}/runs/build
 APP_ELF = ${BUILD_DIR}/app
 
-flash:
+generate_bin:
 	${RISCV}/bin/riscv32-unknown-elf-objcopy -O binary ${APP_ELF} ${APP_ELF}.bin
+
+flash: generate_bin
 	${RISCV}/bin/openocd -f apps/cfg/ma_sim_old.cfg -f apps/cfg/flash.tcl
 
 app_dump:
