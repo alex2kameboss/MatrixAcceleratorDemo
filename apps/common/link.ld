@@ -7,7 +7,7 @@ ENTRY(_start)
 
 MEMORY
 {
-    ram         : ORIGIN = 0x80000000, LENGTH = 0x00200000
+    ram         : ORIGIN = 0x80000000, LENGTH = 0x10000000
 }
 
 /* Stack information variables */
