@@ -152,7 +152,7 @@ GROUP_TEST(int16_t)
 GROUP_TEST(int32_t)
 
 int printResult(bool result) {
-    printf("%s,%d\n", result ? "PASSED" : "FAILED", seed - 1);
+    printf("%s,%d\r\n", result ? "PASSED" : "FAILED", seed - 1);
     return result;
 }
 
@@ -180,7 +180,7 @@ int printResult(bool result) {
 }
 
 int main() {
-    printf("test,dtype,size,hw,sw,result,seed\n");
+    printf("test,dtype,size,hw,sw,result,seed\r\n");
     
 #ifdef TEST_16
     RUN_TEST_GROUP_SIZE(16)
@@ -202,6 +202,11 @@ int main() {
     RUN_TEST_GROUP_SIZE(256)
 #endif
 
+#ifdef TEST_512
+    RUN_TEST_GROUP_SIZE(512)
+#endif    
 
-    printf("%d/%d\n", passedTests, numberOfTests);
+    printf("%d/%d\r\n", passedTests, numberOfTests);
+
+    while (1) ;
 }
