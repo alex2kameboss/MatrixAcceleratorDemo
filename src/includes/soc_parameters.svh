@@ -8,7 +8,7 @@
 
 // 1GB RAM
 `define SOC_RAM_BASE        64'h8000_0000
-`define SOC_RAM_LENGTH      64'h0200_0000
+`define SOC_RAM_LENGTH      64'h4000_0000
 
 `define SOC_UART_BASE       64'hC000_0000
 `define SOC_UART_LENGTH     64'h0002_0000
