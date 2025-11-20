@@ -212,8 +212,9 @@ proc create_root_design { parentCell } {
     CONFIG.USER_APB_EN {false} \
     CONFIG.USER_MC0_ECC_BYPASS {true} \
     CONFIG.USER_MC0_TRAFFIC_OPTION {Linear} \
-    CONFIG.USER_MC_ENABLE_02 {FALSE} \
-    CONFIG.USER_MC_ENABLE_03 {FALSE} \
+    CONFIG.USER_MC_ENABLE_01 {TRUE} \
+    CONFIG.USER_MC_ENABLE_02 {TRUE} \
+    CONFIG.USER_MC_ENABLE_03 {TRUE} \
     CONFIG.USER_MC_ENABLE_04 {FALSE} \
     CONFIG.USER_MC_ENABLE_05 {FALSE} \
     CONFIG.USER_MC_ENABLE_06 {FALSE} \
@@ -225,7 +226,11 @@ proc create_root_design { parentCell } {
 
   # Create instance: axi_interconnect_0, and set properties
   set axi_interconnect_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:axi_interconnect:2.1 axi_interconnect_0 ]
-  set_property CONFIG.NUM_MI {4} $axi_interconnect_0
+  set_property -dict [list \
+    CONFIG.NUM_MI {8} \
+    CONFIG.S00_HAS_DATA_FIFO {2} \
+    CONFIG.STRATEGY {2} \
+  ] $axi_interconnect_0
 
 
   # Create instance: rama_0, and set properties
@@ -260,14 +265,18 @@ proc create_root_design { parentCell } {
   connect_bd_intf_net -intf_net axi_interconnect_0_M01_AXI [get_bd_intf_pins axi_interconnect_0/M01_AXI] [get_bd_intf_pins hbm_0/SAXI_01]
   connect_bd_intf_net -intf_net axi_interconnect_0_M02_AXI [get_bd_intf_pins axi_interconnect_0/M02_AXI] [get_bd_intf_pins hbm_0/SAXI_02]
   connect_bd_intf_net -intf_net axi_interconnect_0_M03_AXI [get_bd_intf_pins axi_interconnect_0/M03_AXI] [get_bd_intf_pins hbm_0/SAXI_03]
+  connect_bd_intf_net -intf_net axi_interconnect_0_M04_AXI [get_bd_intf_pins axi_interconnect_0/M04_AXI] [get_bd_intf_pins hbm_0/SAXI_04]
+  connect_bd_intf_net -intf_net axi_interconnect_0_M05_AXI [get_bd_intf_pins axi_interconnect_0/M05_AXI] [get_bd_intf_pins hbm_0/SAXI_05]
+  connect_bd_intf_net -intf_net axi_interconnect_0_M06_AXI [get_bd_intf_pins axi_interconnect_0/M06_AXI] [get_bd_intf_pins hbm_0/SAXI_06]
+  connect_bd_intf_net -intf_net axi_interconnect_0_M07_AXI [get_bd_intf_pins axi_interconnect_0/M07_AXI] [get_bd_intf_pins hbm_0/SAXI_07]
   connect_bd_intf_net -intf_net axi_memory_init_0_M_AXI [get_bd_intf_pins axi_memory_init_0/M_AXI] [get_bd_intf_pins axi_interconnect_0/S00_AXI]
   connect_bd_intf_net -intf_net rama_0_m_axi [get_bd_intf_pins rama_0/m_axi] [get_bd_intf_pins axi_memory_init_0/S_AXI]
   connect_bd_intf_net -intf_net s_axi_0_1 [get_bd_intf_ports s_axi_0] [get_bd_intf_pins rama_0/s_axi]
 
   # Create port connections
   connect_bd_net -net HBM_REF_CLK_0_0_1 [get_bd_ports HBM_REF_CLK_0_0] [get_bd_pins hbm_0/HBM_REF_CLK_0]
-  connect_bd_net -net axi_aclk_0_1 [get_bd_ports axi_aclk_0] [get_bd_pins rama_0/axi_aclk] [get_bd_pins axi_memory_init_0/aclk] [get_bd_pins axi_interconnect_0/ACLK] [get_bd_pins axi_interconnect_0/S00_ACLK] [get_bd_pins axi_interconnect_0/M00_ACLK] [get_bd_pins axi_interconnect_0/M01_ACLK] [get_bd_pins axi_interconnect_0/M02_ACLK] [get_bd_pins axi_interconnect_0/M03_ACLK] [get_bd_pins hbm_0/AXI_00_ACLK] [get_bd_pins hbm_0/AXI_01_ACLK] [get_bd_pins hbm_0/AXI_02_ACLK] [get_bd_pins hbm_0/AXI_03_ACLK] [get_bd_pins hbm_0/APB_0_PCLK]
-  connect_bd_net -net axi_aresetn_0_1 [get_bd_ports axi_aresetn_0] [get_bd_pins rama_0/axi_aresetn] [get_bd_pins axi_memory_init_0/aresetn] [get_bd_pins axi_interconnect_0/ARESETN] [get_bd_pins axi_interconnect_0/S00_ARESETN] [get_bd_pins axi_interconnect_0/M00_ARESETN] [get_bd_pins axi_interconnect_0/M01_ARESETN] [get_bd_pins axi_interconnect_0/M02_ARESETN] [get_bd_pins axi_interconnect_0/M03_ARESETN] [get_bd_pins hbm_0/AXI_00_ARESET_N] [get_bd_pins hbm_0/AXI_01_ARESET_N] [get_bd_pins hbm_0/AXI_02_ARESET_N] [get_bd_pins hbm_0/AXI_03_ARESET_N] [get_bd_pins hbm_0/APB_0_PRESET_N]
+  connect_bd_net -net axi_aclk_0_1 [get_bd_ports axi_aclk_0] [get_bd_pins rama_0/axi_aclk] [get_bd_pins axi_memory_init_0/aclk] [get_bd_pins axi_interconnect_0/ACLK] [get_bd_pins axi_interconnect_0/S00_ACLK] [get_bd_pins axi_interconnect_0/M00_ACLK] [get_bd_pins axi_interconnect_0/M01_ACLK] [get_bd_pins axi_interconnect_0/M02_ACLK] [get_bd_pins axi_interconnect_0/M03_ACLK] [get_bd_pins hbm_0/AXI_00_ACLK] [get_bd_pins hbm_0/AXI_01_ACLK] [get_bd_pins hbm_0/AXI_02_ACLK] [get_bd_pins hbm_0/AXI_03_ACLK] [get_bd_pins hbm_0/APB_0_PCLK] [get_bd_pins axi_interconnect_0/M04_ACLK] [get_bd_pins hbm_0/AXI_04_ACLK] [get_bd_pins axi_interconnect_0/M05_ACLK] [get_bd_pins hbm_0/AXI_05_ACLK] [get_bd_pins axi_interconnect_0/M06_ACLK] [get_bd_pins hbm_0/AXI_06_ACLK] [get_bd_pins axi_interconnect_0/M07_ACLK] [get_bd_pins hbm_0/AXI_07_ACLK]
+  connect_bd_net -net axi_aresetn_0_1 [get_bd_ports axi_aresetn_0] [get_bd_pins rama_0/axi_aresetn] [get_bd_pins axi_memory_init_0/aresetn] [get_bd_pins axi_interconnect_0/ARESETN] [get_bd_pins axi_interconnect_0/S00_ARESETN] [get_bd_pins axi_interconnect_0/M00_ARESETN] [get_bd_pins axi_interconnect_0/M01_ARESETN] [get_bd_pins axi_interconnect_0/M02_ARESETN] [get_bd_pins axi_interconnect_0/M03_ARESETN] [get_bd_pins hbm_0/AXI_00_ARESET_N] [get_bd_pins hbm_0/AXI_01_ARESET_N] [get_bd_pins hbm_0/AXI_02_ARESET_N] [get_bd_pins hbm_0/AXI_03_ARESET_N] [get_bd_pins hbm_0/APB_0_PRESET_N] [get_bd_pins axi_interconnect_0/M04_ARESETN] [get_bd_pins hbm_0/AXI_04_ARESET_N] [get_bd_pins axi_interconnect_0/M05_ARESETN] [get_bd_pins hbm_0/AXI_05_ARESET_N] [get_bd_pins axi_interconnect_0/M06_ARESETN] [get_bd_pins hbm_0/AXI_06_ARESET_N] [get_bd_pins axi_interconnect_0/M07_ARESETN] [get_bd_pins hbm_0/AXI_07_ARESET_N]
   connect_bd_net -net axi_memory_init_0_init_complete_out [get_bd_pins axi_memory_init_0/init_complete_out] [get_bd_ports init_complete_out_0]
   connect_bd_net -net xlconstant_0_dout [get_bd_pins xlconstant_0/dout] [get_bd_pins axi_memory_init_0/init_complete_in]
 
@@ -276,6 +285,10 @@ proc create_root_design { parentCell } {
   assign_bd_address -offset 0x10000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces s_axi_0] [get_bd_addr_segs hbm_0/SAXI_01/HBM_MEM01] -force
   assign_bd_address -offset 0x20000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces s_axi_0] [get_bd_addr_segs hbm_0/SAXI_02/HBM_MEM02] -force
   assign_bd_address -offset 0x30000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces s_axi_0] [get_bd_addr_segs hbm_0/SAXI_03/HBM_MEM03] -force
+  assign_bd_address -offset 0x40000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces s_axi_0] [get_bd_addr_segs hbm_0/SAXI_04/HBM_MEM04] -force
+  assign_bd_address -offset 0x50000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces s_axi_0] [get_bd_addr_segs hbm_0/SAXI_05/HBM_MEM05] -force
+  assign_bd_address -offset 0x60000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces s_axi_0] [get_bd_addr_segs hbm_0/SAXI_06/HBM_MEM06] -force
+  assign_bd_address -offset 0x70000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces s_axi_0] [get_bd_addr_segs hbm_0/SAXI_07/HBM_MEM07] -force
 
 
   # Restore current instance
