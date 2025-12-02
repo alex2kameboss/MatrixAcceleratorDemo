@@ -79,6 +79,7 @@ add_files -fileset constrs_1 -norecurse $ROOT/src/sdc/vivado_demo.sdc
 source $ROOT/scripts/vivado/hbm_subsystem.tcl
 source $ROOT/scripts/vivado/pll.tcl
 source $ROOT/scripts/vivado/uart.tcl
+source $ROOT/scripts/vivado/mem.tcl
 
 # generate HBM wrapper
 make_wrapper -import -top [get_files hbm_subsystem.bd]
@@ -92,7 +93,7 @@ reorder_files -auto -disable_unused
 #synth_ip [get_ips]
 
 # synthesis
-set_property strategy Flow_RuntimeOptimized [get_runs synth_1]
+#set_property strategy Flow_RuntimeOptimized [get_runs synth_1]
 update_compile_order -fileset sources_1
 launch_runs synth_1 -jobs $THREADS
 wait_on_run synth_1
