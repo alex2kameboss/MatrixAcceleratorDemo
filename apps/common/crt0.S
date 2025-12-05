@@ -64,7 +64,7 @@ main_entry:
   jal x1, main
 
   /* Halt simulation */
-  li x5, 0xD0000000
+  li x5, 0x50000000
   li x6, 0xFF
   sb x6, 0(x5)
 

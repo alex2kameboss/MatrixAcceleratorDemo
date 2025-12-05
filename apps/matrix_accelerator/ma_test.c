@@ -26,10 +26,10 @@ INIT(int16_t)
 INIT(int32_t)
 
 #define VV_TEST_BASE(DTYPE_I, DTYPE_O, ACC, REF) \
-    DTYPE_I a[m * n] __attribute__((aligned(512))); \
-    DTYPE_I b[n * p] __attribute__((aligned(512))); \
+    DTYPE_I a[m * n] __attribute__((aligned(32))); \
+    DTYPE_I b[n * p] __attribute__((aligned(32))); \
     DTYPE_O res_sw[m * p]; \
-    DTYPE_O res_hw[m * p] __attribute__((aligned(512))); \
+    DTYPE_O res_hw[m * p] __attribute__((aligned(32))); \
     init_array_##DTYPE_I(a, n, m); \
     init_array_##DTYPE_I(b, p, n); \
     start_timer(); \
@@ -58,9 +58,9 @@ INIT(int32_t)
     return cmp_##DTYPE_O(res_hw, res_sw, m * p);
 
 #define VS_TEST_BASE(DTYPE_I, DTYPE_O, ACC, REF, B) \
-    DTYPE_I a[m * n] __attribute__((aligned(512))); \
+    DTYPE_I a[m * n] __attribute__((aligned(32))); \
     DTYPE_O res_sw[m * p]; \
-    DTYPE_O res_hw[m * p] __attribute__((aligned(512))); \
+    DTYPE_O res_hw[m * p] __attribute__((aligned(32))); \
     init_array_##DTYPE_I(a, n, m); \
     start_timer(); \
     MA_DEFINE_##DTYPE_I(0, m, n); \
@@ -86,12 +86,12 @@ INIT(int32_t)
 
 #define CNV_TEST_BASE(DTYPE_I, DTYPE_O) \
     int kernel_n = BUS_WIDTH / sizeof(DTYPE_I); \
-    DTYPE_I a[m * n] __attribute__((aligned(512))); \
-    DTYPE_I b[k_m * kernel_n] __attribute__((aligned(512))); \
+    DTYPE_I a[m * n] __attribute__((aligned(32))); \
+    DTYPE_I b[k_m * kernel_n] __attribute__((aligned(32))); \
     int res_m = m - k_m + 1; \
     int res_n = n - k_n + 1; \
     DTYPE_O res_sw[m * n]; \
-    DTYPE_O res_hw[m * n] __attribute__((aligned(512))); \
+    DTYPE_O res_hw[m * n] __attribute__((aligned(32))); \
     init_array_##DTYPE_I(a, n, m); \
     init_array_##DTYPE_I(b, kernel_n, k_m); \
     start_timer(); \

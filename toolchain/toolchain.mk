@@ -12,7 +12,7 @@ clean_toolchain:
 
 gcc: toolchain_dirs git_submodules
 	cd ${TOOLCHAIN_DIR}/gcc ; \
-		./configure --prefix=${RISCV} --disable-linux --with-arch=rv32imac_zicsr ; \
+		./configure --prefix=${RISCV} --disable-linux --with-arch=rv64im_zicsr --with-abi=lp64 --with-cmodel=medany; \
 		make -j$(nproc)
 
 openocd:

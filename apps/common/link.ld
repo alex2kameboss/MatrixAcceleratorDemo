@@ -11,7 +11,7 @@ MEMORY
 }
 
 /* Stack information variables */
-_stack_len     = 0x4000;
+_stack_len     = 0x00100000;
 _stack_start   = ORIGIN(ram) + LENGTH(ram);
 
 SECTIONS
@@ -62,8 +62,8 @@ SECTIONS
         _stack = . ;
     } > ram
 
-    fake_uart = 0xC0000004;
-    control_base = 0xD0000000;
-    timer_control = 0xD0000001;
-    timer_value = 0xD0000008;
+    fake_uart = 0x40000004;
+    control_base = 0x50000000;
+    timer_control = 0x50000001;
+    timer_value = 0x50000008;
 }
