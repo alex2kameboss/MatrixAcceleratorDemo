@@ -144,7 +144,6 @@ cva6 #(
 
 matrix_accelerator #(
     .OPCODE             ( 7'h2B                 ),
-    .ADDR_WIDTH         ( `CVA6_AXI_ADDR_WIDTH  ),
     .REGISTER_NUMBERS   ( 32                    ),
     .PRF_LOG_P          ( PRF_LOG_P             ),
     .PRF_LOG_Q          ( PRF_LOG_Q             ),

@@ -4,7 +4,7 @@ package:
     - "Alexandru Puscasu <alexandru.puscasu@imt.ro>"
 
 dependencies:
-    matrix_accelerator: { git: "https://github.com/alex2kameboss/MatrixAccelerator.git",  rev: demo       }
+    matrix_accelerator: { git: "https://github.com/alex2kameboss/MatrixAccelerator.git",  rev: demo_64b   }
     ariane:             { git: "https://github.com/openhwgroup/cva6.git",                 rev: master     }
     axi:                { git: "https://github.com/pulp-platform/axi.git",                rev: master     }
     cv_x_if:            { git: "https://github.com/alex2kameboss/core-v-xif-fix.git",     rev: demo       }
@@ -20,7 +20,7 @@ sources:
   files:
     - target: simulation
       files:
-        - src/packages/ma_cv32a6_imac_sv0_config_pkg.sv
+        - src/packages/ma_cv64a6_imac_config_pkg.sv
         - src/tests/sim/uart_mock.sv
         - src/tests/sim/ram_wrapper.sv
 
