@@ -45,7 +45,7 @@ sources:
         TARGET_JTAG: ~
         USE_CI_CJ: ~
       files:
-        - src/packages/ma_cv32a6_imac_sv0_config_pkg_xilinx.sv
+        - src/packages/ma_cv64a6_imac_debug_config_pkg_xilinx.sv
         - src/tests/vivado/uart_mock.sv
         - src/tests/vivado/ram_wrapper.sv
         - src/tests/vivado/top.sv
