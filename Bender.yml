@@ -36,7 +36,7 @@ sources:
 
     - target: any(vivado, jtag)
       files:
-        - src/packages/ma_cv32a6_imac_debug_config_pkg.sv
+        - src/packages/ma_cv64a6_imac_debug_config_pkg.sv
         - src/ips/ariane/corev_apu/axi_mem_if/src/axi2mem.sv
         - src/rtl/jtag_debugger.sv
 

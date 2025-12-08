@@ -93,7 +93,7 @@ AXI_BUS #(
 `AXI_ASSIGN_FROM_REQ(master_debugger_axi, master_narrow_axi_req)
 `AXI_ASSIGN_TO_RESP(master_narrow_axi_resp, master_debugger_axi)
 
-assign axi_adapter_size = (CVA6Cfg.XLEN == 64) ? 2'b11 : 2'b10;
+assign axi_adapter_size = (XLEN == 64) ? 2'b11 : 2'b10;
 assign ndmreset = ~ndmreset_inv;
 
 
@@ -209,7 +209,7 @@ axi_adapter #(
     .type_i                ( ariane_pkg::SINGLE_REQ ),
     .amo_i                 ( ariane_pkg::AMO_NONE   ),
     .gnt_o                 ( dm_master_gnt          ),
-    .addr_i                ( dm_master_add[31 : 0]  ),
+    .addr_i                ( dm_master_add[XLEN-1:0]),
     .we_i                  ( dm_master_we           ),
     .wdata_i               ( dm_master_wdata        ),
     .be_i                  ( dm_master_be           ),
