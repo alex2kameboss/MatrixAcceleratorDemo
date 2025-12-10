@@ -9,7 +9,7 @@
 // 1GB RAM
 `define SOC_RAM_BASE        64'h8000_0000
 `ifdef HBM
-`define SOC_RAM_LENGTH      64'h8000_0000
+`define SOC_RAM_LENGTH      64'h2_0000_0000
 `else
 `define SOC_RAM_LENGTH      64'h0050_0000
 `endif

@@ -44,7 +44,7 @@ hbm_subsystem_wrapper i_hbm_subsystem(
     .axi_aresetn_0      ( rst_n                             ), //   input axi_aresetn_0;
     .init_complete_out_0( init_complete                     ), //   output init_complete_out_0;
     
-    .s_axi_0_araddr     ( {2'd0, axi_256[0].ar_addr[30:0]}  ), //   input [32:0]s_axi_0_araddr;
+    .s_axi_0_araddr     ( axi_256[0].ar_addr[32:0]          ), //   input [32:0]s_axi_0_araddr;
     .s_axi_0_arburst    ( axi_256[0].ar_burst               ), //   input [1:0]s_axi_0_arburst;
     .s_axi_0_arid       ( axi_256[0].ar_id                  ), //   input [5:0]s_axi_0_arid;
     .s_axi_0_arlen      ( axi_256[0].ar_len                 ), //   input [7:0]s_axi_0_arlen;
@@ -52,7 +52,7 @@ hbm_subsystem_wrapper i_hbm_subsystem(
     .s_axi_0_arsize     ( axi_256[0].ar_size                ), //   input [2:0]s_axi_0_arsize;
     .s_axi_0_arvalid    ( axi_256[0].ar_valid               ), //   input s_axi_0_arvalid;
     
-    .s_axi_0_awaddr     ( {2'd0, axi_256[0].aw_addr[30:0]}  ), //   input [32:0]s_axi_0_awaddr;
+    .s_axi_0_awaddr     ( axi_256[0].aw_addr[32:0]          ), //   input [32:0]s_axi_0_awaddr;
     .s_axi_0_awburst    ( axi_256[0].aw_burst               ), //   input [1:0]s_axi_0_awburst;
     .s_axi_0_awid       ( axi_256[0].aw_id                  ), //   input [5:0]s_axi_0_awid;
     .s_axi_0_awlen      ( axi_256[0].aw_len                 ), //   input [7:0]s_axi_0_awlen;
