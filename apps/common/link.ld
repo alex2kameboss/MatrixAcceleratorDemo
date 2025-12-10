@@ -7,11 +7,11 @@ ENTRY(_start)
 
 MEMORY
 {
-    ram         : ORIGIN = 0x80000000, LENGTH = 0x00200000
+    ram         : ORIGIN = 0x80000000, LENGTH = 8192M
 }
 
 /* Stack information variables */
-_stack_len     = 0x00100000;
+_stack_len     = 7936M;
 _stack_start   = ORIGIN(ram) + LENGTH(ram);
 
 SECTIONS
@@ -52,6 +52,11 @@ SECTIONS
         *(COMMON)
         _bss_end = .;
     } > ram
+
+    .stack_addr : {
+        _stack_addr = . ;
+        LONG(_stack_start)
+    }
 
     /* ensure there is enough room for stack */
     .stack (NOLOAD): {
