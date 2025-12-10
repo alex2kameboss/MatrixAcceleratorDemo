@@ -28,9 +28,9 @@ typedef enum int unsigned {
 `ifdef TARGET_JTAG
     S_JTAG          ,
 `endif
-    RAM             ,
     UART            ,
     CTRL            ,
+    RAM             ,
     AXI_NO_SLAVES   
 } axi_slaves_t;
 
@@ -88,9 +88,9 @@ typedef logic [AXI_USER_WIDTH-1:0] axi_user_t;
 `AXI_TYPEDEF_ALL(slave_axi, axi_addr_t, axi_slave_id_t, axi_data_t, axi_strobe_t, axi_user_t)
 
 typedef enum logic [`SOC_AXI_ADDR_WIDTH - 1 : 0] {
-    RAM_BASE  = `SOC_RAM_BASE       ,
     UART_BASE = `SOC_UART_BASE      ,
-    CTRL_BASE = `SOC_CTRL_REG_BASE  
+    CTRL_BASE = `SOC_CTRL_REG_BASE  ,
+    RAM_BASE  = `SOC_RAM_BASE       
 } soc_bus_start_t;
 
 
@@ -156,9 +156,9 @@ assign routing_rules = '{
 `ifdef TARGET_JTAG
     '{idx: S_JTAG , start_addr: 'd0      , end_addr: 'h1000                 },
 `endif
-    '{idx: RAM    , start_addr: RAM_BASE , end_addr: RAM_BASE + RAM_LENGTH  },
     '{idx: UART   , start_addr: UART_BASE, end_addr: UART_BASE + UART_LENGTH},
-    '{idx: CTRL   , start_addr: CTRL_BASE, end_addr: CTRL_BASE + CTRL_LENGTH}
+    '{idx: CTRL   , start_addr: CTRL_BASE, end_addr: CTRL_BASE + CTRL_LENGTH},
+    '{idx: RAM    , start_addr: RAM_BASE , end_addr: RAM_BASE + RAM_LENGTH  }
 };
 
 assign ctrl_in = '0;
