@@ -8,9 +8,14 @@ GCC_ARGS ?= -DTEST_32
 BUILD_DIR = ${PROJ_ROOT}/runs/build
 APP_ELF = ${BUILD_DIR}/app
 
-flash:
+generate_bin:
 	${RISCV}/bin/riscv64-unknown-elf-objcopy -O binary ${APP_ELF} ${APP_ELF}.bin
+
+flash: generate_bin
 	${RISCV}/bin/openocd -f apps/cfg/ma_sim_old.cfg -f apps/cfg/flash.tcl
+
+flash_linux: generate_bin
+	sudo ${RISCV}/bin/openocd -f apps/cfg/esp32_devkitj_v1.cfg -f apps/cfg/ma_demo.cfg -f apps/cfg/flash.tcl
 
 app_dump:
 	${RISCV}/bin/riscv64-unknown-elf-objdump -d ${APP_ELF} > ${BUILD_DIR}/dump.txt

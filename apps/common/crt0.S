@@ -71,5 +71,4 @@ main_entry:
 
   /* If execution ends up here just put the core to sleep */
 sleep_loop:
-  wfi
   j sleep_loop
