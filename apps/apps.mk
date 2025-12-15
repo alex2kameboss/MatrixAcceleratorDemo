@@ -34,6 +34,6 @@ ma_test_build:
 
 generate_coe:
 	cd ${BUILD_DIR} ; \
-		${RISCV}/bin/riscv64-unknown-elf-objcopy -v --change-addresses -0x80000000 -O ihex app input_32.hex ; \
+		${RISCV}/bin/riscv64-unknown-elf-objcopy -v --change-addresses -0x400000000 -O ihex app input_32.hex ; \
 		srec_cat input_32.hex -Intel -output input.hex -Intel -Output_Block_Size 32 ; \
 		tclsh ${PROJ_ROOT}/scripts/vivado/hex_to_coe.tcl

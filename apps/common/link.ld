@@ -7,11 +7,11 @@ ENTRY(_start)
 
 MEMORY
 {
-    ram         : ORIGIN = 0x400000000, LENGTH = 8192M
+    ram         : ORIGIN = 0x400000000, LENGTH = 2M
 }
 
 /* Stack information variables */
-_stack_len     = 7936M;
+_stack_len     = 1M;
 _stack_start   = ORIGIN(ram) + LENGTH(ram);
 
 SECTIONS
