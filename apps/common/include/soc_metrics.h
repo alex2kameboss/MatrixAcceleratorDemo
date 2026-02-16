@@ -4,8 +4,8 @@
 #include <stdint.h>
 #include "printf.h"
 
-extern char timer_control;
-extern uint64_t timer_value;
+extern volatile char timer_control;
+extern volatile uint64_t timer_value;
 
 void start_timer() {
     timer_control = 0b1;

@@ -49,7 +49,7 @@ void print_array_##DTYPE(DTYPE *ptr, int w, int h) { \
 } 
 
 #define VECTOR_VECTOR_OPERATION_FN(DTYPE, NAME, OP) \
-void __attribute__((optimize("Ofast"))) NAME##_##DTYPE(DTYPE *a, DTYPE *b, DTYPE *c, int m, int n, int p) { \
+void NAME##_##DTYPE(DTYPE *a, DTYPE *b, DTYPE *c, int m, int n, int p) { \
     for (int i = 0; i < m; ++i) { \
         for (int j = 0; j < n; ++j) { \
             c[i * n + j] = a[i * n + j] OP b[i * n + j]; \
@@ -58,7 +58,7 @@ void __attribute__((optimize("Ofast"))) NAME##_##DTYPE(DTYPE *a, DTYPE *b, DTYPE
 } 
 
 #define VECTOR_SCALAR_OPERATION_FN(DTYPE, NAME, OP) \
-void __attribute__((optimize("Ofast"))) NAME##_##DTYPE(DTYPE *a, DTYPE b, DTYPE *c, int m, int n, int p) { \
+void NAME##_##DTYPE(DTYPE *a, DTYPE b, DTYPE *c, int m, int n, int p) { \
     for (int i = 0; i < m; ++i) { \
         for (int j = 0; j < n; ++j) { \
             c[i * n + j] = a[i * n + j] OP b; \
@@ -86,7 +86,7 @@ void __attribute__((optimize("Ofast"))) NAME##_##DTYPE(DTYPE *a, DTYPE b, DTYPE 
             print_array_cnv_##DTYPE(res_hw, m - k_m + 1, n - k_n + 1, n); \
         } \
     } \
-    void __attribute__((optimize("Ofast"))) cnv_##DTYPE(DTYPE *a, DTYPE *b, DTYPE *c, int m, int n, int k_m, int k_n, int kernel_n) { \
+    void cnv_##DTYPE(DTYPE *a, DTYPE *b, DTYPE *c, int m, int n, int k_m, int k_n, int kernel_n) { \
         for (int i = 0; i < m - k_m + 1; ++i) { \
             for (int j = 0; j < n - k_n + 1; ++j) { \
                 c[i * n + j] = 0; \
@@ -116,7 +116,7 @@ void __attribute__((optimize("Ofast"))) NAME##_##DTYPE(DTYPE *a, DTYPE b, DTYPE 
                 return false; \
         return true; \
     } \
-    void __attribute__((optimize("Ofast"))) mult_##DTYPE(DTYPE *a, DTYPE *b, DTYPE *c, int m, int n, int p) { \
+    void mult_##DTYPE(DTYPE *a, DTYPE *b, DTYPE *c, int m, int n, int p) { \
         for (int i = 0; i < m; ++i) { \
             for (int j = 0; j < p; ++j) { \
                 c[i * p + j] = 0; \

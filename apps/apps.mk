@@ -1,5 +1,5 @@
 RISCV_GCC = ${RISCV}/bin/riscv64-unknown-elf-gcc
-RISCV_CFLAGS = -lm -lgcc -march=rv64im_zicsr -mabi=lp64 -static -mcmodel=medany -Wall -fvisibility=hidden -nostartfiles -ffreestanding
+RISCV_CFLAGS = -lm -lgcc -march=rv64im_zicsr -mabi=lp64 -static -mcmodel=medany -Wall -fvisibility=hidden -nostartfiles -ffreestanding -Ofast
 RISCV_LD_FLAGS = -Tapps/common/link.ld  -Wl,--print-memory-usage
 RISCV_GCC_INCLUDES = -Iapps/common/include
 RISCV_MIN_C_SOURCES = apps/common/crt0.S apps/common/printf.c apps/common/serial.c
