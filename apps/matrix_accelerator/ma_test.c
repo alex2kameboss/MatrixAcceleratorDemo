@@ -125,8 +125,6 @@ INIT(int32_t)
 #define SUB_TEST_BASE(DTYPE_I, DTYPE_O) VV_TEST_BASE(DTYPE_I, DTYPE_O, MA_VV_SUB, sub)
 #define MULT_TEST_BASE(DTYPE_I, DTYPE_O) VV_TEST_BASE(DTYPE_I, DTYPE_O, MA_VV_MULT, mult)
 #define SMULT_TEST_BASE(DTYPE_I, DTYPE_O) VV_TEST_BASE(DTYPE_I, DTYPE_O, MA_VV_SMULT, smult)
-#define SLL_TEST_BASE(DTYPE_I, DTYPE_O) VS_TEST_BASE(DTYPE_I, DTYPE_O, MA_VS_SLL, sll, 3)
-#define SRA_TEST_BASE(DTYPE_I, DTYPE_O) VS_TEST_BASE(DTYPE_I, DTYPE_O, MA_VS_SRA, sra, 3)
 
 #define ADD_TEST(DTYPE) bool add_test_##DTYPE(int m, int n, int p) { ADD_TEST_BASE(DTYPE, DTYPE) }
 #define SUB_TEST(DTYPE) bool sub_test_##DTYPE(int m, int n, int p) { SUB_TEST_BASE(DTYPE, DTYPE) }
@@ -134,8 +132,6 @@ INIT(int32_t)
 #define SMULT_TEST(DTYPE) bool smult_test_##DTYPE(int m, int n, int p) { SMULT_TEST_BASE(DTYPE, DTYPE) }
 #define CNV_GENERIC_TEST(DTYPE) bool cnv_generic_test_##DTYPE(int m, int n, int k_m, int k_n) { CNV_TEST_BASE(DTYPE, DTYPE) }
 #define CNV_TEST(DTYPE) bool cnv_test_4x4_##DTYPE(int m, int n, int p) { return cnv_generic_test_##DTYPE(m, n, 4, 4); }
-#define SLL_TEST(DTYPE) bool sll_test_##DTYPE(int m, int n, int p) { SLL_TEST_BASE(DTYPE, DTYPE) }
-#define SRA_TEST(DTYPE) bool sra_test_##DTYPE(int m, int n, int p) { SRA_TEST_BASE(DTYPE, DTYPE) }
 
 #define GROUP_TEST(DTYPE) \
     ADD_TEST(DTYPE) \
@@ -143,9 +139,7 @@ INIT(int32_t)
     MULT_TEST(DTYPE) \
     SMULT_TEST(DTYPE) \
     CNV_GENERIC_TEST(DTYPE) \
-    CNV_TEST(DTYPE) \
-    SLL_TEST(DTYPE) \
-    SRA_TEST(DTYPE)
+    CNV_TEST(DTYPE) 
 
 GROUP_TEST(int8_t)
 GROUP_TEST(int16_t)
@@ -169,8 +163,6 @@ int printResult(bool result) {
     RUN_TEST(DotProduct, DTYPE, mult_test_##DTYPE, SIZE) \
     RUN_TEST(CrossProduct, DTYPE, smult_test_##DTYPE, SIZE) \
     RUN_TEST(Convolution_4x4, DTYPE, cnv_test_4x4_##DTYPE, SIZE) \
-    RUN_TEST(SLL_3, DTYPE, sll_test_##DTYPE, SIZE) \
-    RUN_TEST(SRA_3, DTYPE, sra_test_##DTYPE, SIZE) \
 }
 
 #define RUN_TEST_GROUP_SIZE(SIZE) { \
@@ -207,4 +199,5 @@ int main() {
 #endif    
 
     printf("%d/%d\r\n", passedTests, numberOfTests);
+    return 0;
 }

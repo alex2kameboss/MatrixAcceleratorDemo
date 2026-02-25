@@ -1,5 +1,5 @@
 #ifndef SOC_METRICS_H
-#define SOC_MATRIX_H
+#define SOC_METRICS_H
 
 #include <stdint.h>
 #include "printf.h"
