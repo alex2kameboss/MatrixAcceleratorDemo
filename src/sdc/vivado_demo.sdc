@@ -50,11 +50,28 @@ set_property IOSTANDARD LVCMOS18 [get_ports tx]
 
 # i_mem multi clock cycle
 #set_multicycle_path -from [get_clocks clk_out200_pll] -to [get_clocks clk_out100_pll] 2
-set_multicycle_path -setup -start -from [get_clocks clk_out200_pll] -to [get_clocks clk_out100_pll] 2
-set_multicycle_path -hold -from [get_clocks clk_out200_pll] -to [get_clocks clk_out100_pll] 1
+# 100 -> 200
+set_multicycle_path 2 -setup -from [get_clocks clk_out100_pll] -to [get_clocks clk_out200_pll] 
+set_multicycle_path 1 -hold -end -from [get_clocks clk_out100_pll] -to [get_clocks clk_out200_pll]
+# 200 -> 100
+set_multicycle_path 2 -setup -start -from [get_clocks clk_out200_pll] -to [get_clocks clk_out100_pll]
+set_multicycle_path 1 -hold -from [get_clocks clk_out200_pll] -to [get_clocks clk_out100_pll]
 
-set_multicycle_path -setup -from [get_clocks clk_out100_pll] -through [get_cells i_soc/i_core/i_matrix_accelerator/i_dma_unit] -to [get_clocks clk_out200_pll] 2
-set_multicycle_path -hold -end -from [get_clocks clk_out100_pll] -through [get_cells i_soc/i_core/i_matrix_accelerator/i_dma_unit] -to [get_clocks clk_out200_pll] 1
+#set_multicycle_path -setup -from [get_clocks clk_out100_pll] -through [get_cells i_soc/i_core/i_matrix_accelerator/i_dma_unit] -to [get_clocks clk_out200_pll] 2
+#set_multicycle_path -hold -end -from [get_clocks clk_out100_pll] -through [get_cells i_soc/i_core/i_matrix_accelerator/i_dma_unit] -to [get_clocks clk_out200_pll] 1
+
+# from axi clock to HBM 50 -> 200
+set_multicycle_path 4 -setup -from [get_clocks clk_out100_pll] -to [get_clocks clk_out450_pll] 
+set_multicycle_path 3 -hold -end -from [get_clocks clk_out100_pll] -to [get_clocks clk_out450_pll]
+
+# from axi clock to HBM 200 -> 50
+set_multicycle_path 4 -setup -start -from [get_clocks clk_out450_pll] -to [get_clocks clk_out100_pll] 
+set_multicycle_path 3 -hold -from [get_clocks clk_out450_pll] -to [get_clocks clk_out100_pll]
+
+set_false_path -from [get_pins i_soc/i_ram/init_complete_out_0]
+
+#set_false_path -from [get_clocks clk_out450_pll] -to [get_clocks clk_out100_pll]
+#set_false_path -from [get_clocks clk_out100_pll] -to [get_clocks clk_out450_pll]
 
 # fix tck placing
 set_property CLOCK_DEDICATED_ROUTE FALSE [get_nets tck_IBUF_inst/O]
@@ -64,7 +81,7 @@ set_property CLOCK_DEDICATED_ROUTE FALSE [get_nets tck_IBUF_inst/O]
 #set_property ALLOW_COMBINATORIAL_LOOPS TRUE [get_nets i_soc/i_debugger/i_slave_dm_axi_adapter/i_axi_to_mem/i_axi_to_detailed_mem/i_fork_dynamic/i_fork/gen_oup_state[0].oup_state_q_reg_1]
 #set_property ALLOW_COMBINATORIAL_LOOPS TRUE [get_nets i_soc/i_debugger/*]
 
-set_clock_groups -asynchronous -group [get_clocks [list clk_in_p [get_clocks -of_objects [get_pins i_pll/inst/plle4_adv_inst/CLKOUT0]] [get_clocks -of_objects [get_pins i_pll/inst/plle4_adv_inst/CLKOUT1]]]] -group [get_clocks tck] -group [get_clocks uart_rx_clk_virt] -group [get_clocks uart_tx_clk_virt]
+set_clock_groups -asynchronous -group [get_clocks [list clk_in_p [get_clocks -of_objects [get_pins i_pll/inst/plle4_adv_inst/CLKOUT0]] [get_clocks -of_objects [get_pins i_pll/inst/plle4_adv_inst/CLKOUT1]]] [get_clocks -of_objects [get_pins i_pll/inst/plle4_adv_inst/CLKOUT2]]] -group [get_clocks tck] -group [get_clocks uart_rx_clk_virt] -group [get_clocks uart_tx_clk_virt]
 
 #set_property CASCADE_HEIGHT 2 [get_cells -hierarchical xpm_memory_tdpram_inst]
 #set_property RAM_DECOMP area [get_cells -hierarchical xpm_memory_tdpram_inst]

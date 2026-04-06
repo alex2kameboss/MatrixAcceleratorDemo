@@ -1,5 +1,6 @@
 module ram_wrapper (
     input           hbm_clk         ,
+    input           clk_mem         ,
     output          init_complete   ,
     input           clk             ,
     input           rst_n           ,
@@ -38,9 +39,13 @@ axi_dw_converter_intf #(
 
 `ifdef HBM
 
+assign axi_256[0].b_user = 'd0;
+assign axi_256[0].r_user = 'd0;
+
 hbm_subsystem_wrapper i_hbm_subsystem(
     .HBM_REF_CLK_0_0    ( hbm_clk                           ), //   input HBM_REF_CLK_0_0;
-    .axi_aclk_0         ( clk                               ), //   input axi_aclk_0;
+    .clk_fast           ( clk_mem                           ), //   memory clk
+    .clk_slow           ( clk                               ), //   system clk
     .axi_aresetn_0      ( rst_n                             ), //   input axi_aresetn_0;
     .init_complete_out_0( init_complete                     ), //   output init_complete_out_0;
     

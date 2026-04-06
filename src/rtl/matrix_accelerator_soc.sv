@@ -9,6 +9,7 @@ module matrix_accelerator_soc #(
 ) (
 `ifdef TARGET_VIVADO
     input           clk_hbm ,
+    input           clk_mem ,
 `endif
     input           clk     ,
     input           clk_2x  ,
@@ -62,10 +63,10 @@ localparam CTRL_LENGTH = `SOC_CTRL_REG_LENGTH;
 localparam axi_pkg::xbar_cfg_t xbar_cfg = '{
     NoSlvPorts:         AXI_NO_MASTERS,
     NoMstPorts:         AXI_NO_SLAVES,
-    MaxMstTrans:        4,
-    MaxSlvTrans:        4,
+    MaxMstTrans:        16,
+    MaxSlvTrans:        16,
     FallThrough:        1'b0,
-    LatencyMode:        axi_pkg::CUT_MST_PORTS,
+    LatencyMode:        axi_pkg::NO_LATENCY,
     PipelineStages:     0,
     AxiIdWidthSlvPorts: AXI_ID_WIDTH,
     AxiIdUsedSlvPorts:  AXI_ID_WIDTH,
@@ -142,7 +143,7 @@ wor [CTRL_LENGTH - 1 : 0][7 : 0] ctrl_in;
 
 // Combinatorial Logic --------------------------------------------------------
 `ifdef TARGET_JTAG
-assign internal_rst_n = rst_n & rst_n_req;
+assign internal_rst_n = rst_n & rst_n_req & init_done;
 `else
 assign internal_rst_n = rst_n;
 assign debug_req = 'd0;
@@ -176,7 +177,7 @@ matrix_accelerator_subsystem #(
 ) i_core (
     .clk        ( clk                           ),
     .clk_2x     ( clk_2x                        ),
-    .rst_n      ( internal_rst_n & init_done    ),
+    .rst_n      ( internal_rst_n                ),
     .boot_addr  ( RAM_BASE                      ),
     .debug_req  ( debug_req                     ),
     .core_axi   ( master[CORE]                  ),
@@ -204,6 +205,7 @@ ram_wrapper i_ram (
 `ifdef TARGET_VIVADO
     .hbm_clk        ( clk_hbm   ),
     .init_complete  ( init_done ),
+    .clk_mem        ( clk_mem   ),
 `endif
     .clk            ( clk       ),
     .rst_n          ( rst_n     ),

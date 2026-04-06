@@ -16,7 +16,7 @@ module top(
 );
 
 logic rst_n_in;
-logic clk, clk_2x;
+logic clk, clk_2x, clk_mem;
 logic rst_n;
 logic locked;
 logic clk_hbm;
@@ -31,7 +31,8 @@ pll i_pll (
     .resetn     ( rst_n_in  ),
     .locked     ( locked    ),
     .clk_out100 ( clk       ),
-    .clk_out200 ( clk_2x    )
+    .clk_out200 ( clk_2x    ),
+    .clk_out450 ( clk_mem   )
 );
 
 matrix_accelerator_soc # (
@@ -41,6 +42,7 @@ matrix_accelerator_soc # (
     .PRF_LOG_M  ( 10        )
 ) i_soc (
     .clk_hbm( hbm_clk   ),
+    .clk_mem( clk_mem   ),
     .clk    ( clk       ),
     .clk_2x ( clk_2x    ),
     .rst_n  ( rst_n     ),
