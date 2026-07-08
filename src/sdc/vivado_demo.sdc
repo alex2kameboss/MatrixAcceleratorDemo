@@ -15,6 +15,12 @@ set_input_delay 0.000 [get_ports rst_in]
 set_property PACKAGE_PIN BM29 [get_ports rst_in]
 set_property IOSTANDARD LVCMOS12 [get_ports rst_in]
 
+## FOR RV DEMO ONLY
+set_false_path -from [get_ports rst_n_ext]
+set_input_delay 0.000 [get_ports rst_n_ext]
+set_property PACKAGE_PIN B20      [get_ports rst_n_ext] ; # Con J20 - 15
+set_property IOSTANDARD  LVCMOS18 [get_ports rst_n_ext]
+
 # jtag
 set_property CLOCK_BUFFER_TYPE BUFG [get_ports tck]
 create_clock -period 1000.000 -name tck [get_ports tck]
