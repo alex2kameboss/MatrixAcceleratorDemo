@@ -32,6 +32,9 @@ ma_ld_st_test_build:
 ma_test_build:
 	${RISCV_GCC} ${GCC_ARGS} -Wpointer-sign ${RISCV_CFLAGS} ${RISCV_LD_FLAGS} ${RISCV_GCC_INCLUDES} -Iapps/matrix_accelerator/include ${RISCV_MIN_C_SOURCES} apps/matrix_accelerator/ma_test.c -o ${APP_ELF}
 
+ma_filter_build:
+	${RISCV_GCC} ${GCC_ARGS} -Wpointer-sign ${RISCV_CFLAGS} ${RISCV_LD_FLAGS} ${RISCV_GCC_INCLUDES} -Iapps/matrix_accelerator/include ${RISCV_MIN_C_SOURCES} apps/matrix_accelerator/guided_filter.c -o ${APP_ELF}
+
 generate_coe:
 	cd ${BUILD_DIR} ; \
 		${RISCV}/bin/riscv64-unknown-elf-objcopy -v --change-addresses -0x400000000 -O ihex app input_32.hex ; \
