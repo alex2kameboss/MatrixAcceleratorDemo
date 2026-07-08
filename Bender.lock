@@ -54,7 +54,7 @@ packages:
     dependencies:
     - common_cells
   matrix_accelerator:
-    revision: e502e861a95c7b8d2c0745bd7abc8e048d6bd0f7
+    revision: f13185df36d2e9d34d78f868af95d5b3d5780d85
     version: null
     source:
       Git: https://github.com/alex2kameboss/MatrixAccelerator.git

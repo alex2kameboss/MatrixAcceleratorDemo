@@ -6,6 +6,7 @@ module top(
     input   clk_in_n,
     input   hbm_clk ,
     input   rst_in  ,
+    input   rst_n_ext,
     output  tx      ,
     input   rx      ,
     input   tck     ,
@@ -23,7 +24,7 @@ logic clk_hbm;
 
 assign rst_n_in = ~rst_in;
 
-assign rst_n = locked & rst_n_in;
+assign rst_n = locked & rst_n_in & rst_n_ext;
 
 pll i_pll (
     .clk_in1_p  ( clk_in_p  ),

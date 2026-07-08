@@ -4,11 +4,11 @@ package:
     - "Alexandru Puscasu <alexandru.puscasu@imt.ro>"
 
 dependencies:
-    matrix_accelerator: { git: "https://github.com/alex2kameboss/MatrixAccelerator.git",  rev: demo_64b   }
-    ariane:             { git: "https://github.com/openhwgroup/cva6.git",                 rev: master     }
-    axi:                { git: "https://github.com/pulp-platform/axi.git",                rev: master     }
-    cv_x_if:            { git: "https://github.com/alex2kameboss/core-v-xif-fix.git",     rev: demo       }
-    riscv-dbg:          { git: "https://github.com/pulp-platform/riscv-dbg.git",          rev: master     }
+    matrix_accelerator: { git: "https://github.com/alex2kameboss/MatrixAccelerator.git",  rev: guided_filter}
+    ariane:             { git: "https://github.com/openhwgroup/cva6.git",                 rev: master       }
+    axi:                { git: "https://github.com/pulp-platform/axi.git",                rev: master       }
+    cv_x_if:            { git: "https://github.com/alex2kameboss/core-v-xif-fix.git",     rev: demo         }
+    riscv-dbg:          { git: "https://github.com/pulp-platform/riscv-dbg.git",          rev: master       }
   
 workspace:
   checkout_dir: "src/ips"

@@ -6,7 +6,7 @@ package require cmdline
 set parameters {
     {path.arg       "."         "Set path where to create vivado project, default current dir"}
     {name.arg       "unknown"   "Set vivado project name"}
-    {threads.arg    "16"        "Number of threads for synthesis, in range [1, 16]"}
+    {threads.arg    "4"         "Number of threads for synthesis, in range [1, 16]"}
     {prfLogP.arg    "1"         "Polymorphic memory log P parameter"}
     {prfLogQ.arg    "2"         "Polymorphic memory log Q parameter"}
     {useUram                    "Use URAM for polymorphic memory"}
