@@ -29,6 +29,14 @@
     MA_LOC_RECT(ID, PRF_X, PRF_Y); \
 }
 
+#define STORE_SUB_MATRIX(DTYPE, PTR, ORIG_W, TILE_H, TILE_W, TILE_X, TILE_Y, PRF_X, PRF_Y) { \
+    MA_DEFINE_##DTYPE(31, 1, TILE_W); \
+    for ( int II = 0; II < TILE_H; II++ ) { \
+        MA_LOC_RECT(31, PRF_X + II, PRF_Y); \
+        MA_STORE_REGISTER(31, PTR[(TILE_X + II) * ORIG_W + TILE_Y]); \
+    } \
+}
+
 int main() {
     int32_t base[HEIGHT * WIDTH] __attribute__((aligned(32)));
     int32_t res[(HEIGHT + 2) * (WIDTH + N_LANES)] __attribute__((aligned(32)));
@@ -53,6 +61,8 @@ int main() {
     MA_DEFINE_int32_t(2, (HEIGHT + 2), (WIDTH + N_LANES));
     MA_LOC_RECT(2, 0, 0);
     MA_STORE_REGISTER(2, res);
+
+    STORE_SUB_MATRIX(int32_t, res, (WIDTH + N_LANES), (HEIGHT + 2), N_LANES, 0, WIDTH, 0, 0);
 
     for ( int i = 0; i < HEIGHT + 2; i++ ) {
         for ( int j = 0; j < WIDTH + N_LANES; j++ )
