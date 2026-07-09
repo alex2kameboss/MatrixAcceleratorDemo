@@ -94,6 +94,7 @@
 #define MA_VV_NW(RID, S1ID, S2ID) asm volatile( "v2dnw.vv x" _STR(RID) ", x" _STR(S1ID) ", x" _STR(S2ID) );
 #define MA_VV_DIV(RID, S1ID, S2ID) asm volatile( "v2ddiv.vv x" _STR(RID) ", x" _STR(S1ID) ", x" _STR(S2ID) );
 #define MA_VV_MULT(RID, S1ID, S2ID) asm volatile( "v2dmul.vv x" _STR(RID) ", x" _STR(S1ID) ", x" _STR(S2ID) );
+#define MA_VV_SMULT(RID, S1ID, S2ID) asm volatile( "v2dsmul.vv x" _STR(RID) ", x" _STR(S1ID) ", x" _STR(S2ID) );
 #define MA_VV_BC(RID, S1ID) asm volatile( "v2dbc.vv x" _STR(RID) ", x" _STR(S1ID) ", x" _STR(S1ID) );
 
 #define MA_VS_ADD(RID, S1ID, S2) ({ \
