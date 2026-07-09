@@ -4,7 +4,7 @@
 
 #define N_LANES 8
 
-#define WIDTH N_LANES
+#define WIDTH (2 * N_LANES)
 #define HEIGHT 4
 
 #define ROW_BC(DTYPE, ID, H, W, SRC_X, SRC_Y, DST_X, DST_Y) { \
@@ -19,17 +19,30 @@
     MA_LOC_RECT(ID, DST_X, DST_Y); \
 }
 
+#define LOAD_SUB_MATRIX(DTYPE, ID, PTR, ORIG_W, TILE_H, TILE_W, TILE_X, TILE_Y, PRF_X, PRF_Y) { \
+    MA_DEFINE_##DTYPE(31, 1, TILE_W); \
+    for ( int II = 0; II < TILE_H; II++ ) { \
+        MA_LOC_RECT(31, PRF_X + II, PRF_Y); \
+        MA_LOAD_REGISTER(31, PTR[(TILE_X + II) * ORIG_W + TILE_Y]); \
+    } \
+    MA_DEFINE_##DTYPE(ID, TILE_H, TILE_W); \
+    MA_LOC_RECT(ID, PRF_X, PRF_Y); \
+}
+
 int main() {
-    int32_t base[HEIGHT * WIDTH];
-    int32_t res[(HEIGHT + 2) * (WIDTH + N_LANES)];
+    int32_t base[HEIGHT * WIDTH] __attribute__((aligned(32)));
+    int32_t res[(HEIGHT + 2) * (WIDTH + N_LANES)] __attribute__((aligned(32)));
 
     for ( int i = 0; i < HEIGHT; i++ )
         for ( int j = 0; j < WIDTH; j++ )
             base[i * WIDTH + j] = i * WIDTH + j;
 
-    MA_DEFINE_int32_t(0, HEIGHT, WIDTH);
-    MA_LOC_RECT(0, 2, N_LANES);
-    MA_LOAD_REGISTER(0, base);
+    //MA_DEFINE_int32_t(0, HEIGHT, WIDTH);
+    //MA_LOC_RECT(0, 2, N_LANES);
+    //MA_LOAD_REGISTER(0, base[0]);
+
+    LOAD_SUB_MATRIX(int32_t, 0, base, WIDTH, HEIGHT, (WIDTH / 2), 0, (WIDTH / 2), 2, N_LANES);
+    LOAD_SUB_MATRIX(int32_t, 4, base, WIDTH, HEIGHT, (WIDTH / 2), 0, (WIDTH / 2), 2, (N_LANES + WIDTH / 2));
 
     MA_DEFINE_int32_t(1, HEIGHT, N_LANES);
     MA_LOC_RECT(1, 2, 0);
@@ -43,7 +56,7 @@ int main() {
 
     for ( int i = 0; i < HEIGHT + 2; i++ ) {
         for ( int j = 0; j < WIDTH + N_LANES; j++ )
-            printf("%d ", res[i * (WIDTH + N_LANES) + j]);
+            printf("%3d ", res[i * (WIDTH + N_LANES) + j]);
         printf("\n");
     }
 }
