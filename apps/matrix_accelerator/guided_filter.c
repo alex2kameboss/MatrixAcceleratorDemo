@@ -1,5 +1,6 @@
 #include "printf.h"
 #include "ImtMatrixAccelerator.h"
+
 #include <stdint.h>
 
 #define N_LANES 8
@@ -38,35 +39,68 @@
 }
 
 int main() {
-    int32_t base[HEIGHT * WIDTH] __attribute__((aligned(32)));
-    int32_t res[(HEIGHT + 2) * (WIDTH + N_LANES)] __attribute__((aligned(32)));
+    //int32_t base[HEIGHT * WIDTH] __attribute__((aligned(32)));
+    //int32_t res[(HEIGHT + 2) * (WIDTH + N_LANES)] __attribute__((aligned(32)));
 
-    for ( int i = 0; i < HEIGHT; i++ )
-        for ( int j = 0; j < WIDTH; j++ )
-            base[i * WIDTH + j] = i * WIDTH + j;
+    //for ( int i = 0; i < HEIGHT; i++ )
+    //    for ( int j = 0; j < WIDTH; j++ )
+    //        base[i * WIDTH + j] = i * WIDTH + j;
 
     //MA_DEFINE_int32_t(0, HEIGHT, WIDTH);
     //MA_LOC_RECT(0, 2, N_LANES);
     //MA_LOAD_REGISTER(0, base[0]);
 
-    LOAD_SUB_MATRIX(int32_t, 0, base, WIDTH, HEIGHT, (WIDTH / 2), 0, (WIDTH / 2), 2, N_LANES);
-    LOAD_SUB_MATRIX(int32_t, 4, base, WIDTH, HEIGHT, (WIDTH / 2), 0, (WIDTH / 2), 2, (N_LANES + WIDTH / 2));
+    //LOAD_SUB_MATRIX(int32_t, 0, base, WIDTH, HEIGHT, (WIDTH / 2), 0, (WIDTH / 2), 2, N_LANES);
+    //LOAD_SUB_MATRIX(int32_t, 4, base, WIDTH, HEIGHT, (WIDTH / 2), 0, (WIDTH / 2), 2, (N_LANES + WIDTH / 2));
 
-    MA_DEFINE_int32_t(1, HEIGHT, N_LANES);
-    MA_LOC_RECT(1, 2, 0);
-    MA_VV_BC(1, 0);
+    //MA_VS_MULT(0, 0, 2);
 
-    ROW_BC(int32_t, 3, 2, (WIDTH + N_LANES), 2, 0, 0, 0);
+    //MA_DEFINE_int32_t(1, HEIGHT, N_LANES);
+    //MA_LOC_RECT(1, 2, 0);
+    //MA_VV_BC_L(1, 0);
 
-    MA_DEFINE_int32_t(2, (HEIGHT + 2), (WIDTH + N_LANES));
-    MA_LOC_RECT(2, 0, 0);
-    MA_STORE_REGISTER(2, res);
+    //ROW_BC(int32_t, 3, 2, (WIDTH + N_LANES), 2, 0, 0, 0);
 
-    STORE_SUB_MATRIX(int32_t, res, (WIDTH + N_LANES), (HEIGHT + 2), N_LANES, 0, WIDTH, 0, 0);
+    //MA_DEFINE_int32_t(2, (HEIGHT + 2), (WIDTH + N_LANES));
+    //MA_LOC_RECT(2, 0, 0);
+    //MA_STORE_REGISTER(2, res);
 
-    for ( int i = 0; i < HEIGHT + 2; i++ ) {
-        for ( int j = 0; j < WIDTH + N_LANES; j++ )
-            printf("%3d ", res[i * (WIDTH + N_LANES) + j]);
+    ///MA_VV_BC_R(1, 0);
+
+    //STORE_SUB_MATRIX(int32_t, res, (WIDTH + N_LANES), (HEIGHT + 2), N_LANES, 0, WIDTH, 0, 0);
+
+    //for ( int i = 0; i < HEIGHT + 2; i++ ) {
+    //    for ( int j = 0; j < WIDTH + N_LANES; j++ )
+    //        printf("%3d ", res[i * (WIDTH + N_LANES) + j]);
+    //    printf("\n");
+    //}
+
+    int8_t a[4 * 32] __attribute__((aligned(32)));
+    int32_t b[4 * 32] __attribute__((aligned(32)));
+    int32_t c[4 * 32] __attribute__((aligned(32)));
+
+    for ( int i = 0; i < 4; i++ )
+        for ( int j = 0; j < 32; j++ ) {
+            a[i * 32 + j] = j;
+            b[i * 32 + j] = i;
+        }
+
+    MA_DEFINE_int8_t(0, 4, 32);
+    MA_LOC_RECT(0, 0, 0);
+    MA_LOAD_REGISTER(0, a);
+
+    MA_DEFINE_int32_t(1, 4, 32);
+    MA_LOC_RECT(1, 0, 32);
+    MA_LOAD_REGISTER(1, b);
+
+    MA_DEFINE_int32_t(2, 4, 32);
+    MA_LOC_RECT(2, 32, 32);
+    MA_VV_SMULT(2, 0, 1);
+    MA_STORE_REGISTER(2, c);
+
+    for ( int i = 0; i < 4; i++ ) {
+        for ( int j = 0; j < 32; j++ )
+            printf("%3d ", c[i * 32 + j]);
         printf("\n");
     }
 }
