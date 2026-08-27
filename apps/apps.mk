@@ -1,8 +1,8 @@
-RISCV_GCC = ${RISCV}/bin/riscv64-unknown-elf-gcc
+RISCV_GCC = ${RISCV}/bin/clang
 RISCV_CFLAGS = -lm -lgcc -march=rv64im_zicsr -mabi=lp64 -static -mcmodel=medany -Wall -fvisibility=hidden -nostartfiles -ffreestanding -Ofast
 RISCV_LD_FLAGS = -Tapps/common/link.ld  -Wl,--print-memory-usage
 RISCV_GCC_INCLUDES = -Iapps/common/include
-RISCV_MIN_C_SOURCES = apps/common/crt0.S apps/common/printf.c apps/common/serial.c
+RISCV_MIN_C_SOURCES = apps/common/crt0.S apps/common/printf.c apps/common/serial.c apps/common/soc_metrics.c
 GCC_ARGS ?= -DTEST_32
 
 BUILD_DIR = ${PROJ_ROOT}/runs/build
@@ -31,6 +31,12 @@ ma_ld_st_test_build:
 
 ma_test_build:
 	${RISCV_GCC} ${GCC_ARGS} -Wpointer-sign ${RISCV_CFLAGS} ${RISCV_LD_FLAGS} ${RISCV_GCC_INCLUDES} -Iapps/matrix_accelerator/include ${RISCV_MIN_C_SOURCES} apps/matrix_accelerator/ma_test.c -o ${APP_ELF}
+
+large_matrix_build:
+	${RISCV_GCC} ${GCC_ARGS} -Wpointer-sign ${RISCV_CFLAGS} ${RISCV_LD_FLAGS} ${RISCV_GCC_INCLUDES} -Iapps/matrix_accelerator/include ${RISCV_MIN_C_SOURCES} apps/matrix_accelerator/large_matrix.c -o ${APP_ELF}
+
+gf_build:
+	${RISCV_GCC} ${GCC_ARGS} -Wpointer-sign ${RISCV_CFLAGS} ${RISCV_LD_FLAGS} ${RISCV_GCC_INCLUDES} -Iapps/matrix_accelerator/include ${RISCV_MIN_C_SOURCES} apps/matrix_accelerator/guided_filter.c apps/matrix_accelerator/guided_filter_demo.c -o ${APP_ELF}
 
 generate_coe:
 	cd ${BUILD_DIR} ; \

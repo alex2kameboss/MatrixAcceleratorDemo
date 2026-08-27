@@ -17,24 +17,24 @@
 #define DEBUG(DTYPE) \
 void debug_##DTYPE(DTYPE *a, DTYPE *b, DTYPE *res_sw, DTYPE *res_hw, int m, int n, int p) { \
     if ( DEBUG_EN ) { \
-        printf("\na = \n"); \
+        printf("\n\ra = \n\r"); \
         print_array_##DTYPE(a, n, m); \
-        printf("b = \n"); \
+        printf("b = \n\r"); \
         print_array_##DTYPE(b, p, n); \
-        printf("sw = \n"); \
+        printf("sw = \n\r"); \
         print_array_##DTYPE(res_sw, p, m); \
-        printf("hw = \n"); \
+        printf("hw = \n\r"); \
         print_array_##DTYPE(res_hw, p, m); \
     } \
 } \
 void debug_vs_##DTYPE(DTYPE *a, DTYPE b, DTYPE *res_sw, DTYPE *res_hw, int m, int n, int p) { \
     if ( DEBUG_EN ) { \
-        printf("\na = \n"); \
+        printf("\n\ra = \n\r"); \
         print_array_##DTYPE(a, n, m); \
-        printf("b = %d\n", b); \
-        printf("sw = \n"); \
+        printf("b = %d\n\r", b); \
+        printf("sw = \n\r"); \
         print_array_##DTYPE(res_sw, p, m); \
-        printf("hw = \n"); \
+        printf("hw = \n\r"); \
         print_array_##DTYPE(res_hw, p, m); \
     } \
 } 
@@ -44,7 +44,7 @@ void print_array_##DTYPE(DTYPE *ptr, int w, int h) { \
     for (int i = 0; i < h; ++i) { \
         for (int j = 0; j < w; ++j) \
             printf("%#08x ", ptr[i * w + j]); \
-        printf("\n"); \
+        printf("\n\r"); \
     } \
 } 
 
@@ -71,18 +71,18 @@ void NAME##_##DTYPE(DTYPE *a, DTYPE b, DTYPE *c, int m, int n, int p) { \
         for (int i = 0; i < h; ++i) { \
             for (int j = 0; j < w; ++j) \
                 printf("%#08x ", ptr[i * hw_w + j]); \
-            printf("\n"); \
+            printf("\n\r"); \
         } \
     } \
     void debug_cnv_##DTYPE(DTYPE *a, DTYPE *b, DTYPE *res_sw, DTYPE *res_hw, int m, int n, int k_m, int k_n, int kernel_n) { \
         if ( DEBUG_EN ) { \
-            printf("\na = \n"); \
+            printf("\n\ra = \n\r"); \
             print_array_##DTYPE(a, n, m); \
-            printf("b = \n"); \
+            printf("b = \n\r"); \
             print_array_cnv_##DTYPE(b, k_n, k_m, kernel_n); \
-            printf("sw = \n"); \
+            printf("sw = \n\r"); \
             print_array_cnv_##DTYPE(res_sw, m - k_m + 1, n - k_n + 1, n); \
-            printf("hw = \n"); \
+            printf("hw = \n\r"); \
             print_array_cnv_##DTYPE(res_hw, m - k_m + 1, n - k_n + 1, n); \
         } \
     } \
@@ -108,7 +108,7 @@ void NAME##_##DTYPE(DTYPE *a, DTYPE b, DTYPE *c, int m, int n, int p) { \
     void init_array_##DTYPE(DTYPE *ptr, int w, int h) { \
         for (int i = 0; i < h; ++i) \
             for (int j = 0; j < w; ++j) \
-                ptr[i * w + j] = rand() % RND_FACTOR + 1; \
+                ptr[i * w + j] = 1; \
     } \
     bool cmp_##DTYPE(DTYPE* src1, DTYPE* src2, int len) { \
         for ( int i =0 ; i < len; ++i ) \

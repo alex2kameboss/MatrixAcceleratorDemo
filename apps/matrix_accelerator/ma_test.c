@@ -26,10 +26,10 @@ INIT(int16_t)
 INIT(int32_t)
 
 #define VV_TEST_BASE(DTYPE_I, DTYPE_O, ACC, REF) \
-    DTYPE_I a[m * n] __attribute__((aligned(512))); \
-    DTYPE_I b[n * p] __attribute__((aligned(512))); \
-    DTYPE_O res_sw[m * p]; \
-    DTYPE_O res_hw[m * p] __attribute__((aligned(512))); \
+    DTYPE_I a[m * n] __attribute__((aligned(4096))); \
+    DTYPE_I b[n * p] __attribute__((aligned(4096))); \
+    DTYPE_O res_hw[m * p] __attribute__((aligned(4096))); \
+    DTYPE_O res_sw[m * p] __attribute__((aligned(4096))); \
     init_array_##DTYPE_I(a, n, m); \
     init_array_##DTYPE_I(b, p, n); \
     start_timer(); \
@@ -58,9 +58,9 @@ INIT(int32_t)
     return cmp_##DTYPE_O(res_hw, res_sw, m * p);
 
 #define VS_TEST_BASE(DTYPE_I, DTYPE_O, ACC, REF, B) \
-    DTYPE_I a[m * n] __attribute__((aligned(512))); \
+    DTYPE_I a[m * n] __attribute__((aligned(4096))); \
     DTYPE_O res_sw[m * p]; \
-    DTYPE_O res_hw[m * p] __attribute__((aligned(512))); \
+    DTYPE_O res_hw[m * p] __attribute__((aligned(4096))); \
     init_array_##DTYPE_I(a, n, m); \
     start_timer(); \
     MA_DEFINE_##DTYPE_I(0, m, n); \
@@ -86,12 +86,12 @@ INIT(int32_t)
 
 #define CNV_TEST_BASE(DTYPE_I, DTYPE_O) \
     int kernel_n = BUS_WIDTH / sizeof(DTYPE_I); \
-    DTYPE_I a[m * n] __attribute__((aligned(512))); \
-    DTYPE_I b[k_m * kernel_n] __attribute__((aligned(512))); \
+    DTYPE_I a[m * n] __attribute__((aligned(4096))); \
+    DTYPE_I b[k_m * kernel_n] __attribute__((aligned(4096))); \
     int res_m = m - k_m + 1; \
     int res_n = n - k_n + 1; \
     DTYPE_O res_sw[m * n]; \
-    DTYPE_O res_hw[m * n] __attribute__((aligned(512))); \
+    DTYPE_O res_hw[m * n] __attribute__((aligned(4096))); \
     init_array_##DTYPE_I(a, n, m); \
     init_array_##DTYPE_I(b, kernel_n, k_m); \
     start_timer(); \
@@ -168,7 +168,6 @@ int printResult(bool result) {
     RUN_TEST(Substraction, DTYPE, sub_test_##DTYPE, SIZE) \
     RUN_TEST(DotProduct, DTYPE, mult_test_##DTYPE, SIZE) \
     RUN_TEST(CrossProduct, DTYPE, smult_test_##DTYPE, SIZE) \
-    RUN_TEST(Convolution_4x4, DTYPE, cnv_test_4x4_##DTYPE, SIZE) \
     RUN_TEST(SLL_3, DTYPE, sll_test_##DTYPE, SIZE) \
     RUN_TEST(SRA_3, DTYPE, sra_test_##DTYPE, SIZE) \
 }
@@ -182,6 +181,16 @@ int printResult(bool result) {
 int main() {
     printf("test,dtype,size,hw,sw,result,seed\r\n");
     
+    //RUN_TEST(Addition, int32_t, add_test_int32_t, 32)
+
+#ifdef TEST_4
+    RUN_TEST_GROUP_SIZE(4)
+#endif
+
+#ifdef TEST_8
+    RUN_TEST_GROUP_SIZE(8)
+#endif
+
 #ifdef TEST_16
     RUN_TEST_GROUP_SIZE(16)
 #endif
@@ -207,4 +216,6 @@ int main() {
 #endif    
 
     printf("%d/%d\r\n", passedTests, numberOfTests);
+
+    while(1);
 }

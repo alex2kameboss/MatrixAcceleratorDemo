@@ -91,9 +91,12 @@
 #define MA_VV_ADD(RID, S1ID, S2ID) asm volatile( "v2dadd.vv x" _STR(RID) ", x" _STR(S1ID) ", x" _STR(S2ID) );
 #define MA_VV_SUB(RID, S1ID, S2ID) asm volatile( "v2dsub.vv x" _STR(RID) ", x" _STR(S1ID) ", x" _STR(S2ID) );
 #define MA_VV_CNV(RID, S1ID, S2ID) asm volatile( "v2dcnv.vv x" _STR(RID) ", x" _STR(S1ID) ", x" _STR(S2ID) );
+#define MA_VV_NW(RID, S1ID, S2ID) asm volatile( "v2dnw.vv x" _STR(RID) ", x" _STR(S1ID) ", x" _STR(S2ID) );
 #define MA_VV_DIV(RID, S1ID, S2ID) asm volatile( "v2ddiv.vv x" _STR(RID) ", x" _STR(S1ID) ", x" _STR(S2ID) );
 #define MA_VV_MULT(RID, S1ID, S2ID) asm volatile( "v2dmul.vv x" _STR(RID) ", x" _STR(S1ID) ", x" _STR(S2ID) );
 #define MA_VV_SMULT(RID, S1ID, S2ID) asm volatile( "v2dsmul.vv x" _STR(RID) ", x" _STR(S1ID) ", x" _STR(S2ID) );
+#define MA_VV_BC_L(RID, S1ID) asm volatile( "v2dbc_l.vv x" _STR(RID) ", x" _STR(S1ID) ", x" _STR(S1ID) );
+#define MA_VV_BC_R(RID, S1ID) asm volatile( "v2dbc_r.vv x" _STR(RID) ", x" _STR(S1ID) ", x" _STR(S1ID) );
 
 #define MA_VS_ADD(RID, S1ID, S2) ({ \
         asm volatile \
@@ -108,6 +111,15 @@
         asm volatile \
         ( \
             "v2dsub.vs x" _STR(RID) ", x" _STR(S1ID) ", %[x]\n\t" \
+            : \
+            : [x] "r" (S2) \
+        ); \
+    })
+
+#define MA_VS_NW(RID, S1ID, S2) ({ \
+        asm volatile \
+        ( \
+            "v2dnw.vs x" _STR(RID) ", x" _STR(S1ID) ", %[x]\n\t" \
             : \
             : [x] "r" (S2) \
         ); \
@@ -148,6 +160,10 @@
             : [x] "r" (S2) \
         ); \
     })
+
+#define MA_FFT(RID, S1ID) asm volatile ( "v2dfft x" _STR(RID) ", x" _STR(S1ID) ", x0\n\t" );
+
+#define MA_IFFT(RID, S1ID) asm volatile ( "v2difft x" _STR(RID) ", x" _STR(S1ID) ", x0\n\t" );
 
 #define MA_VS_MULT(RID, S1ID, S2) ({ \
         asm volatile \
