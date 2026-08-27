@@ -36,7 +36,7 @@ large_matrix_build:
 	${RISCV_GCC} ${GCC_ARGS} -Wpointer-sign ${RISCV_CFLAGS} ${RISCV_LD_FLAGS} ${RISCV_GCC_INCLUDES} -Iapps/matrix_accelerator/include ${RISCV_MIN_C_SOURCES} apps/matrix_accelerator/large_matrix.c -o ${APP_ELF}
 
 gf_build:
-	${RISCV_GCC} ${GCC_ARGS} -Wpointer-sign ${RISCV_CFLAGS} ${RISCV_LD_FLAGS} ${RISCV_GCC_INCLUDES} -Iapps/matrix_accelerator/include ${RISCV_MIN_C_SOURCES} apps/matrix_accelerator/guided_filter.c apps/matrix_accelerator/guided_filter_demo.c -o ${APP_ELF}
+	${RISCV_GCC} ${GCC_ARGS} -Wpointer-sign ${RISCV_CFLAGS} ${RISCV_LD_FLAGS} ${RISCV_GCC_INCLUDES} -Iapps/matrix_accelerator/include ${RISCV_MIN_C_SOURCES} apps/matrix_accelerator/guided_filter.c apps/matrix_accelerator/guided_filter_acc.c apps/matrix_accelerator/guided_filter_demo.c -o ${APP_ELF}
 
 generate_coe:
 	cd ${BUILD_DIR} ; \
