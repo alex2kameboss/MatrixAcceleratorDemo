@@ -54,7 +54,7 @@ packages:
     dependencies:
     - common_cells
   matrix_accelerator:
-    revision: e502e861a95c7b8d2c0745bd7abc8e048d6bd0f7
+    revision: 94190268213d483b31e8fd4405a277bb66240187
     version: null
     source:
       Git: https://github.com/alex2kameboss/MatrixAccelerator.git
@@ -62,7 +62,14 @@ packages:
     - axi
     - common_cells
     - cv_x_if
+    - mersenne_ntt
     - poly_mem
+  mersenne_ntt:
+    revision: b6b228973724cd1c4ef8194ed6dcd2767682847e
+    version: null
+    source:
+      Git: https://github.com/mgologanu/MersenneNTT.git
+    dependencies: []
   poly_mem:
     revision: null
     version: null

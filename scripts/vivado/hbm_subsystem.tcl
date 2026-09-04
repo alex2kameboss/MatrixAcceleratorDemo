@@ -246,6 +246,7 @@ proc create_root_design { parentCell } {
   # Create instance: axi_memory_init_0, and set properties
   set axi_memory_init_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:axi_memory_init:1.0 axi_memory_init_0 ]
   set_property -dict [list \
+    CONFIG.ADDR_SIZE {9} \
     CONFIG.ADDR_WIDTH {33} \
     CONFIG.ARUSER_WIDTH {4} \
     CONFIG.AWUSER_WIDTH {4} \

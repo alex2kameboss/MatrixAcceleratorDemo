@@ -65,7 +65,7 @@ localparam axi_pkg::xbar_cfg_t xbar_cfg = '{
     MaxMstTrans:        4,
     MaxSlvTrans:        4,
     FallThrough:        1'b0,
-    LatencyMode:        axi_pkg::CUT_MST_PORTS,
+    LatencyMode:        axi_pkg::NO_LATENCY,
     PipelineStages:     0,
     AxiIdWidthSlvPorts: AXI_ID_WIDTH,
     AxiIdUsedSlvPorts:  AXI_ID_WIDTH,
