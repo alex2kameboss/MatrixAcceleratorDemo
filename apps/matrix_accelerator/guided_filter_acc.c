@@ -1,4 +1,35 @@
 #include "guided_filter.h"
+#include "ImtMatrixAccelerator.h"
+#include "printf.h"
+#include "soc_metrics.h"
+
+#define GF_R_I 0
+#define GF_R_P 1
+#define GF_R_BOX 2
+#define GF_R_MEAN_P 5
+#define GF_R_CORR_IP 7
+
+#define GF_X_C0 0
+#define GF_X_C1 GF_TILE_H
+#define GF_X_C2 (2 * GF_TILE_H)
+#define GF_X_C3 (3 * GF_TILE_H)
+#define GF_X_ACC (4 * GF_TILE_H)
+#define GF_X_SHIFTED (5 * GF_TILE_H)
+#define GF_X_CHANNEL 512
+#define GF_Y_CHANNEL 0
+#define GF_X_PACKED 640
+#define GF_X_TEMP 768
+#define GF_X_KERNEL (GF_X_TEMP + GF_IN_H)
+#define GF_Y_KERNEL 0
+#define GF_X_RESULT (2 * GF_MID_H)
+#define GF_Y_RESULT GF_Y_MID
+
+//uint32_t* gf_rgbx_stage_input[GF_CPU_MAX_STORAGE_WORDS] __attribute__((aligned(4096)));
+//uint32_t gf_rgbx_stage_output[GF_CPU_MAX_STORAGE_WORDS] __attribute__((aligned(4096)));
+//int32_t gf_box_kernel[4096] __attribute__((aligned(4096)));
+uint32_t* gf_rgbx_stage_input;
+uint32_t* gf_rgbx_stage_output;
+int32_t* gf_box_kernel;
 
 int GF_RGBX_IMAGE_W, GF_RGBX_IMAGE_H;
 int GF_TILE_W, GF_TILE_H;
@@ -221,7 +252,7 @@ void gf_repack_output_tile(const gf_tile_t *tile, int channel) {
     FLUSH_D_CACHE();
 }
 
-void guided_filter(
+void guided_filter_acc(
     int img_w,
     int img_h,
     int tile_w,
@@ -237,7 +268,6 @@ void guided_filter(
     GF_BOX_W = box_w;
     GF_BOX_H = box_h;
     // derived
-
     GF_IN_H = (GF_TILE_H + 4 * GF_RADIUS);
     GF_IN_W = (GF_TILE_W + 4 * GF_RADIUS);
     GF_MID_H = (GF_TILE_H + 2 * GF_RADIUS);
@@ -249,6 +279,16 @@ void guided_filter(
     GF_STORAGE_WORDS = (GF_STORAGE_W * GF_STORAGE_H);
     GF_KERNEL_W = GF_PAD_TO_LANES(GF_BOX_W);
 
+    uint32_t local_gf_rgbx_stage_input[img_w * img_h] __attribute__((aligned(4096)));
+    uint32_t local_gf_rgbx_stage_output[img_w * img_h] __attribute__((aligned(4096)));
+    int32_t  local_gf_box_kernel[GF_KERNEL_W * box_h] __attribute__((aligned(4096)));
+
+    gf_rgbx_stage_input = local_gf_rgbx_stage_input;
+    gf_rgbx_stage_output = local_gf_rgbx_stage_output;
+    gf_box_kernel = local_gf_box_kernel;
+
+    gf_initialize_kernel();
+
     int channel;
     int tile_y;
     int tile_x;
@@ -256,6 +296,8 @@ void guided_filter(
     uint64_t tile_load_cc = 0;
     uint64_t tile_compute_cc = 0;
     uint64_t tile_store_cc = 0;
+
+    printf("acc,%d,%d,%d,%d,%d,%d,%d,", GF_LANES, img_w, img_h, tile_w, tile_h, box_w, box_h);
 
     /* TEST START */
     /* reset counters */
@@ -268,7 +310,7 @@ void guided_filter(
 
                 if (gf_describe_tile(&tile, tile_y, tile_x) != 0) {
                     printf("guided_filter_done status=3 reason=invalid_tile\n\r");
-                    return 3;
+                    return;
                 }
 
                 clear_timer();
@@ -316,7 +358,8 @@ void guided_filter(
                     MA_DEFINE_int32_t_cc + 
                     MA_LOC_RECT_cc;
 
-    printf("%d,%d,%d,%d,%d,%d,%d,%d,", GF_LANES, img_w, img_h, tile_w, tile_h, box_w, box_h, channel_tile_passes);
+    //printf("acc,%d,%d,%d,%d,%d,%d,%d,%d,", GF_LANES, img_w, img_h, tile_w, tile_h, box_w, box_h, channel_tile_passes);
+    printf("%d,", channel_tile_passes);
     printf("%llu,%llu,%llu,%llu,", tile_load_cc, tile_compute_cc, tile_store_cc, tile_load_cc + tile_compute_cc + tile_store_cc);
     printf("%llu,%llu,%llu,%llu,%llu,%llu,%llu,%llu,%llu,%llu,%llu\n\r",
         MA_VS_ADD_cc,

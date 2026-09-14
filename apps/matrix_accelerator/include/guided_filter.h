@@ -49,6 +49,14 @@ extern uint64_t MA_LOC_RECT_cc;
 //#define GF_STORAGE_WORDS (GF_STORAGE_W * GF_STORAGE_H)
 //#define GF_KERNEL_W GF_PAD_TO_LANES(GF_BOX_W)
 
+#define GF_CPU_MAX_STORAGE_W 4096
+#define GF_CPU_MAX_STORAGE_H 2304
+#define GF_CPU_MAX_STORAGE_WORDS (GF_CPU_MAX_STORAGE_W * GF_CPU_MAX_STORAGE_H)
+
+extern uint32_t* gf_rgbx_stage_input;
+extern uint32_t* gf_rgbx_stage_output;
+extern int32_t* gf_box_kernel;
+
 typedef struct {
     int output_x;
     int output_y;
@@ -70,13 +78,25 @@ extern int GF_MID_H, GF_Y_MID;
 extern int GF_TILES_X, GF_TILES_Y;
 extern int GF_STORAGE_W, GF_STORAGE_H, GF_STORAGE_WORDS;
 
-void guided_filter(
+void guided_filter_acc (
     int img_w,
     int img_h,
     int tile_w,
     int tile_h,
     int box_w,
     int box_h
+);
+
+int guided_filter_cpu(
+    const uint32_t *input,
+    uint32_t *output,
+    int img_w,
+    int img_h,
+    int tile_w,
+    int tile_h,
+    int box_w,
+    int box_h,
+    int epsilon
 );
 
 #endif // GUIDED_FILTER_H
