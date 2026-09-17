@@ -41,7 +41,8 @@ int main(void) {
                         tile_w,
                         tile_h,
                         box_w,
-                        box_h
+                        box_h,
+                        true
                     );
 
                     //guided_filter_cpu(

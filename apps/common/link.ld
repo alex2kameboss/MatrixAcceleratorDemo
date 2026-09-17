@@ -11,7 +11,7 @@ MEMORY
 }
 
 /* Stack information variables */
-_stack_len     = 8000M;
+_stack_len     = 7000M;
 _stack_start   = ORIGIN(ram) + LENGTH(ram);
 
 SECTIONS

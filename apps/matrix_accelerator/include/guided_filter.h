@@ -2,6 +2,7 @@
 #define GUIDED_FILTER_H
 
 #include <stdint.h>
+#include <stdbool.h>
 
 void guided_filter_process_tile_i32(int guidance_x,
                                     int guidance_y,
@@ -78,13 +79,23 @@ extern int GF_MID_H, GF_Y_MID;
 extern int GF_TILES_X, GF_TILES_Y;
 extern int GF_STORAGE_W, GF_STORAGE_H, GF_STORAGE_WORDS;
 
-void guided_filter_acc (
+void print_metrics(
     int img_w,
     int img_h,
     int tile_w,
     int tile_h,
     int box_w,
     int box_h
+);
+
+void guided_filter_acc (
+    int img_w,
+    int img_h,
+    int tile_w,
+    int tile_h,
+    int box_w,
+    int box_h,
+    bool print
 );
 
 int guided_filter_cpu(

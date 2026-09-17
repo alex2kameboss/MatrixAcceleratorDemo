@@ -15,6 +15,9 @@ flash: generate_bin
 	${RISCV}/bin/openocd -f apps/cfg/ma_sim_old.cfg -f apps/cfg/flash.tcl
 
 flash_linux: generate_bin
+	sudo ${RISCV}/bin/openocd -f apps/cfg/ma_demo_new.cfg -f apps/cfg/flash.tcl
+
+flash_linux_old: generate_bin
 	sudo ${RISCV}/bin/openocd -f apps/cfg/esp32_devkitj_v1.cfg -f apps/cfg/ma_demo.cfg -f apps/cfg/flash.tcl
 
 app_dump:
@@ -38,8 +41,8 @@ large_matrix_build:
 gf_build:
 	${RISCV_GCC} ${GCC_ARGS} -Wpointer-sign ${RISCV_CFLAGS} ${RISCV_LD_FLAGS} ${RISCV_GCC_INCLUDES} -Iapps/matrix_accelerator/include ${RISCV_MIN_C_SOURCES} apps/matrix_accelerator/guided_filter.c apps/matrix_accelerator/guided_filter_acc.c apps/matrix_accelerator/guided_filter_cpu.c apps/matrix_accelerator/guided_filter_demo.c -o ${APP_ELF}
 
-ntt_build:
-	${RISCV_GCC} ${GCC_ARGS} -Wpointer-sign ${RISCV_CFLAGS} ${RISCV_LD_FLAGS} ${RISCV_GCC_INCLUDES} -Iapps/ntt ${RISCV_MIN_C_SOURCES} apps/ntt/mrsn_ntt_iterative.c apps/ntt/test_mrsn_ntt.c -o ${APP_ELF}
+final_demo:
+	${RISCV_GCC} ${GCC_ARGS} -Wpointer-sign ${RISCV_CFLAGS} ${RISCV_LD_FLAGS} ${RISCV_GCC_INCLUDES} -Iapps/matrix_accelerator/include ${RISCV_MIN_C_SOURCES} apps/matrix_accelerator/guided_filter.c apps/matrix_accelerator/guided_filter_acc.c apps/matrix_accelerator/guided_filter_cpu.c apps/matrix_accelerator/gf_demo.c -o ${APP_ELF}
 
 
 generate_coe:

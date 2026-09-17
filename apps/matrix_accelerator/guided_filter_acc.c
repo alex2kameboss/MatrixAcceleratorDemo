@@ -252,13 +252,45 @@ void gf_repack_output_tile(const gf_tile_t *tile, int channel) {
     FLUSH_D_CACHE();
 }
 
-void guided_filter_acc(
+uint64_t channel_tile_passes = 0;
+uint64_t tile_load_cc = 0;
+uint64_t tile_compute_cc = 0;
+uint64_t tile_store_cc = 0;
+
+void print_metrics(
     int img_w,
     int img_h,
     int tile_w,
     int tile_h,
     int box_w,
     int box_h
+) {
+    
+    printf("acc,%d,%d,%d,%d,%d,%d,%d,", GF_LANES, img_w, img_h, tile_w, tile_h, box_w, box_h);
+    printf("%d,", channel_tile_passes);
+    printf("%llu,%llu,%llu,%llu,", tile_load_cc, tile_compute_cc, tile_store_cc, tile_load_cc + tile_compute_cc + tile_store_cc);
+    printf("%llu,%llu,%llu,%llu,%llu,%llu,%llu,%llu,%llu,%llu,%llu\n\r",
+        MA_VS_ADD_cc,
+        MA_VS_MULT_cc,
+        MA_VS_SRA_cc,
+        MA_VS_SRL_cc,
+        MA_VV_ADD_cc,
+        MA_VV_CNV_cc,
+        MA_VV_NW_cc,
+        MA_VV_SMULT_cc,
+        MA_VV_SUB_cc,
+        MA_DEFINE_int32_t_cc,
+        MA_LOC_RECT_cc);
+};
+
+void guided_filter_acc(
+    int img_w,
+    int img_h,
+    int tile_w,
+    int tile_h,
+    int box_w,
+    int box_h,
+    bool print
 ) {
     // set up
     GF_RGBX_IMAGE_W = img_w;
@@ -292,12 +324,13 @@ void guided_filter_acc(
     int channel;
     int tile_y;
     int tile_x;
-    uint64_t channel_tile_passes = 0;
-    uint64_t tile_load_cc = 0;
-    uint64_t tile_compute_cc = 0;
-    uint64_t tile_store_cc = 0;
+    channel_tile_passes = 0;
+    tile_load_cc = 0;
+    tile_compute_cc = 0;
+    tile_store_cc = 0;
 
-    printf("acc,%d,%d,%d,%d,%d,%d,%d,", GF_LANES, img_w, img_h, tile_w, tile_h, box_w, box_h);
+    if ( print )
+        printf("acc,%d,%d,%d,%d,%d,%d,%d,", GF_LANES, img_w, img_h, tile_w, tile_h, box_w, box_h);
 
     /* TEST START */
     /* reset counters */
@@ -359,19 +392,21 @@ void guided_filter_acc(
                     MA_LOC_RECT_cc;
 
     //printf("acc,%d,%d,%d,%d,%d,%d,%d,%d,", GF_LANES, img_w, img_h, tile_w, tile_h, box_w, box_h, channel_tile_passes);
-    printf("%d,", channel_tile_passes);
-    printf("%llu,%llu,%llu,%llu,", tile_load_cc, tile_compute_cc, tile_store_cc, tile_load_cc + tile_compute_cc + tile_store_cc);
-    printf("%llu,%llu,%llu,%llu,%llu,%llu,%llu,%llu,%llu,%llu,%llu\n\r",
-        MA_VS_ADD_cc,
-        MA_VS_MULT_cc,
-        MA_VS_SRA_cc,
-        MA_VS_SRL_cc,
-        MA_VV_ADD_cc,
-        MA_VV_CNV_cc,
-        MA_VV_NW_cc,
-        MA_VV_SMULT_cc,
-        MA_VV_SUB_cc,
-        MA_DEFINE_int32_t_cc,
-        MA_LOC_RECT_cc);
+    if ( print ) {
+        printf("%d,", channel_tile_passes);
+        printf("%llu,%llu,%llu,%llu,", tile_load_cc, tile_compute_cc, tile_store_cc, tile_load_cc + tile_compute_cc + tile_store_cc);
+        printf("%llu,%llu,%llu,%llu,%llu,%llu,%llu,%llu,%llu,%llu,%llu\n\r",
+            MA_VS_ADD_cc,
+            MA_VS_MULT_cc,
+            MA_VS_SRA_cc,
+            MA_VS_SRL_cc,
+            MA_VV_ADD_cc,
+            MA_VV_CNV_cc,
+            MA_VV_NW_cc,
+            MA_VV_SMULT_cc,
+            MA_VV_SUB_cc,
+            MA_DEFINE_int32_t_cc,
+            MA_LOC_RECT_cc);
+    }
     /* TEST END */
 }
