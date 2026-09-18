@@ -11,11 +11,15 @@ int main(void) {
         {3840, 2160}
     };
     int tile_sizes[][3] = {
-        {32, 32},
-        {64, 64},
-        {128, 128}
+//        {32, 32},
+        {64, 64}
+//        {128, 128}
     };
-    int kernel_sizes[] = {31, 33, 35};
+    int kernel_sizes[] = {
+//        31, 
+//        33,
+        35
+    };
 
     int repetitions = 1;
     int image_case_count = sizeof(image_sizes) / sizeof(image_sizes[0]);

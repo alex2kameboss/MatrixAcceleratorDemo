@@ -8,8 +8,8 @@
 #define IMG_MAX_W 1280
 #define IMG_MAX_H 720
 
-#define TILE_SIZE 128
-#define KERNEL_SIZE 31
+#define TILE_SIZE 64
+#define KERNEL_SIZE 33
 
 #define MAX_BUFFER_SIZE 1024
 
@@ -77,9 +77,9 @@ int main() {
 
     // buffers
     uint8_t buf[MAX_BUFFER_SIZE];
-    uint8_t imageInBuf[IMG_MAX_W * IMG_MAX_H * 4];
-    uint8_t imageOutBuf[IMG_MAX_W * IMG_MAX_H * 4];
-    int32_t kernel[64 * 64];
+    uint8_t imageInBuf[IMG_MAX_W * IMG_MAX_H * 4] __attribute__((aligned(4096)));
+    uint8_t imageOutBuf[IMG_MAX_W * IMG_MAX_H * 4] __attribute__((aligned(4096)));
+    int32_t kernel[64 * 64] __attribute__((aligned(4096)));
 
     // variables
     int imageWidth, imageHeight;
@@ -129,15 +129,15 @@ int main() {
             false
         );
         //printf("Execute\n\r");
-        for ( int i = 0; i < imageSize; ++i ) {
-            imageOutBuf[i] = imageInBuf[i];
-        }
+        //for ( int i = 0; i < imageSize; ++i ) {
+        //    imageOutBuf[i] = imageInBuf[i];
+        //}
         printf("$RESULT_IMAGE\r\n");
         for ( int i = 0; i < imageSize; ++i ) {
             txSendByte(imageOutBuf[i]);
         }
         printf("$RESULT_METRICS\r\n");
-        printf("hw,lanes,img_w,img_h,tile_w,tile_h,box_w,box_h,#tiles,tile_load,tile_compute,tile_store,total,MA_VS_ADD,MA_VS_MULT,MA_VS_SRA,MA_VS_SRL,MA_VV_ADD,MA_VV_CNV,MA_VV_NW,MA_VV_SMULT,MA_VV_SUB,MA_DEFINE_int32_t,MA_LOC_RECT\n\r");
+        printf("hw,lanes,img_w,img_h,tile_w,tile_h,box_w,box_h,#tiles,tile_load,tile_compute,tile_store,total,MA_VS_ADD,MA_VS_MULT,MA_VS_SRA,MA_VS_SRL,MA_VV_ADD,MA_VV_CNV,MA_VV_NW,MA_VV_SMULT,MA_VV_SUB,MA_DEFINE_int32_t,MA_LOC_RECT\r\n");
         print_metrics (
             imageWidth,
             imageHeight,

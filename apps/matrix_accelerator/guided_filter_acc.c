@@ -269,7 +269,7 @@ void print_metrics(
     printf("acc,%d,%d,%d,%d,%d,%d,%d,", GF_LANES, img_w, img_h, tile_w, tile_h, box_w, box_h);
     printf("%d,", channel_tile_passes);
     printf("%llu,%llu,%llu,%llu,", tile_load_cc, tile_compute_cc, tile_store_cc, tile_load_cc + tile_compute_cc + tile_store_cc);
-    printf("%llu,%llu,%llu,%llu,%llu,%llu,%llu,%llu,%llu,%llu,%llu\n\r",
+    printf("%llu,%llu,%llu,%llu,%llu,%llu,%llu,%llu,%llu,%llu,%llu\r\n",
         MA_VS_ADD_cc,
         MA_VS_MULT_cc,
         MA_VS_SRA_cc,
@@ -311,13 +311,13 @@ void guided_filter_acc(
     GF_STORAGE_WORDS = (GF_STORAGE_W * GF_STORAGE_H);
     GF_KERNEL_W = GF_PAD_TO_LANES(GF_BOX_W);
 
-    uint32_t local_gf_rgbx_stage_input[img_w * img_h] __attribute__((aligned(4096)));
-    uint32_t local_gf_rgbx_stage_output[img_w * img_h] __attribute__((aligned(4096)));
-    int32_t  local_gf_box_kernel[GF_KERNEL_W * box_h] __attribute__((aligned(4096)));
+    //uint32_t local_gf_rgbx_stage_input[img_w * img_h] __attribute__((aligned(4096)));
+    //uint32_t local_gf_rgbx_stage_output[img_w * img_h] __attribute__((aligned(4096)));
+    //int32_t  local_gf_box_kernel[GF_KERNEL_W * box_h] __attribute__((aligned(4096)));
 
-    gf_rgbx_stage_input = local_gf_rgbx_stage_input;
-    gf_rgbx_stage_output = local_gf_rgbx_stage_output;
-    gf_box_kernel = local_gf_box_kernel;
+    //gf_rgbx_stage_input = local_gf_rgbx_stage_input;
+    //gf_rgbx_stage_output = local_gf_rgbx_stage_output;
+    //gf_box_kernel = local_gf_box_kernel;
 
     gf_initialize_kernel();
 

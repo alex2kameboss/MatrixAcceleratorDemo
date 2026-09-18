@@ -28,7 +28,7 @@ extern uint64_t MA_DEFINE_int32_t_cc;
 extern uint64_t MA_LOC_RECT_cc;
 
 #ifndef GF_LANES
-#define GF_LANES 16
+#define GF_LANES 32
 #endif
 
 #ifndef GF_RADIUS
