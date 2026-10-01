@@ -18,7 +18,7 @@ flash_linux: generate_bin
 	sudo ${RISCV}/bin/openocd -f apps/cfg/esp32_devkitj_v1.cfg -f apps/cfg/ma_demo.cfg -f apps/cfg/flash.tcl
 
 app_dump:
-	${RISCV}/bin/riscv64-unknown-elf-objdump -d ${APP_ELF} > ${BUILD_DIR}/dump.txt
+	${RISCV}/bin/riscv64-unknown-elf-objdump -M numeric -d ${APP_ELF} > ${BUILD_DIR}/dump.txt
 
 hello_dummy_build: dirs
 	${RISCV_GCC} ${RISCV_CFLAGS} ${RISCV_LD_FLAGS} ${RISCV_GCC_INCLUDES} apps/common/crt0.S apps/hello_world_dummy.c -o ${APP_ELF}

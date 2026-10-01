@@ -82,25 +82,22 @@ int main() {
     for ( int i = 0; i < 4; i++ )
         for ( int j = 0; j < 32; j++ ) {
             a[i * 32 + j] = j;
-            b[i * 32 + j] = i;
         }
 
-    MA_DEFINE_int8_t(0, 4, 32);
+    MA_DEFINE_uint8_t(0, 4, 32);
     MA_LOC_RECT(0, 0, 0);
     MA_LOAD_REGISTER(0, a);
 
     MA_DEFINE_int32_t(1, 4, 32);
     MA_LOC_RECT(1, 0, 32);
-    MA_LOAD_REGISTER(1, b);
 
-    MA_DEFINE_int32_t(2, 4, 32);
-    MA_LOC_RECT(2, 32, 32);
-    MA_VV_SMULT(2, 0, 1);
-    MA_STORE_REGISTER(2, c);
+    MA_VS_ADD(1, 0, 0);
+
+    MA_STORE_REGISTER(1, b);
 
     for ( int i = 0; i < 4; i++ ) {
         for ( int j = 0; j < 32; j++ )
-            printf("%3d ", c[i * 32 + j]);
+            printf("%3d ", b[i * 32 + j]);
         printf("\n");
     }
 }
