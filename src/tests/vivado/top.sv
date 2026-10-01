@@ -6,15 +6,14 @@ module top(
     input   clk_in_n,
     input   hbm_clk ,
     input   rst_in  ,
-    input   rst_n_ext,
     output  tx      ,
     input   rx      ,
-    input   tck     ,
-    input   tms     ,
-    input   trstn   ,
-    input   tdi     ,
-    output  tdo     
+    output  led     ,
+    output  cts     
 );
+
+assign led = rx;
+assign cts = 1'b0;
 
 logic rst_n_in;
 logic clk, clk_2x;
@@ -24,7 +23,7 @@ logic clk_hbm;
 
 assign rst_n_in = ~rst_in;
 
-assign rst_n = locked & rst_n_in & rst_n_ext;
+assign rst_n = locked & rst_n_in;
 
 pll i_pll (
     .clk_in1_p  ( clk_in_p  ),
@@ -47,11 +46,11 @@ matrix_accelerator_soc # (
     .rst_n  ( rst_n     ),
     .tx     ( tx        ),
     .rx     ( rx        ),
-    .tck    ( tck       ),
-    .tms    ( tms       ),
-    .trstn  ( trstn     ),
-    .tdi    ( tdi       ),
-    .tdo    ( tdo       )
+    .tck    ( 1'b0       ),
+    .tms    ( 1'b0       ),
+    .trstn  ( 1'b1     ),
+    .tdi    ( 1'b0       ),
+    .tdo    (        )
 );
 
 endmodule

@@ -15,44 +15,48 @@ set_input_delay 0.000 [get_ports rst_in]
 set_property PACKAGE_PIN BM29 [get_ports rst_in]
 set_property IOSTANDARD LVCMOS12 [get_ports rst_in]
 
-## FOR RV DEMO ONLY
-set_false_path -from [get_ports rst_n_ext]
-set_input_delay 0.000 [get_ports rst_n_ext]
-set_property PACKAGE_PIN B20      [get_ports rst_n_ext] ; # Con J20 - 15
-set_property IOSTANDARD  LVCMOS18 [get_ports rst_n_ext]
-
 # jtag
-set_property CLOCK_BUFFER_TYPE BUFG [get_ports tck]
-create_clock -period 1000.000 -name tck [get_ports tck]
-set_input_delay 0.000 [get_ports tck]
-set_input_jitter tck 1.000
+#set_property CLOCK_BUFFER_TYPE BUFG [get_ports tck]
+#create_clock -period 1000.000 -name tck [get_ports tck]
+#set_input_delay 0.000 [get_ports tck]
+#set_input_jitter tck 1.000
 
-set_input_delay -clock tck -clock_fall 5.000 [get_ports tdi]
-set_input_delay -clock tck -clock_fall 5.000 [get_ports tms]
-set_output_delay -clock tck 5.000 [get_ports tdo]
-set_false_path -from [get_ports trstn]
+#set_input_delay -clock tck -clock_fall 5.000 [get_ports tdi]
+#set_input_delay -clock tck -clock_fall 5.000 [get_ports tms]
+#set_output_delay -clock tck 5.000 [get_ports tdo]
+#set_false_path -from [get_ports trstn]
 
-set_property PACKAGE_PIN A21 [get_ports tck]
-set_property IOSTANDARD LVCMOS18 [get_ports tck]
-set_property PACKAGE_PIN A20 [get_ports tdi]
-set_property IOSTANDARD LVCMOS18 [get_ports tdi]
-set_property PACKAGE_PIN A19 [get_ports tms]
-set_property IOSTANDARD LVCMOS18 [get_ports tms]
-set_property PACKAGE_PIN A18 [get_ports tdo]
-set_property IOSTANDARD LVCMOS18 [get_ports tdo]
-set_property PACKAGE_PIN A16 [get_ports trstn]
-set_property IOSTANDARD LVCMOS18 [get_ports trstn]
+#set_property PACKAGE_PIN A21 [get_ports tck]
+#set_property IOSTANDARD LVCMOS18 [get_ports tck]
+#set_property PACKAGE_PIN A20 [get_ports tdi]
+#set_property IOSTANDARD LVCMOS18 [get_ports tdi]
+#set_property PACKAGE_PIN A19 [get_ports tms]
+#set_property IOSTANDARD LVCMOS18 [get_ports tms]
+#set_property PACKAGE_PIN A18 [get_ports tdo]
+#set_property IOSTANDARD LVCMOS18 [get_ports tdo]
+#set_property PACKAGE_PIN A16 [get_ports trstn]
+#set_property IOSTANDARD LVCMOS18 [get_ports trstn]
 
 # uart
 create_clock -period 104166.000 -name uart_rx_clk_virt
 set_input_delay -clock uart_rx_clk_virt 0.000 [get_ports rx]
 create_clock -period 104166.000 -name uart_tx_clk_virt
 set_output_delay -clock uart_tx_clk_virt 0.000 [get_ports tx]
+set_property PACKAGE_PIN BP23     [get_ports cts] ;# Bank  67 VCCO - VCC1V8   - IO_L1P_T0L_N0_DBC_67
+set_property IOSTANDARD  LVCMOS18 [get_ports cts] ;# Bank  67 VCCO - VCC1V8   - IO_L1P_T0L_N0_DBC_67
 
-set_property PACKAGE_PIN C18 [get_ports rx]
-set_property IOSTANDARD LVCMOS18 [get_ports rx]
-set_property PACKAGE_PIN C17 [get_ports tx]
-set_property IOSTANDARD LVCMOS18 [get_ports tx]
+set_property PACKAGE_PIN BH24     [get_ports led] ;# Bank  67 VCCO - VCC1V8   - IO_L18N_T2U_N11_AD2N_67
+set_property IOSTANDARD  LVCMOS18 [get_ports led] ;# Bank  67 VCCO - VCC1V8   - IO_L18N_T2U_N11_AD2N_67
+
+#set_property PACKAGE_PIN C18 [get_ports rx]
+#set_property IOSTANDARD LVCMOS18 [get_ports rx]
+#set_property PACKAGE_PIN C17 [get_ports tx]
+#set_property IOSTANDARD LVCMOS18 [get_ports tx]
+
+set_property PACKAGE_PIN BP26     [get_ports rx] ;# Bank  67 VCCO - VCC1V8   - IO_L2N_T0L_N3_67
+set_property IOSTANDARD  LVCMOS18 [get_ports rx] ;# Bank  67 VCCO - VCC1V8   - IO_L2N_T0L_N3_67
+set_property PACKAGE_PIN BN26     [get_ports tx] ;# Bank  67 VCCO - VCC1V8   - IO_L2P_T0L_N2_67
+set_property IOSTANDARD  LVCMOS18 [get_ports tx] ;# Bank  67 VCCO - VCC1V8   - IO_L2P_T0L_N2_67
 
 # i_mem multi clock cycle
 #set_multicycle_path -from [get_clocks clk_out200_pll] -to [get_clocks clk_out100_pll] 2
