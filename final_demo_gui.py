@@ -100,13 +100,13 @@ class SerialWorker(threading.Thread):
 
         while not self._stop_flag.is_set():
             try:
-                width, height, rgba_bytes = self.send_queue.get(timeout=0.2)
+                width, height, epsilon, rgba_bytes = self.send_queue.get(timeout=0.2)
             except queue.Empty:
                 continue
 
             try:
                 self.last_size = (width, height)
-                self._send_image(width, height, rgba_bytes)
+                self._send_image(width, height, epsilon, rgba_bytes)
                 self.event_queue.put(("status", "Wait for response"))
                 self._listen_for_response()
             except Exception as exc:
@@ -116,11 +116,11 @@ class SerialWorker(threading.Thread):
             self.ser.close()
 
     # -- called from the GUI thread -------------------------------------
-    def request_send(self, width, height, rgba_bytes):
-        self.send_queue.put((width, height, rgba_bytes))
+    def request_send(self, width, height, epsilon, rgba_bytes):
+        self.send_queue.put((width, height, epsilon, rgba_bytes))
 
     # -- sending -------------------------------------------------------
-    def _send_image(self, width, height, rgba_bytes):
+    def _send_image(self, width, height, epsilon, rgba_bytes):
         """Sends width, height, then the raw RGBA byte array.
 
         Wire format (change this to match the firmware you already wrote):
@@ -129,6 +129,8 @@ class SerialWorker(threading.Thread):
             raw bytes: width * height * 4  (R,G,B,A per pixel)
         """
         self.ser.write(f"$START\r".encode('utf-8'))
+        time.sleep(0.1)
+        self.ser.write(f"$EPSILON{epsilon}\r".encode('utf-8'))
         time.sleep(0.1)
         self.ser.write(f"$WIDTH{width}\r".encode('utf-8'))
         time.sleep(0.1)
@@ -202,7 +204,7 @@ class App(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title("UART Image Processor")
-        self.geometry("950x650")
+        self.geometry("1200x1000")
 
         self.source_image = None    # PIL Image, RGBA, full size
         self.source_photo = None    # ImageTk.PhotoImage kept alive
@@ -225,6 +227,11 @@ class App(tk.Tk):
 
         self.start_btn = ttk.Button(top, text="Start", command=self.on_start, state=tk.DISABLED)
         self.start_btn.pack(side=tk.LEFT, padx=4)
+
+        ttk.Label(top, text="Epsilon:").pack(side=tk.LEFT, padx=(16, 2))
+        self.epsilon_var = tk.StringVar(value="1650")
+        epsilon_entry = ttk.Entry(top, textvariable=self.epsilon_var, width=12)
+        epsilon_entry.pack(side=tk.LEFT, padx=4)
 
         images_frame = ttk.Frame(self, padding=8)
         images_frame.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
@@ -285,6 +292,14 @@ class App(tk.Tk):
         self.result_photo = None
         self._clear_table()
 
+        try:
+            epsilon = int(self.epsilon_var.get())
+            if not (-2147483648 <= epsilon <= 2147483647):
+                raise ValueError("epsilon out of int32 range")
+        except ValueError as exc:
+            messagebox.showerror("Invalid epsilon", f"Epsilon must be an int32 value: {exc}")
+            return
+
         width, height = self.source_image.size
         rgba_bytes = self.source_image.tobytes()  # RGBA RGBA RGBA ...
 
@@ -298,7 +313,7 @@ class App(tk.Tk):
             self.select_btn.config(state=tk.NORMAL)
             return
 
-        self.worker.request_send(width, height, rgba_bytes)
+        self.worker.request_send(width, height, epsilon, rgba_bytes)
 
     # -- helpers -----------------------------------------------
     def _show_image(self, pil_img, label_widget, is_source):
@@ -345,6 +360,7 @@ class App(tk.Tk):
                     width, height, rgba, csv1, csv2 = payload
                     try:
                         img = Image.frombytes("RGBA", (width, height), rgba)
+                        img.save("output.png")
                         self._show_image(img, self.result_label, is_source=False)
                     except Exception as exc:
                         messagebox.showerror("Could not decode result image", str(exc))

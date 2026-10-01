@@ -20,10 +20,6 @@
 #define GF_TILE_W 64
 #endif
 
-#ifndef GF_EPS
-#define GF_EPS 4
-#endif
-
 #ifndef GF_Q_SHIFT
 #define GF_Q_SHIFT 16
 #endif

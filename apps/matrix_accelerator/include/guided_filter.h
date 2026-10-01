@@ -71,6 +71,7 @@ typedef struct {
     int pad_right;
 } gf_tile_t;
 
+extern int32_t GF_EPS;
 extern int GF_RGBX_IMAGE_W, GF_RGBX_IMAGE_H;
 extern int GF_TILE_W, GF_TILE_H;
 extern int GF_BOX_H, GF_BOX_W, GF_KERNEL_W;

@@ -74,6 +74,8 @@ uint32_t waitMessage(uint8_t* buf, uint32_t maxSize, const char* msg) {
     return idx;
 }
 
+int32_t GF_EPS = 2000;
+
 int main() {
     // reset fifos
     uart_ctrl_reg[0] = 3;
@@ -100,6 +102,9 @@ int main() {
         // START
         //printf("Wait start\n\r");
         waitMessage(buf, MAX_BUFFER_SIZE, "$START");
+        // EPSILON
+        numberStartIdx = waitMessage(buf, MAX_BUFFER_SIZE, "$EPSILON");
+        GF_EPS = atoi(&buf[numberStartIdx]);
         // WIDTH
         //printf("Wait width\n\r");
         numberStartIdx = waitMessage(buf, MAX_BUFFER_SIZE, "$WIDTH");
